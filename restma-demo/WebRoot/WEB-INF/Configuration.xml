@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="logImpl" value="LOG4J" />
+		<setting name="cacheEnabled" value="true" />
+		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="aggressiveLazyLoading" value="false" />
+		<setting name="localCacheScope" value="SESSION" />
+		<setting name="autoMappingBehavior" value="PARTIAL" />
+		<setting name="proxyFactory" value="CGLIB" />
+		<setting name="lazyLoadTriggerMethods" value="" />
+	</settings>
+	<!--
+		<typeAliases>
+		<typeAlias alias="User" type="cn.limeng32.testSpring.pojo.User" />
+		<typeAlias alias="Article" type="cn.limeng32.testSpring.pojo.Article" />
+		</typeAliases>
+		
+		<typeHandlers></typeHandlers>
+	-->
+	<plugins>
+		<plugin interceptor="cn.limeng32.mybatis.plugin.SqlPlugin">
+			<property name="dialect" value="mysql" />
+			<property name="selectAllMatcher" value=".*selectAll.*" />
+		</plugin>
+	</plugins>
+	<!-- 
+		<mappers>
+		<mapper resource="cn/limeng32/testSpring/mapper/Pojo.xml" />
+		<mapper resource="cn/limeng32/testSpring/mapper/User.xml" />
+		<mapper resource="cn/limeng32/testSpring/mapper/Article.xml" />
+		</mappers>
+	-->
+</configuration>

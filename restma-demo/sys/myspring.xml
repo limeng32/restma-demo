@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "sys/spring-beans.dtd">
+
+<beans>
+
+	<!-- 定义了ShowMessage类的bean -->
+
+	<bean id="myBean" class="test.ShowMessage">
+
+		<property name="message">
+
+			<value>Hello Spring!!</value>
+
+		</property>
+
+	</bean>
+
+</beans>

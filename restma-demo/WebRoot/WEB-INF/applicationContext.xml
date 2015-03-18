@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="  
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd  
+       	http://www.springframework.org/schema/aop
+       	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       	http://www.springframework.org/schema/tx
+       	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd"
+       	>
+
+	<context:annotation-config />
+
+	<context:component-scan base-package="cn.limeng32.testSpring.*" />
+
+	<context:property-placeholder location="/WEB-INF/jdbc.properties" />
+
+	<bean class="cn.limeng32.testSpring.SpringContextHolder" />
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}">
+		</property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation"
+			value="/WEB-INF/Configuration.xml" />
+		<!-- 
+			<property name="transactionFactory">
+			<bean
+			class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+			</property>
+		-->
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations"
+			value="classpath:cn/limeng32/testSpring/mapper/*.xml" />
+		<property name="typeAliasesPackage"
+			value="cn.limeng32.testSpring.pojo" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage"
+			value="cn.limeng32.testSpring.mapper" />
+		<!-- 
+			<property name="markerInterface"
+			value="cn.limeng32.testSpring.mapper.SuperMapper" />
+		-->
+		<property name="sqlSessionFactoryBeanName"
+			value="sqlSessionFactory" />
+	</bean>
+
+	<!-- 
+		<bean id="sqlSession"
+		class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+		<constructor-arg index="1" value="BATCH" />
+		</bean>
+		
+		<bean id="user2Service"
+		class="cn.limeng32.testSpring.service.User2Service">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+		</bean>
+	-->
+
+	<bean id="nativeJdbcExtractor" lazy-init="true"
+		class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor" />
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+		<property name="nativeJdbcExtractor" ref="nativeJdbcExtractor" />
+	</bean>
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<tx:annotation-driven transaction-manager="txManager" />
+	<!-- <bean id="txServiceTarget"
+		class="cn.limeng32.testSpring.service.TxService">
+		</bean>
+		<bean id="txService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="txManager" />
+		<property name="target" ref="txServiceTarget" />
+		<property name="transactionAttributes">
+		<props>
+		<prop key="*">
+		PROPAGATION_REQUIRED
+		</prop>
+		</props>
+		</property>
+		</bean> -->
+	<!-- 	
+		<aop:config>
+		<aop:pointcut id="serviceMethod"
+		expression="execution(* cn.limeng32.testSpring.service.TxService.*(..))" />
+		<aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice" />
+		</aop:config>
+		<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+		<tx:method name="insert"
+		no-rollback-for="PessimisticLockingFailureException" />
+		</tx:attributes>
+		</tx:advice>
+	-->
+	<import resource="spring_dao.xml" />
+	<import resource="spring_service.xml" />
+</beans>
