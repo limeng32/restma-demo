@@ -1,0 +1,11 @@
+#Mon Feb 16 06:20:57 GMT 2015
+eclipse.preferences.version=1
+encoding//WebRoot/WEB-INF/ftl/userListByFtl.ftl=UTF-8
+encoding//src/cn/limeng32/connleak/JdbcUserService.java=utf8
+encoding//src/cn/limeng32/testSpring/web/UserListExcelView.java=utf-8
+encoding//src/conf/i18n/content_en_US.properties=utf-8
+encoding//src/conf/i18n/content_zh_CN.properties=UTF-8
+encoding//src/conf/i18n/messages.properties=utf-8
+encoding//src/conf/i18n/messages_en_US.properties=utf-8
+encoding//src/conf/i18n/messages_zh_CN.properties=utf-8
+encoding//src/conf/i18n/views_zh_CN.properties=utf-8
