@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.limeng32.testSpring.annotation.Domain;
 import cn.limeng32.testSpring.enums.PojoEnum;
 import cn.limeng32.testSpring.mapper.MapperFace;
 
@@ -27,15 +28,12 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 	protected List<T> supportSelectAllUseEnum(MapperFace<T> mapper,
 			Map<PojoEnum, Object> map) {
 		Map<String, Object> p = new HashMap<String, Object>();
-		Type t1 = ((ParameterizedType) getClass().getGenericSuperclass())
+		Type t = ((ParameterizedType) getClass().getGenericSuperclass())
 				.getActualTypeArguments()[0];
 		for (PojoEnum key : map.keySet()) {
 			Boolean b = false;
-			if (((Type[]) key.getClass().getGenericInterfaces()).length > 0) {
-				b = t1
-						.equals((((ParameterizedType) ((Type[]) key.getClass()
-								.getGenericInterfaces())[0])
-								.getActualTypeArguments())[0]);
+			if (key.getClass().isAnnotationPresent(Domain.class)) {
+				b = t.equals(key.getClass().getAnnotation(Domain.class).value());
 			}
 			if (b) {
 				p.put(key.value(), map.get(key));

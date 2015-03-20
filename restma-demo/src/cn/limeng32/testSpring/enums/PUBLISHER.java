@@ -1,8 +1,9 @@
 package cn.limeng32.testSpring.enums;
 
-import cn.limeng32.testSpring.pojo.Publisher;
+import cn.limeng32.testSpring.annotation.Domain;
 
-public enum PUBLISHER implements PojoEnum<Publisher> {
+@Domain(cn.limeng32.testSpring.pojo.Publisher.class)
+public enum PUBLISHER implements PojoEnum {
 
 	tableName("publish"), id("id"), userid("userid") {
 		@Override

@@ -1,6 +1,8 @@
 package cn.limeng32.testSpring.enums;
 
-public interface PojoEnum<T> {
+public interface PojoEnum {
+
+	String doubleUnderscore = "__";
 
 	String isable = "isable";
 

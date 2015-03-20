@@ -30,11 +30,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import cn.limeng32.mybatis.enums.PLUGIN;
 import cn.limeng32.mybatis.plugin.SqlSuffix;
 import cn.limeng32.testSpring.enums.ARTICLE;
 import cn.limeng32.testSpring.enums.GENDER;
-import cn.limeng32.testSpring.enums.PUBLISHER;
 import cn.limeng32.testSpring.enums.PojoEnum;
 import cn.limeng32.testSpring.enums.SQL;
 import cn.limeng32.testSpring.enums.USER;
@@ -55,8 +53,8 @@ public class testController {
 	private ArticleService articleService;
 
 	@RequestMapping()
-	public ModelAndView get(@RequestParam(value = "s", required = false)
-	String s) {
+	public ModelAndView get(
+			@RequestParam(value = "s", required = false) String s) {
 
 		// org.springframework.core.convert.support.DefaultConversionService
 		// adapter = SpringContextHolder
@@ -72,7 +70,7 @@ public class testController {
 		// org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.class);
 
 		ModelAndView view = new ModelAndView();
-		System.out.println("asdf");
+		System.out.println("asdfg");
 		User u = userService.select(1);
 		Article a = articleService.select(1);
 		Map<PojoEnum, Object> pm = new HashMap<PojoEnum, Object>();
@@ -121,8 +119,8 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/handle41")
-	public String handle41(@RequestBody
-	String requestBody, ModelMap map) throws UnsupportedEncodingException {
+	public String handle41(@RequestBody String requestBody, ModelMap map)
+			throws UnsupportedEncodingException {
 		System.out.println("+++++++++++++++-" + requestBody);
 		System.out.println("++++++++++++++++"
 				+ URLDecoder.decode(requestBody, "utf-8"));
@@ -138,8 +136,7 @@ public class testController {
 
 	@ResponseBody
 	@RequestMapping(value = "/handle42/{imageId}")
-	public byte[] handle42(@PathVariable
-	String imageId) throws IOException {
+	public byte[] handle42(@PathVariable String imageId) throws IOException {
 		System.out.println("--" + imageId);
 		Resource res = new ClassPathResource("/moeTiger4.jpg");
 		byte[] fileData = FileCopyUtils.copyToByteArray(res.getInputStream());
@@ -155,8 +152,8 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/handle44/{imageId}")
-	public ResponseEntity<byte[]> handle44(@PathVariable
-	String imageId) throws Throwable {
+	public ResponseEntity<byte[]> handle44(@PathVariable String imageId)
+			throws Throwable {
 		System.out.println("++" + imageId);
 		Resource res = new ClassPathResource("/moeTiger4.jpg");
 		byte[] fileData = FileCopyUtils.copyToByteArray(res.getInputStream());
@@ -166,23 +163,20 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/handle51")
-	public ResponseEntity<User> handle51(@RequestParam
-	int id) {
+	public ResponseEntity<User> handle51(@RequestParam int id) {
 		User user = userService.select(id);
 		userService.loadArticle(user, new HashMap<PojoEnum, Object>());
 		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/handle52")
-	public ResponseEntity<Article> handle52(@RequestParam("id")
-	int id) {
+	public ResponseEntity<Article> handle52(@RequestParam("id") int id) {
 		Article article = articleService.select(id);
 		return new ResponseEntity<Article>(article, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/handle53")
-	public ResponseEntity<Article> handle53(@RequestParam
-	int id) {
+	public ResponseEntity<Article> handle53(@RequestParam int id) {
 		Article article = articleService.select(id);
 		return new ResponseEntity<Article>(article, HttpStatus.OK);
 	}
@@ -194,15 +188,13 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/handle81")
-	public String handle81(@RequestParam
-	User user, ModelMap modelMap) {
+	public String handle81(@RequestParam User user, ModelMap modelMap) {
 		modelMap.put("user", user);
 		return "test";
 	}
 
 	@RequestMapping(value = "/handle102")
-	public void handle102(@RequestParam("s")
-	String s) {
+	public void handle102(@RequestParam("s") String s) {
 		String a = s;
 		System.out.println(a);
 	}
@@ -229,8 +221,7 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/showArticleXml")
-	public String showArticleXml(@RequestParam("id")
-	int id, ModelMap mm) {
+	public String showArticleXml(@RequestParam("id") int id, ModelMap mm) {
 		Article a = articleService.select(id);
 		mm.addAttribute("_xml", a);
 		return "showXml";
@@ -365,8 +356,7 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/showArticleMix")
-	public String showArticleMix(ModelMap mm, @RequestParam("id")
-	int id) {
+	public String showArticleMix(ModelMap mm, @RequestParam("id") int id) {
 		Article a = articleService.select(id);
 		// articleService.insert(a);
 		// User user = new User();
@@ -378,9 +368,8 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/upload")
-	public String upload(@RequestParam("name")
-	String name, @RequestParam("file")
-	MultipartFile file) throws Exception {
+	public String upload(@RequestParam("name") String name,
+			@RequestParam("file") MultipartFile file) throws Exception {
 		if (!file.isEmpty()) {
 			file.transferTo(new File("d:/" + file.getOriginalFilename()));
 			return "redirect:/success.html";
@@ -400,8 +389,8 @@ public class testController {
 	@RequestMapping(value = "/useEnum2")
 	public String useEnum2() {
 		Map<PojoEnum, Object> map = new HashMap<PojoEnum, Object>();
-		// map.put(ARTICLE.id, 2);
-		map.put(USER.id, 1);
+		map.put(ARTICLE.id, 2);
+		// map.put(USER.id, 2);
 		// List<Article> list = articleService.selectAllUseEnum(map);
 		List<User> list = userService.selectAllUseEnum(map);
 		System.out.println("-" + list);
