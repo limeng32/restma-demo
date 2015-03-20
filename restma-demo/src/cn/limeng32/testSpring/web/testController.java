@@ -70,7 +70,6 @@ public class testController {
 		// org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.class);
 
 		ModelAndView view = new ModelAndView();
-		System.out.println("asdfg");
 		User u = userService.select(1);
 		Article a = articleService.select(1);
 		Map<PojoEnum, Object> pm = new HashMap<PojoEnum, Object>();

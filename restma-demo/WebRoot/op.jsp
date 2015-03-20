@@ -127,7 +127,7 @@ button {
 	data-config="{combine:true}"></script>
 </head>
 <body>
-	<div class="content">111
+	<div class="content">
 	<div class="img">
 		<ul class="img-list">
 			<li class="list1 active"><img src="${resourceRoot}/image/op/1.min.png" /></li>
