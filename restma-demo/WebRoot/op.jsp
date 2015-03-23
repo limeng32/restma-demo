@@ -95,7 +95,75 @@ ul li img {
 	opacity: 0.2;
 }
 
+ul li {
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+	position: absolute;
+}
+
 ul li.active img {
+	opacity: 1;
+}
+
+ul.checker li.checker1 {
+	top: 20px;
+	left: 10px;
+}
+
+ul.checker li.checker2 {
+	top: 20px;
+	left: 45px;
+}
+
+ul.checker li.checker3 {
+	top: 20px;
+	left: 80px;
+}
+
+ul.checker li.checker4 {
+	top: 20px;
+	left: 115px;
+}
+
+ul.checker li.checker5 {
+	top: 20px;
+	left: 150px;
+}
+
+ul.checker li.checker6 {
+	top: 20px;
+	left: 185px;
+}
+
+ul.checker li.checker7 {
+	top: 20px;
+	left: 220px;
+}
+
+ul.checker li.checker8 {
+	top: 20px;
+	left: 255px;
+}
+
+ul.checker li.checker9 {
+	top: 20px;
+	left: 290px;
+}
+
+ul.checker li.checkerAttempt {
+	top: 25px;
+	left: 335px;
+}
+
+ul.checker li img {
+	width: 30px;
+	height: 30px;
+	border-radius: 50px;
+	opacity: 0.2;
+}
+
+ul.checker li.active img {
 	opacity: 1;
 }
 
@@ -107,7 +175,6 @@ button {
 	height: 50px;
 	text-align: center;
 	margin: 50px auto;
-	
 	border-width: 1px;
 	border-color: #a2a2a2;
 	border-radius: 5px;
@@ -116,70 +183,123 @@ button {
 .detail {
 	position: absolute;
 	display: none;
-	top: 80px;
+	top: 100px;
 	left: 158px;
 	width: 183px;
-	height: 275px;
+	height: 183px;
+	border-radius: 50px;
 	box-shadow: 0 0 5px #ccc;
+}
+
+.detail img {
+	width: 183px;
+	height: 183px;
+	border-radius: 50px;
+}
+
+.echo {
+	position: absolute;
+	display: none;
+	top: 290px;
+	left: 165px;
+	width: 180px; //
+	height: 183px; //
+	border-radius: 50px; //
+	box-shadow: 0 0 5px #ccc;
+}
+
+.chars {
+	color: #005491;
+	font-size: 16px;
+	font-weight: bolder;
+	font-family: "黑体";
+}
+
+.digit {
+	color: #f46306;
+	font-size: 22px;
+	font-weight: bolder;
+	font-family: "黑体";
 }
 </style>
 <script src="http://g.tbcdn.cn/kissy/k/1.4.1/seed-min.js"
 	data-config="{combine:true}"></script>
 </head>
 <body>
+	<ul class="checker">
+		<li class="checker1"><img src="${resourceRoot}/image/op/1.png" /></li>
+		<li class="checker2"><img src="${resourceRoot}/image/op/2.png" /></li>
+		<li class="checker3"><img src="${resourceRoot}/image/op/3.png" /></li>
+		<li class="checker4"><img src="${resourceRoot}/image/op/4.png" /></li>
+		<li class="checker5"><img src="${resourceRoot}/image/op/5.png" /></li>
+		<li class="checker6"><img src="${resourceRoot}/image/op/6.png" /></li>
+		<li class="checker7"><img src="${resourceRoot}/image/op/7.png" /></li>
+		<li class="checker8"><img src="${resourceRoot}/image/op/8.png" /></li>
+		<li class="checker9"><img src="${resourceRoot}/image/op/9.png" /></li>
+		<li class="checkerAttempt"><span class="chars">Coin</span>:<span class="attemptsSpan digit">0</span></li>
+	</ul>
 	<div class="content">
-	<div class="img">
-		<ul class="img-list">
-			<li class="list1 active"><img src="${resourceRoot}/image/op/1.min.png" /></li>
-			<li class="list2"><img src="${resourceRoot}/image/op/2.min.png" /></li>
-			<li class="list3"><img src="${resourceRoot}/image/op/3.min.png" /></li>
-			<li class="list4"><img src="${resourceRoot}/image/op/4.min.png" /></li>
-			<li class="list5"><img src="${resourceRoot}/image/op/5.min.png" /></li>
-			<li class="list6"><img src="${resourceRoot}/image/op/6.min.png" /></li>
-			<li class="list7"><img src="${resourceRoot}/image/op/7.min.png" /></li>
-			<li class="list8"><img src="${resourceRoot}/image/op/8.min.png" /></li>
-			<li class="list9"><img src="${resourceRoot}/image/op/9.min.png" /></li>
-		</ul>
-	</div>
-	<button class="start">start</button>
-	<div class="detail">
-	</div>
-	<script>
-	KISSY.config({
-	    packages: [
-	        {
-	            name: "module",
-	            tag: "20140212",
-	            path: "${resourceRoot}/js/kissy/", 
-	            combine: false,
-	            charset: "utf-8"
-	        }
-	    ]
-	});
-	
-	KISSY.use('module/opLotto, module/flow, node, event', function(S, OP, Flow, N, E){
-	
-		S.ready(function(S){
-			var $ = S.all;
-			
-			OP.init();
-	
-			E.on('button', 'click', function(ev){
-				Flow.init();
-				var self = this;
-				if($(self).hasClass('start')){
-					$(self).replaceClass('start', 'pause').html('pause');
-					$('.detail').fadeOut();
-					OP.start();
-				}
-				else{
-					$(self).replaceClass('pause', 'start').html('start');
-					OP.pause();
-				}
+		<div class="img">
+			<ul class="img-list">
+				<li class="list1 active"><img
+					src="${resourceRoot}/image/op/1.png" /></li>
+				<li class="list2"><img src="${resourceRoot}/image/op/2.png" /></li>
+				<li class="list3"><img src="${resourceRoot}/image/op/3.png" /></li>
+				<li class="list4"><img src="${resourceRoot}/image/op/4.png" /></li>
+				<li class="list5"><img src="${resourceRoot}/image/op/5.png" /></li>
+				<li class="list6"><img src="${resourceRoot}/image/op/6.png" /></li>
+				<li class="list7"><img src="${resourceRoot}/image/op/7.png" /></li>
+				<li class="list8"><img src="${resourceRoot}/image/op/8.png" /></li>
+				<li class="list9"><img src="${resourceRoot}/image/op/9.png" /></li>
+			</ul>
+		</div>
+		<button class="start">start</button>
+		<div class="detail"></div>
+		<div class="echo"></div>
+		<script>
+			KISSY.config({
+				packages : [ {
+					name : "module",
+					tag : "20140212",
+					path : "${resourceRoot}/js/kissy/",
+					combine : false,
+					charset : "utf-8"
+				} ]
+			});
+
+			KISSY.use('module/opLotto, module/flow, node, event', function(S,
+					OP, Flow, N, E) {
+
+				S.ready(function(S) {
+					var $ = S.all;
+
+					OP.init();
+
+					E.on('button', 'click', function(ev) {
+						Flow.init();
+						var self = this;
+						if ($(self).hasClass('start')) {
+							$(self).replaceClass('start', 'pause')
+									.html('pause');
+							$('.detail').fadeOut();
+							OP.start();
+						} else {
+							$(self).replaceClass('pause', 'start')
+									.html('start');
+							OP.pause();
+						}
+					})
+				})
 			})
-		})
-	})
-	</script>
-</div>
+
+			function test() {
+				KISSY.use('io, json', function(S, IO, JSON) {
+					IO.getJSON('op/test?_content=json', function(d) {
+						alert(d._content);
+					});
+				});
+			}
+		</script>
+	</div>
 </body>
 </html>
