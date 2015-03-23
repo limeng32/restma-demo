@@ -50,42 +50,42 @@ ul li.list1 {
 
 ul li.list2 {
 	top: 8px;
-	left: 39px;
+	left: 361px;
 }
 
 ul li.list9 {
 	top: 8px;
-	left: 361px;
+	left: 39px;
 }
 
 ul li.list3 {
 	top: 157px;
-	left: -46px;
+	left: 446px;
 }
 
 ul li.list8 {
 	top: 157px;
-	left: 446px;
+	left: -46px;
 }
 
 ul li.list4 {
 	top: 325px;
-	left: -17px;
+	left: 417px;
 }
 
 ul li.list7 {
 	top: 325px;
-	left: 417px;
+	left: -17px;
 }
 
 ul li.list5 {
 	top: 435px;
-	left: 114px;
+	left: 286px;
 }
 
 ul li.list6 {
 	top: 435px;
-	left: 286px;
+	left: 114px;
 }
 
 ul li img {
@@ -183,25 +183,25 @@ button {
 .detail {
 	position: absolute;
 	display: none;
-	top: 100px;
+	top: 125px;
 	left: 158px;
 	width: 183px;
 	height: 183px;
-	border-radius: 50px;
-	box-shadow: 0 0 5px #ccc;
+	border-radius: 20px 5px 5px 5px;
+	box-shadow: 0 0 1px solid  #ccc;
 }
 
 .detail img {
-	width: 183px;
-	height: 183px;
-	border-radius: 50px;
+	width: 181px;
+	height: 181px;
+	border-radius: 20px 5px 5px 5px;
 }
 
 .echo {
 	position: absolute;
 	display: none;
-	top: 290px;
-	left: 165px;
+	top: 15px;
+	left: 950px;
 	width: 180px; //
 	height: 183px; //
 	border-radius: 50px; //
@@ -238,6 +238,7 @@ button {
 		<li class="checker9"><img src="${resourceRoot}/image/op/9.png" /></li>
 		<li class="checkerAttempt"><span class="chars">Coin</span>:<span class="attemptsSpan digit">0</span></li>
 	</ul>
+	<div class="echo"></div>
 	<div class="content">
 		<div class="img">
 			<ul class="img-list">
@@ -255,7 +256,6 @@ button {
 		</div>
 		<button class="start">start</button>
 		<div class="detail"></div>
-		<div class="echo"></div>
 		<script>
 			KISSY.config({
 				packages : [ {

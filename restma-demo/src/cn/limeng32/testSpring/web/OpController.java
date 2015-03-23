@@ -24,7 +24,7 @@ public class OpController {
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	public String test(ModelMap mm,
 			@RequestParam(value = "attempts", required = false) String attempts) {
-		String[] array = { "恭喜您，只用了", attempts, "次就完成了本次游戏。", "我的联系方式：QQ ",
+		String[] array = { "恭喜您，只尝试", attempts, "次就完成了游戏。", "如需与作者联系，请加QQ ",
 				"540906853" };
 		mm.addAttribute("_content", array);
 		return "Mix";

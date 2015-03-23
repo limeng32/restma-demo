@@ -77,7 +77,7 @@ KISSY.add(function(S, N, E, A, IO) {
 								.addClass('chars').appendTo($('.echo'));
 						var echo4 = new N('<span>').html(data._content[4])
 								.addClass('digit').appendTo($('.echo'));
-						$('.echo').fadeIn(0.5);
+						$('.echo').fadeIn(2);
 					}, 'json');
 					this.done = true;
 				}
