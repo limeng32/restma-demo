@@ -11,25 +11,10 @@
 		<setting name="proxyFactory" value="CGLIB" />
 		<setting name="lazyLoadTriggerMethods" value="" />
 	</settings>
-	<!--
-		<typeAliases>
-		<typeAlias alias="User" type="cn.limeng32.testSpring.pojo.User" />
-		<typeAlias alias="Article" type="cn.limeng32.testSpring.pojo.Article" />
-		</typeAliases>
-		
-		<typeHandlers></typeHandlers>
-	-->
 	<plugins>
-		<plugin interceptor="cn.limeng32.mybatis.plugin.SqlPlugin">
+		<plugin interceptor="limeng32.mybatis.plugin.SqlPlugin">
 			<property name="dialect" value="mysql" />
 			<property name="selectAllMatcher" value=".*selectAll.*" />
 		</plugin>
 	</plugins>
-	<!-- 
-		<mappers>
-		<mapper resource="cn/limeng32/testSpring/mapper/Pojo.xml" />
-		<mapper resource="cn/limeng32/testSpring/mapper/User.xml" />
-		<mapper resource="cn/limeng32/testSpring/mapper/Article.xml" />
-		</mappers>
-	-->
 </configuration>

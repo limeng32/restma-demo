@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xsi:schemaLocation="  
         http://www.springframework.org/schema/util  
         http://www.springframework.org/schema/util/spring-util-3.2.xsd  
@@ -15,17 +13,15 @@
         http://www.springframework.org/schema/mvc  
        	http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-	<context:component-scan base-package="cn.limeng32.testSpring.*">
+	<context:component-scan base-package="limeng32.testSpring.*">
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Service" />
 	</context:component-scan>
 
 	<context:annotation-config />
-	<mvc:annotation-driven
-		conversion-service="formattingConversionService">
+	<mvc:annotation-driven conversion-service="formattingConversionService">
 		<mvc:message-converters>
-			<bean
-				class="org.springframework.http.converter.FormHttpMessageConverter">
+			<bean class="org.springframework.http.converter.FormHttpMessageConverter">
 			</bean>
 			<bean
 				class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
@@ -35,15 +31,12 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
-	<bean id="xmlMarshaller"
-		class="org.springframework.oxm.xstream.XStreamMarshaller">
+	<bean id="xmlMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
 		<property name="autodetectAnnotations" value="true"></property>
 		<property name="aliases">
 			<map>
-				<entry key="article"
-					value="cn.limeng32.testSpring.pojo.Article" />
-				<entry key="user"
-					value="cn.limeng32.testSpring.pojo.User" />
+				<entry key="article" value="limeng32.testSpring.pojo.Article" />
+				<entry key="user" value="limeng32.testSpring.pojo.User" />
 			</map>
 		</property>
 		<property name="streamDriver">
@@ -53,8 +46,8 @@
 		</property>
 		<property name="annotatedClasses">
 			<list>
-				<value>cn.limeng32.testSpring.pojo.Article</value>
-				<value>cn.limeng32.testSpring.pojo.User</value>
+				<value>limeng32.testSpring.pojo.Article</value>
+				<value>limeng32.testSpring.pojo.User</value>
 			</list>
 		</property>
 	</bean>
@@ -63,16 +56,14 @@
 		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 		<property name="converters">
 			<list>
-				<bean
-					class="cn.limeng32.testSpring.converter.StringToUserConverter">
+				<bean class="limeng32.testSpring.converter.StringToUserConverter">
 				</bean>
 			</list>
 		</property>
 	</bean>
 
 	<mvc:default-servlet-handler />
-	<bean id="rpe"
-		class="cn.limeng32.testSpring.web.ResourcePathExposer"
+	<bean id="rpe" class="limeng32.testSpring.web.ResourcePathExposer"
 		init-method="init" />
 	<mvc:resources mapping="#{rpe.resourceRoot}/**" location="/"
 		cache-period="3153600" />
@@ -95,8 +86,7 @@
 		<property name="contentType" value="text/html; charset=utf-8" />
 	</bean>
 
-	<bean
-		class="org.springframework.web.servlet.view.XmlViewResolver">
+	<bean class="org.springframework.web.servlet.view.XmlViewResolver">
 		<property name="order" value="10"></property>
 		<property name="location" value="WEB-INF/spring-views.xml"></property>
 	</bean>
@@ -145,8 +135,7 @@
 					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
 					<property name="modelKeys" value="_content"></property>
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.xml.MarshallingView">
+				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
 					<property name="marshaller" ref="xmlMarshaller"></property>
 					<property name="modelKey" value="_content"></property>
 				</bean>
@@ -163,8 +152,7 @@
 	</bean>
 
 	<mvc:interceptors>
-		<bean
-			class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
 	</mvc:interceptors>
 
 	<bean id="handlerExceptionResolver"

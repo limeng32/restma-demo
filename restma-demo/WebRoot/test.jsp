@@ -23,7 +23,7 @@
 	<input value="" id="articleId"/>
 	<input type="button" value="articleJson" id="articleJson">
 	
-	<form method="post" action="<c:url value="/test/handle41?"/>">
+	<form method="post" action="<c:url value="/test/handle41"/>">
 		姓名：<input type="text" name="name" /><br />
 		地址：<input type="text" name="address" /><br />
 		昵称：<input type="text" name="nickname" /><br />

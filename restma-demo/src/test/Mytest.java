@@ -1,7 +1,6 @@
 package test;
 
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
@@ -16,12 +15,13 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 public class Mytest {
 
+	private static ApplicationContext ctx;
+
 	public static void main(String argv[]) {
 
 		// 获取Spring的上下文环境
 
-		ApplicationContext ctx = new FileSystemXmlApplicationContext(
-				"sys/myspring.xml");
+		ctx = new FileSystemXmlApplicationContext("sys/myspring.xml");
 
 		// 从上下文环境中获取myBean
 

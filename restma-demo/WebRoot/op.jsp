@@ -188,7 +188,7 @@ button {
 	width: 183px;
 	height: 183px;
 	border-radius: 20px 5px 5px 5px;
-	box-shadow: 0 0 1px solid  #ccc;
+	box-shadow: 0 0 1px solid #ccc;
 }
 
 .detail img {
@@ -236,7 +236,8 @@ button {
 		<li class="checker7"><img src="${resourceRoot}/image/op/7.png" /></li>
 		<li class="checker8"><img src="${resourceRoot}/image/op/8.png" /></li>
 		<li class="checker9"><img src="${resourceRoot}/image/op/9.png" /></li>
-		<li class="checkerAttempt"><span class="chars">Coin</span>:<span class="attemptsSpan digit">0</span></li>
+		<li class="checkerAttempt"><span class="chars">Coin</span>:<span
+			class="attemptsSpan digit">0</span></li>
 	</ul>
 	<div class="echo"></div>
 	<div class="content">
@@ -260,7 +261,7 @@ button {
 			KISSY.config({
 				packages : [ {
 					name : "module",
-					tag : "20140212",
+					tag : "201503240936",
 					path : "${resourceRoot}/js/kissy/",
 					combine : false,
 					charset : "utf-8"
@@ -291,14 +292,6 @@ button {
 					})
 				})
 			})
-
-			function test() {
-				KISSY.use('io, json', function(S, IO, JSON) {
-					IO.getJSON('op/test?_content=json', function(d) {
-						alert(d._content);
-					});
-				});
-			}
 		</script>
 	</div>
 </body>
