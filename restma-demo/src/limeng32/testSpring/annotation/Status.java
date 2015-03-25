@@ -19,7 +19,7 @@ import limeng32.testSpring.validator.StatusValidator;
 @Target({ ANNOTATION_TYPE, METHOD, FIELD })
 @Retention(RUNTIME)
 public @interface Status {
-	String message() default "²»ÕıÈ·µÄ×´Ì¬ , Ó¦¸ÃÊÇ 'created', 'paid', shipped', closed'ÆäÖĞÖ®Ò»";
+	String message() default "ä¸æ­£ç¡®çš„çŠ¶æ€ , åº”è¯¥æ˜¯ 'created', 'paid', shipped', closed'å…¶ä¸­ä¹‹ä¸€";
 
 	Class<?>[] groups() default {};
 

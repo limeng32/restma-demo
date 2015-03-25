@@ -6,22 +6,22 @@ public class SqlSuffix implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	/* ½á¹û¼¯ÖĞµÄ×î´óÏÔÊ¾ÊıÁ¿ */
+	/* ç»“æœé›†ä¸­çš„æœ€å¤§æ˜¾ç¤ºæ•°é‡ */
 	private int showCount;
 
-	/* ÓÃÀ´ÅÅĞòµÄ×Ö¶Î£¬Ä¿Ç°Ö»Ö§³Öµ¥×Ö¶ÎÅÅĞò */
+	/* ç”¨æ¥æ’åºçš„å­—æ®µï¼Œç›®å‰åªæ”¯æŒå•å­—æ®µæ’åº */
 	private String sortField;
 
-	/* Ë³Ğò£¬ÕıĞò»òÄæĞò */
+	/* é¡ºåºï¼Œæ­£åºæˆ–é€†åº */
 	private String order;
 
-	/* ½á¹û¼¯ÖĞµÚÒ»Ìõ¼ÇÂ¼ÔÚ±íÖĞËù´¦Î»ÖÃ */
+	/* ç»“æœé›†ä¸­ç¬¬ä¸€æ¡è®°å½•åœ¨è¡¨ä¸­æ‰€å¤„ä½ç½® */
 	private int currentResult;
 
-	/* ËùÓĞÂú×ã²éÑ¯Ìõ¼şµÄ¼ÇÂ¼×ÜÊı£¬¿ÉÓÉ´Ë¼ÆËã³öÄ¿Ç°Ëù´¦Ò³Êı£¬´ËÊıÖµ½¨ÒéÓÉ²å¼ş×Ô¶¯»ñÈ¡¡£ */
+	/* æ‰€æœ‰æ»¡è¶³æŸ¥è¯¢æ¡ä»¶çš„è®°å½•æ€»æ•°ï¼Œå¯ç”±æ­¤è®¡ç®—å‡ºç›®å‰æ‰€å¤„é¡µæ•°ï¼Œæ­¤æ•°å€¼å»ºè®®ç”±æ’ä»¶è‡ªåŠ¨è·å–ã€‚ */
 	private int totalResult;
 
-	/* ·Ö×é */
+	/* åˆ†ç»„ */
 	private String groupField;
 
 	public int getCurrentResult() {

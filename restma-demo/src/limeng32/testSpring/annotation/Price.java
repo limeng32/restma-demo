@@ -18,10 +18,10 @@ import javax.validation.constraints.Min;
 @Min(8000)
 @Constraint(validatedBy = {})
 @Documented
-@Target( { ANNOTATION_TYPE, METHOD, FIELD })
+@Target({ ANNOTATION_TYPE, METHOD, FIELD })
 @Retention(RUNTIME)
 public @interface Price {
-	String message() default "´íÎóµÄ¼Û¸ñ";
+	String message() default "é”™è¯¯çš„ä»·æ ¼";
 
 	Class<?>[] groups() default {};
 

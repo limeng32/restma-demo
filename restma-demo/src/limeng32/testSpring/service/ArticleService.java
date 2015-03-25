@@ -18,7 +18,7 @@ public class ArticleService extends ServiceSupport<Article> implements
 	private ArticleMapper mapper;
 
 	public List<Article> selectAllByEnum(Map<String, Object> map) {
-		return ((ArticleMapper) mapper).selectAllByEnum(map);
+		return mapper.selectAllByEnum(map);
 	}
 
 	public Article select(int id) {

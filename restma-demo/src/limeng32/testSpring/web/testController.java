@@ -180,7 +180,7 @@ public class testController {
 	@RequestMapping(value = "/userListByFtl")
 	public String showUserListByFtl(ModelMap mm) {
 		Map<String, Object> pm = new HashMap<String, Object>();
-		pm.put(USER.name.value(), "%’≈%");
+		pm.put(USER.name.value(), "%‰∏≠Êñá%");
 		List<User> userList = userService.selectAll(pm);
 		mm.addAttribute(userList);
 		return "userListByFtl";

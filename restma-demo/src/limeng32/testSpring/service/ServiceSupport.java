@@ -38,7 +38,7 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 			if (b) {
 				p.put(key.value(), map.get(key));
 			} else {
-				/* 还没有解决分页的问题 */
+				/* 杩樻病鏈夎В鍐冲垎椤电殑闂 */
 				p.put(key.tableAndValue(), map.get(key));
 			}
 		}

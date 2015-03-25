@@ -127,7 +127,7 @@ public class User extends PojoSupport<User> implements Serializable {
 		removeAllArticle();
 		for (java.util.Iterator<Article> iter = newArticle.iterator(); iter
 				.hasNext();)
-			addArticle((Article) iter.next());
+			addArticle(iter.next());
 	}
 
 	//

@@ -24,7 +24,7 @@ public class OpController {
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	public String test(ModelMap mm,
 			@RequestParam(value = "attempts", required = false) String attempts) {
-		String[] array = { "¹§Ï²Äú£¬Ö»³¢ÊÔ", attempts, "´Î¾ÍÍê³ÉÁËÓÎÏ·¡£", "ÈçĞèÓë×÷ÕßÁªÏµ£¬Çë¼ÓQQ ",
+		String[] array = { "æ­å–œæ‚¨ï¼Œåªå°è¯•", attempts, "æ¬¡å°±å®Œæˆäº†æ¸¸æˆã€‚", "å¦‚éœ€ä¸ä½œè€…è”ç³»ï¼Œè¯·åŠ QQ ",
 				"540906853" };
 		mm.addAttribute("_content", array);
 		return "Mix";

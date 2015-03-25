@@ -21,7 +21,7 @@ public class UserListPdfView extends AbstractPdfView {
 			Document document, PdfWriter writer, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		response.setHeader("Content-Disposition", "attachment;filename="
-				+ new String("用户列表".getBytes(), "iso8859-1") + ".pdf");
+				+ new String("鐢ㄦ埛鍒楄〃".getBytes(), "iso8859-1") + ".pdf");
 		Table table = new Table(3);
 		table.setWidth(120);
 		table.setBorder(1);

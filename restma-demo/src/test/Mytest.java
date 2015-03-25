@@ -19,15 +19,15 @@ public class Mytest {
 
 	public static void main(String argv[]) {
 
-		// 获取Spring的上下文环境
+		// 鑾峰彇Spring鐨勪笂涓嬫枃鐜
 
 		ctx = new FileSystemXmlApplicationContext("sys/myspring.xml");
 
-		// 从上下文环境中获取myBean
+		// 浠庝笂涓嬫枃鐜涓幏鍙杕yBean
 
 		ShowMessage sm = (ShowMessage) ctx.getBean("myBean");
 
-		// 调用ShowMessage的show方法输出消息
+		// 璋冪敤ShowMessage鐨剆how鏂规硶杈撳嚭娑堟伅
 
 		sm.show();
 

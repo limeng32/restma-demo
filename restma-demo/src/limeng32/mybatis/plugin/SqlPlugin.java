@@ -63,7 +63,7 @@ public class SqlPlugin implements Interceptor {
 		}
 	}
 
-	/* 此方法中当SqlSuffix.getShowCount()不为null时，则自动获取totalResult */
+	/* 姝ゆ柟娉曚腑褰揝qlSuffix.getShowCount()涓嶄负null鏃讹紝鍒欒嚜鍔ㄨ幏鍙杢otalResult */
 	@SuppressWarnings("unchecked")
 	public Object intercept(Invocation ivk) throws Throwable {
 		if (ivk.getTarget() instanceof RoutingStatementHandler) {

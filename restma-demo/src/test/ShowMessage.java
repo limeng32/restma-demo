@@ -12,7 +12,7 @@ package test;
 
 public class ShowMessage {
 
-	// ÏûÏ¢¶ÔÏó
+	// æ¶ˆæ¯å¯¹è±¡
 
 	private String message;
 
@@ -28,7 +28,7 @@ public class ShowMessage {
 
 	}
 
-	// ·¢ËÍÏûÏ¢·½·¨
+	// å‘é€æ¶ˆæ¯æ–¹æ³•
 
 	public void show() {
 
