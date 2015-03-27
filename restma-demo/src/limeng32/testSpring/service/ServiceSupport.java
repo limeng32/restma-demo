@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import limeng32.testSpring.annotation.Domain;
+import limeng32.testSpring.annotation.SqlDialect;
 import limeng32.testSpring.enums.PojoEnum;
 import limeng32.testSpring.mapper.MapperFace;
 
@@ -34,12 +35,15 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 			Boolean b = false;
 			if (key.getClass().isAnnotationPresent(Domain.class)) {
 				b = t.equals(key.getClass().getAnnotation(Domain.class).value());
-			}
-			if (b) {
-				p.put(key.value(), map.get(key));
-			} else {
-				/* 还没有解决分页的问题 */
-				p.put(key.tableAndValue(), map.get(key));
+				if (b) {
+					p.put(key.value(), map.get(key));
+				} else {
+					p.put(key.tableAndValue(), map.get(key));
+				}
+			} else if (key.getClass().isAnnotationPresent(SqlDialect.class)) {
+				/* 按sql关键字来进行处理 */
+				/* 解决排序的问题 */
+				/* 解决分页的问题 */
 			}
 		}
 		return mapper.selectAll(p);
