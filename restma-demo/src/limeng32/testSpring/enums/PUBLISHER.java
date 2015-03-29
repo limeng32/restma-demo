@@ -23,6 +23,10 @@ public enum PUBLISHER implements PojoEnum {
 	}
 
 	public String tableAndValue() {
+		return tableName.value + dot + value;
+	}
+
+	public String tableAndValueByEscape() {
 		return tableName.value + "__" + value;
 	}
 }

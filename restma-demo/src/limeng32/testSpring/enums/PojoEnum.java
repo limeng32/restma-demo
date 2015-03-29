@@ -4,6 +4,8 @@ public interface PojoEnum {
 
 	String doubleUnderscore = "__";
 
+	String dot = ".";
+
 	String isable = "isable";
 
 	String isableYes = "1";
@@ -15,5 +17,7 @@ public interface PojoEnum {
 	public String value();
 
 	public String tableAndValue();
+
+	public String tableAndValueByEscape();
 
 }

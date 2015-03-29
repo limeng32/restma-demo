@@ -16,7 +16,7 @@ import limeng32.mybatis.plugin.SqlSuffix;
 import limeng32.testSpring.enums.ARTICLE;
 import limeng32.testSpring.enums.GENDER;
 import limeng32.testSpring.enums.PojoEnum;
-import limeng32.testSpring.enums.SQL;
+import limeng32.testSpring.enums.SQLORDER;
 import limeng32.testSpring.enums.USER;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.User;
@@ -59,6 +59,7 @@ public class testController {
 		User u = userService.select(1);
 		Article a = articleService.select(1);
 		Map<PojoEnum, Object> pm = new HashMap<PojoEnum, Object>();
+		pm.put(SQLORDER.desc, ARTICLE.id);
 		userService.loadArticle(u, pm);
 		u.removeArticle(a);
 		// u.setSex(GENDER.male.getValue());
@@ -216,7 +217,7 @@ public class testController {
 		pm.put(ARTICLE.title, "%5%");
 		SqlSuffix sqlSuffix = new SqlSuffix();
 		sqlSuffix.setSortField(ARTICLE.id.value());
-		sqlSuffix.setOrder(SQL.asc.value());
+		sqlSuffix.setOrder(SQLORDER.asc.value());
 		// pm.put(PLUGIN.sqlSuffix, sqlSuffix);
 		userService.loadArticle(u, pm);
 		u.addArticle(a);

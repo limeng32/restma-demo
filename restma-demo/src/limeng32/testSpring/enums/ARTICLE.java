@@ -19,6 +19,10 @@ public enum ARTICLE implements PojoEnum {
 	}
 
 	public String tableAndValue() {
+		return tableName.value + dot + value;
+	}
+
+	public String tableAndValueByEscape() {
 		return tableName.value + doubleUnderscore + value;
 	}
 }
