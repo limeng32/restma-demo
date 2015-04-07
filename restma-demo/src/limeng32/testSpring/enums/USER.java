@@ -4,7 +4,7 @@ import limeng32.testSpring.annotation.Domain;
 import limeng32.testSpring.pojo.User;
 
 @Domain(User.class)
-public enum USER implements PojoEnum {
+public enum USER implements POJOFace {
 	tableName("user"), id("id"), name("name"), address("address"), sex("sex");
 
 	private USER(String value) {

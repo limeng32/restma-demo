@@ -4,7 +4,7 @@ import limeng32.testSpring.annotation.Domain;
 import limeng32.testSpring.pojo.Publisher;
 
 @Domain(Publisher.class)
-public enum PUBLISHER implements PojoEnum {
+public enum PUBLISHER implements POJOFace {
 
 	tableName("publisher"), id("id"), userid("userid"), name("name");
 
@@ -27,6 +27,6 @@ public enum PUBLISHER implements PojoEnum {
 	}
 
 	public String tableAndValueByEscape() {
-		return tableName.value + "__" + value;
+		return tableName.value + doubleUnderscore + value;
 	}
 }

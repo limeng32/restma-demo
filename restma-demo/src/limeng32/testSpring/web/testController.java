@@ -15,10 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import limeng32.mybatis.plugin.SqlSuffix;
 import limeng32.testSpring.enums.ARTICLE;
 import limeng32.testSpring.enums.GENDER;
-import limeng32.testSpring.enums.PojoEnum;
-import limeng32.testSpring.enums.SQLORDER;
 import limeng32.testSpring.enums.USER;
+import limeng32.testSpring.enums.sql.SQLORDER;
 import limeng32.testSpring.pojo.Article;
+import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.UserService;
@@ -58,9 +58,13 @@ public class testController {
 		ModelAndView view = new ModelAndView();
 		User u = userService.select(1);
 		Article a = articleService.select(1);
-		Map<PojoEnum, Object> pm = new HashMap<PojoEnum, Object>();
+		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
 		pm.put(SQLORDER.desc, ARTICLE.id);
 		userService.loadArticle(u, pm);
+		System.out.println(u.getArticle());
+		pm.put(SQLORDER.desc, ARTICLE.title);
+		userService.loadArticle(u, pm);
+		System.out.println(u.getArticle());
 		u.removeArticle(a);
 		// u.setSex(GENDER.male.getValue());
 		List<GENDER> genderList = new ArrayList<GENDER>();
@@ -150,7 +154,7 @@ public class testController {
 	@RequestMapping(value = "/handle51")
 	public ResponseEntity<User> handle51(@RequestParam int id) {
 		User user = userService.select(id);
-		userService.loadArticle(user, new HashMap<PojoEnum, Object>());
+		userService.loadArticle(user, new HashMap<Queryable, Object>());
 		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 
@@ -213,7 +217,7 @@ public class testController {
 		Article a = articleService.select(13);
 		User u = userService.select(1);
 		// u.removeArticle(a);
-		Map<PojoEnum, Object> pm = new HashMap<PojoEnum, Object>();
+		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
 		pm.put(ARTICLE.title, "%5%");
 		SqlSuffix sqlSuffix = new SqlSuffix();
 		sqlSuffix.setSortField(ARTICLE.id.value());
@@ -244,7 +248,7 @@ public class testController {
 	@RequestMapping(value = "/showArticleJson3")
 	public String showArticleJson3(ModelMap mm) {
 		User u = userService.select(1);
-		Map<PojoEnum, Object> pm = new HashMap<PojoEnum, Object>();
+		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
 		pm.put(ARTICLE.title, "%5%");
 		userService.loadArticle(u, pm);
 		Article a = (Article) u.getArticle().toArray()[0];
@@ -367,7 +371,7 @@ public class testController {
 
 	@RequestMapping(value = "/useEnum2")
 	public String useEnum2() {
-		Map<PojoEnum, Object> map = new HashMap<PojoEnum, Object>();
+		Map<Queryable, Object> map = new HashMap<Queryable, Object>();
 		map.put(ARTICLE.id, 2);
 		// map.put(USER.id, 2);
 		// List<Article> list = articleService.selectAllUseEnum(map);

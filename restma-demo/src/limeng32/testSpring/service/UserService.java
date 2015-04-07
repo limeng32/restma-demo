@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import limeng32.testSpring.enums.ARTICLE;
-import limeng32.testSpring.enums.PojoEnum;
 import limeng32.testSpring.enums.USER;
 import limeng32.testSpring.mapper.UserMapper;
+import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +41,11 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 		supportInsert(mapper, t);
 	}
 
-	public List<User> selectAllUseEnum(Map<PojoEnum, Object> map) {
+	public List<User> selectAllUseEnum(Map<Queryable, Object> map) {
 		return supportSelectAllUseEnum(mapper, map);
 	}
 
-	public void loadArticle(User user, Map<PojoEnum, Object> map) {
+	public void loadArticle(User user, Map<Queryable, Object> map) {
 		map.put(ARTICLE.userid, user);
 		map.put(USER.id, 100);
 		user.setArticle(articleService.selectAllUseEnum(map));

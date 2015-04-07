@@ -3,9 +3,9 @@ package limeng32.testSpring.service;
 import java.util.List;
 import java.util.Map;
 
-import limeng32.testSpring.enums.PojoEnum;
 import limeng32.testSpring.mapper.ArticleMapper;
 import limeng32.testSpring.pojo.Article;
+import limeng32.testSpring.pojo.Queryable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class ArticleService extends ServiceSupport<Article> implements
 		supportUpdate(mapper, t);
 	}
 
-	public List<Article> selectAllUseEnum(Map<PojoEnum, Object> map) {
+	public List<Article> selectAllUseEnum(Map<Queryable, Object> map) {
 		return supportSelectAllUseEnum(mapper, map);
 	}
 
