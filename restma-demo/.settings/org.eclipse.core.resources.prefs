@@ -1,5 +1,8 @@
 eclipse.preferences.version=1
 encoding//WebRoot/WEB-INF/ftl/userListByFtl.ftl=UTF-8
+encoding//WebRoot/js/kissy/module/opData.json=UTF-8
+encoding//WebRoot/js/kissy/module/opLotto.js=UTF-8
+encoding//WebRoot/oa/build/header/header.js=UTF-8
 encoding//src/conf/i18n/content_en_US.properties=utf-8
 encoding//src/conf/i18n/content_zh_CN.properties=UTF-8
 encoding//src/conf/i18n/messages.properties=utf-8

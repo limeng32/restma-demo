@@ -1,0 +1,67 @@
+body {
+	margin: 0;
+}
+
+header {
+	background-color: #eee;
+	padding-bottom: 5px;
+}
+
+article {
+	background-color: #009900;
+}
+
+.banner {
+	background-image: url("../demo/image/headerBG.png");
+	height: 70px;
+	width: 100%;
+}
+
+.logoKnot {
+	margin-top: 15px;
+	margin-left: 35px;
+}
+
+.logoText {
+	margin-top: 15px;
+	margin-left: 40px;
+}
+
+.rightBox {
+	float: right;
+}
+
+.headerSetting {
+	margin-top: 12px;
+	margin-right: 10px;
+}
+
+.headerHelping {
+	margin-top: 0px;
+}
+
+.welcomePanel {
+	float: right;
+	margin-top: 28px;
+	margin-right: 40px;
+}
+
+.welcomePerson {
+	float: right;
+	margin-left: 2px;
+	margin-top: 4px;
+	font-size: 14px;
+	font-weight: bolder;
+	font-family: "ºÚÌå";
+}
+
+.rightPanel {
+	float: right;
+	margin-top: 18px;
+	margin-right: 50px;
+}
+
+.rightPanelItems {
+	float: left;
+	margin-top: 20px;
+}

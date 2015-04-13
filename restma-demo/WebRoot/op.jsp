@@ -194,7 +194,7 @@ button {
 .detail img {
 	width: 181px;
 	height: 181px;
-	border-radius: 20px 5px 5px 5px;
+	border-radius: 100px;
 }
 
 .echo {
@@ -222,7 +222,7 @@ button {
 	font-family: "黑体";
 }
 </style>
-<script src="http://g.tbcdn.cn/kissy/k/1.4.1/seed-min.js"
+<script src="//g.alicdn.com/kissy/k/5.0.1/seed.js"
 	data-config="{combine:true}"></script>
 </head>
 <body>
@@ -258,38 +258,32 @@ button {
 		<button class="start">start</button>
 		<div class="detail"></div>
 		<script>
-			KISSY.config({
-				packages : [ {
-					name : "module",
-					tag : "201503240936",
-					path : "${resourceRoot}/js/kissy/",
-					combine : false,
-					charset : "utf-8"
-				} ]
+			require.config({
+			    packages: [
+			        {
+			            name: "modulePkgName",
+			            tag: "201504081517",
+			            path: "${resourceRoot}/js/kissy/module", 
+			            combine : false,
+			            charset: "utf-8"
+			        }
+			    ]
 			});
+		
+			require(['modulePkgName/opLotto','modulePkgName/flow', 'node'], function(OP, F, $){
+				OP.init();
 
-			KISSY.use('module/opLotto, module/flow, node, event', function(S,
-					OP, Flow, N, E) {
-
-				S.ready(function(S) {
-					var $ = S.all;
-
-					OP.init();
-
-					E.on('button', 'click', function(ev) {
-						Flow.init();
-						var self = this;
-						if ($(self).hasClass('start')) {
-							$(self).replaceClass('start', 'pause')
-									.html('pause');
-							$('.detail').fadeOut();
-							OP.start();
-						} else {
-							$(self).replaceClass('pause', 'start')
-									.html('start');
-							OP.pause();
-						}
-					})
+				$('.start').on('click', function(ev){
+					var self = this;
+					if($(self).hasClass('start')){
+						$(self).replaceClass('start', 'pause').html('pause');
+						$('.detail').fadeOut();
+						OP.start();
+					}
+					else{
+						$(self).replaceClass('pause', 'start').html('start');
+						OP.pause();
+					}
 				})
 			})
 		</script>
