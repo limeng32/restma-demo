@@ -6,7 +6,7 @@ import limeng32.testSpring.pojo.Queryable;
 @SqlDialect(SqlDialect.order)
 public enum SQLORDER implements Queryable {
 
-	asc("asc"), desc("desc"), sorter("sorter");
+	asc("asc"), desc("desc");
 
 	private SQLORDER(String value) {
 		this.value = value;

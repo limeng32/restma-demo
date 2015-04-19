@@ -17,6 +17,5 @@
 	<img src="${resourceRoot}/image/ctgl-pic32.png">
 	<img src="${resourceRoot}/image/ctgl-pic34.png">
 	<img src="${resourceRoot}/image/ctgl-pic35.png">
-	<!-- 我是一个工程师，我有自己的生活方式，我不愿卑微的活着。 -->
 </body>
 </html>

@@ -17,6 +17,7 @@ import limeng32.testSpring.enums.ARTICLE;
 import limeng32.testSpring.enums.GENDER;
 import limeng32.testSpring.enums.USER;
 import limeng32.testSpring.enums.sql.SQLORDER;
+import limeng32.testSpring.enums.sql.SQLSORTER;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.User;
@@ -63,6 +64,7 @@ public class testController {
 		userService.loadArticle(u, pm);
 		System.out.println(u.getArticle());
 		pm.put(SQLORDER.desc, ARTICLE.title);
+		pm.put(SQLSORTER.sorter, 1);
 		userService.loadArticle(u, pm);
 		System.out.println(u.getArticle());
 		u.removeArticle(a);
