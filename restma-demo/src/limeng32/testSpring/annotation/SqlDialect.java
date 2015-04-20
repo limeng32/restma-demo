@@ -11,7 +11,9 @@ public @interface SqlDialect {
 
 	public static final int order = 0;
 
-	public static final int limit = 1;
+	public static final int sorter = 1;
+
+	public static final int limit = 2;
 
 	int value();
 }

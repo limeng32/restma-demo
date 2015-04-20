@@ -53,7 +53,10 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 					sqlSuffix.setOrder(key.value());
 					sqlSuffix.setSortField(((POJOFace) map.get(key))
 							.tableAndValue());
+				} else if (SqlDialect.sorter == key.getClass()
+						.getAnnotation(SqlDialect.class).value()) {
 					/* 正要解决多重排序的问题 */
+					System.out.println("asd");
 				}
 				/* 解决分页的问题 */
 
