@@ -3,6 +3,7 @@ package limeng32.testSpring.service;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,16 +55,17 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 				}
 				switch (i) {
 				case SQLMeta.order:
-					SqlSuffix sqlSuffix = new SqlSuffix();
-					sqlSuffix.setOrder(key.value());
-					sqlSuffix.setSortField(((POJOFace) map.get(key))
-							.tableAndValue());
-					p.put(PLUGIN.sqlSuffix.toString(), sqlSuffix);
+					arrangeSorter(map, key, p);
 					break;
 
 				case SQLMeta.sorter:
 					/* 正要解决多重排序的问题 */
 					System.out.println("asd");
+					break;
+
+				case SQLMeta.limit:
+					/* 然后解决分页的问题 */
+					System.out.println("qwe");
 					break;
 
 				default:
@@ -72,6 +74,19 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 			}
 		}
 		return mapper.selectAll(p);
+	}
+
+	private void arrangeSorter(Map<Queryable, Object> map, Queryable key,
+			Map<String, Object> p) {
+		/* 这个方法还需要调整以适应迭代 */
+		SqlSuffix sqlSuffix = new SqlSuffix();
+		String[] oneSorter = new String[] {
+				((POJOFace) map.get(key)).tableAndValue(), key.value() };
+		if (sqlSuffix.getSorterList() == null) {
+			sqlSuffix.setSorterList(new LinkedList<String[]>());
+		}
+		sqlSuffix.getSorterList().add(oneSorter);
+		p.put(PLUGIN.sqlSuffix.toString(), sqlSuffix);
 	}
 
 	protected void supportInsert(MapperFace<T> mapper, T t) {

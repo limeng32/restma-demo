@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import limeng32.mybatis.plugin.SqlSuffix;
 import limeng32.testSpring.enums.ARTICLE;
 import limeng32.testSpring.enums.GENDER;
 import limeng32.testSpring.enums.USER;
@@ -60,6 +59,7 @@ public class testController {
 		Article a = articleService.select(1);
 		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
 		pm.put(SQL.desc, ARTICLE.id);
+		pm.put(SQL.desc, ARTICLE.title);
 		userService.loadArticle(u, pm);
 		System.out.println(u.getArticle());
 		pm.put(SQL.desc, ARTICLE.title);
@@ -220,9 +220,9 @@ public class testController {
 		// u.removeArticle(a);
 		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
 		pm.put(ARTICLE.title, "%5%");
-		SqlSuffix sqlSuffix = new SqlSuffix();
-		sqlSuffix.setSortField(ARTICLE.id.value());
-		sqlSuffix.setOrder(SQL.asc.value());
+		// SqlSuffix sqlSuffix = new SqlSuffix();
+		// sqlSuffix.setSortField(ARTICLE.id.value());
+		// sqlSuffix.setOrder(SQL.asc.value());
 		// pm.put(PLUGIN.sqlSuffix, sqlSuffix);
 		userService.loadArticle(u, pm);
 		u.addArticle(a);

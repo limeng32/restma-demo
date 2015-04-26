@@ -1,6 +1,7 @@
 package limeng32.mybatis.plugin;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class SqlSuffix implements Serializable {
 
@@ -9,11 +10,8 @@ public class SqlSuffix implements Serializable {
 	/* 结果集中的最大显示数量 */
 	private int showCount;
 
-	/* 用来排序的字段，目前只支持单字段排序 */
-	private String sortField;
-
-	/* 顺序，正序或逆序 */
-	private String order;
+	/* 用来排序的排序器集合 */
+	private List<String[]> sorterList;
 
 	/* 结果集中第一条记录在表中所处位置 */
 	private int currentResult;
@@ -32,28 +30,12 @@ public class SqlSuffix implements Serializable {
 		this.currentResult = currentResult;
 	}
 
-	public String getOrder() {
-		return order;
-	}
-
-	public void setOrder(String order) {
-		this.order = order;
-	}
-
 	public int getShowCount() {
 		return showCount;
 	}
 
 	public void setShowCount(int showCount) {
 		this.showCount = showCount;
-	}
-
-	public String getSortField() {
-		return sortField;
-	}
-
-	public void setSortField(String sortField) {
-		this.sortField = sortField;
 	}
 
 	public int getTotalResult() {
@@ -71,4 +53,13 @@ public class SqlSuffix implements Serializable {
 	public void setGroupField(String groupField) {
 		this.groupField = groupField;
 	}
+
+	public List<String[]> getSorterList() {
+		return sorterList;
+	}
+
+	public void setSorterList(List<String[]> sorterList) {
+		this.sorterList = sorterList;
+	}
+
 }

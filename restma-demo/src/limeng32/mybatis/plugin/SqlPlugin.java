@@ -196,11 +196,20 @@ public class SqlPlugin implements Interceptor {
 				if (suffix.getGroupField() != null) {
 					pageSql.append(" group by ").append(suffix.getGroupField());
 				}
-				if (suffix.getSortField() != null) {
-					pageSql.append(" order by ").append(suffix.getSortField());
-					if (suffix.getOrder() != null) {
-						pageSql.append(" ").append(suffix.getOrder());
+				// if (suffix.getSortField() != null) {
+				// pageSql.append(" order by ").append(suffix.getSortField());
+				// if (suffix.getOrder() != null) {
+				// pageSql.append(" ").append(suffix.getOrder());
+				// }
+				// }
+				if (suffix.getSorterList() != null
+						&& suffix.getSorterList().size() > 0) {
+					pageSql.append(" order by ");
+					for (String[] sorter : suffix.getSorterList()) {
+						pageSql.append(sorter[0]).append(" ").append(sorter[1])
+								.append(",");
 					}
+					pageSql.deleteCharAt(pageSql.length() - 1);
 				}
 				if (suffix.getShowCount() > 0) {
 					pageSql.append(" limit " + suffix.getCurrentResult() + ","
