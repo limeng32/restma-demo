@@ -1,14 +1,18 @@
 package limeng32.testSpring.enums.sql;
 
-import limeng32.testSpring.annotation.SqlDialect;
+import limeng32.testSpring.annotation.SQLMeta;
 import limeng32.testSpring.pojo.Queryable;
 
-@SqlDialect(SqlDialect.sorter)
-public enum SQLSORTER implements Queryable {
+@SQLMeta(SQLMeta.subdata)
+public enum SQL implements Queryable {
 
-	sorter("sorter");
+	@SQLMeta(SQLMeta.order)
+	asc("asc"), @SQLMeta(SQLMeta.order)
+	desc("desc"), @SQLMeta(SQLMeta.sorter)
+	sorter("sorter"), @SQLMeta(SQLMeta.limit)
+	limit("sorter");
 
-	private SQLSORTER(String value) {
+	private SQL(String value) {
 		this.value = value;
 	}
 

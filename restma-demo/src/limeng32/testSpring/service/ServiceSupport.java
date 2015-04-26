@@ -9,7 +9,7 @@ import java.util.Map;
 import limeng32.mybatis.enums.PLUGIN;
 import limeng32.mybatis.plugin.SqlSuffix;
 import limeng32.testSpring.annotation.Domain;
-import limeng32.testSpring.annotation.SqlDialect;
+import limeng32.testSpring.annotation.SQLMeta;
 import limeng32.testSpring.enums.POJOFace;
 import limeng32.testSpring.mapper.MapperFace;
 import limeng32.testSpring.pojo.Queryable;
@@ -43,24 +43,32 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 				} else {
 					p.put(key.tableAndValueByEscape(), map.get(key));
 				}
-			} else if (key.getClass().isAnnotationPresent(SqlDialect.class)) {
-				SqlSuffix sqlSuffix = new SqlSuffix();
-				/* 解决排序的问题 */
-				if (SqlDialect.order == key.getClass()
-						.getAnnotation(SqlDialect.class).value()) {
-					System.out.println("--"
-							+ ((Queryable) map.get(key)).tableAndValue());
+			} else if (key.getClass().isAnnotationPresent(SQLMeta.class)) {
+				String enumName = ((Enum<?>) key).name();
+				int i = -1;
+				try {
+					i = key.getClass().getField(enumName)
+							.getAnnotation(SQLMeta.class).value();
+					System.out.println("--" + i);
+				} catch (NoSuchFieldException | SecurityException e) {
+				}
+				switch (i) {
+				case SQLMeta.order:
+					SqlSuffix sqlSuffix = new SqlSuffix();
 					sqlSuffix.setOrder(key.value());
 					sqlSuffix.setSortField(((POJOFace) map.get(key))
 							.tableAndValue());
-				} else if (SqlDialect.sorter == key.getClass()
-						.getAnnotation(SqlDialect.class).value()) {
+					p.put(PLUGIN.sqlSuffix.toString(), sqlSuffix);
+					break;
+
+				case SQLMeta.sorter:
 					/* 正要解决多重排序的问题 */
 					System.out.println("asd");
-				}
-				/* 解决分页的问题 */
+					break;
 
-				p.put(PLUGIN.sqlSuffix.toString(), sqlSuffix);
+				default:
+					break;
+				}
 			}
 		}
 		return mapper.selectAll(p);
