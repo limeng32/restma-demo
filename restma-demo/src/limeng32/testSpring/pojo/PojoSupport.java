@@ -2,7 +2,7 @@ package limeng32.testSpring.pojo;
 
 import java.util.Collection;
 
-public abstract class PojoSupport<T extends PojoSupport<?>> implements
+public abstract class PojoSupport<T extends PojoSupport<T>> implements
 		PojoFace<T> {
 
 	abstract protected int getId();

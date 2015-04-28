@@ -11,8 +11,8 @@ import limeng32.mybatis.enums.PLUGIN;
 import limeng32.mybatis.plugin.SqlSuffix;
 import limeng32.testSpring.annotation.Domain;
 import limeng32.testSpring.annotation.SQLMeta;
-import limeng32.testSpring.enums.POJOFace;
 import limeng32.testSpring.mapper.MapperFace;
+import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Queryable;
 
 public abstract class ServiceSupport<T> implements ServiceFace<T> {
@@ -54,18 +54,15 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 				} catch (NoSuchFieldException | SecurityException e) {
 				}
 				switch (i) {
-				case SQLMeta.order:
-					arrangeSorter(map, key, p);
-					break;
 
 				case SQLMeta.sorter:
-					/* 正要解决多重排序的问题 */
-					System.out.println("asd");
+					arrangeSorter(p, map.get(key));
 					break;
 
 				case SQLMeta.limit:
 					/* 然后解决分页的问题 */
-					System.out.println("qwe");
+					System.out.println("----"
+							+ ((PageParam) (map.get(key))).getPageNo());
 					break;
 
 				default:
@@ -76,16 +73,19 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 		return mapper.selectAll(p);
 	}
 
-	private void arrangeSorter(Map<Queryable, Object> map, Queryable key,
-			Map<String, Object> p) {
-		/* 这个方法还需要调整以适应迭代 */
+	private void arrangeSorter(Map<String, Object> p, Object list) {
 		SqlSuffix sqlSuffix = new SqlSuffix();
-		String[] oneSorter = new String[] {
-				((POJOFace) map.get(key)).tableAndValue(), key.value() };
 		if (sqlSuffix.getSorterList() == null) {
 			sqlSuffix.setSorterList(new LinkedList<String[]>());
 		}
-		sqlSuffix.getSorterList().add(oneSorter);
+		@SuppressWarnings("unchecked")
+		List<Queryable[]> l = (List<Queryable[]>) list;
+		for (Queryable[] q : l) {
+			System.out.println("---" + q[0] + "," + q[1]);
+			String[] oneSorter = new String[] { q[0].tableAndValue(),
+					q[1].value() };
+			sqlSuffix.getSorterList().add(oneSorter);
+		}
 		p.put(PLUGIN.sqlSuffix.toString(), sqlSuffix);
 	}
 
