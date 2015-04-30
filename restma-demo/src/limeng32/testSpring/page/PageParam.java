@@ -1,6 +1,8 @@
 package limeng32.testSpring.page;
 
-public class PageParam {
+import limeng32.mybatis.plugin.Limitable;
+
+public class PageParam implements Limitable {
 
 	public PageParam() {
 
@@ -15,7 +17,7 @@ public class PageParam {
 
 	private int pageSize;
 
-	private int maxPageNum;
+	private int totalCount;
 
 	public int getPageNo() {
 		return pageNo;
@@ -33,12 +35,24 @@ public class PageParam {
 		this.pageSize = pageSize;
 	}
 
-	public int getMaxPageNum() {
-		return maxPageNum;
+	@Override
+	public int getLimitFrom() {
+		return (pageNo - 1) * pageSize + 1;
 	}
 
-	public void setMaxPageNum(int maxPageNum) {
-		this.maxPageNum = maxPageNum;
+	@Override
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	@Override
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+
+	@Override
+	public int getMaxPageNum() {
+		return ((totalCount - 1) / pageSize) + 1;
 	}
 
 }

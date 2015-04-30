@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import limeng32.mybatis.enums.PLUGIN;
 import limeng32.mybatis.plugin.SqlSuffix;
 import limeng32.testSpring.annotation.Domain;
 import limeng32.testSpring.annotation.SQLMeta;
@@ -32,6 +31,7 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 
 	protected List<T> supportSelectAllUseEnum(MapperFace<T> mapper,
 			Map<Queryable, Object> map) {
+		/* 不要新建p，仍然使用map进行传值 */
 		Map<String, Object> p = new HashMap<String, Object>();
 		Type t = ((ParameterizedType) getClass().getGenericSuperclass())
 				.getActualTypeArguments()[0];
@@ -60,9 +60,7 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 					break;
 
 				case SQLMeta.limit:
-					/* 然后解决分页的问题 */
-					System.out.println("----"
-							+ ((PageParam) (map.get(key))).getPageNo());
+					arrangeLimiter(p, map.get(key));
 					break;
 
 				default:
@@ -74,7 +72,12 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 	}
 
 	private void arrangeSorter(Map<String, Object> p, Object list) {
-		SqlSuffix sqlSuffix = new SqlSuffix();
+		SqlSuffix sqlSuffix;
+		if (p.containsKey(SqlSuffix.KEY)) {
+			sqlSuffix = (SqlSuffix) p.get(SqlSuffix.KEY);
+		} else {
+			sqlSuffix = new SqlSuffix();
+		}
 		if (sqlSuffix.getSorterList() == null) {
 			sqlSuffix.setSorterList(new LinkedList<String[]>());
 		}
@@ -86,7 +89,19 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 					q[1].value() };
 			sqlSuffix.getSorterList().add(oneSorter);
 		}
-		p.put(PLUGIN.sqlSuffix.toString(), sqlSuffix);
+		p.put(SqlSuffix.KEY, sqlSuffix);
+	}
+
+	private void arrangeLimiter(Map<String, Object> p, Object limiter) {
+		PageParam pageParam = (PageParam) limiter;
+		SqlSuffix sqlSuffix;
+		if (p.containsKey(SqlSuffix.KEY)) {
+			sqlSuffix = (SqlSuffix) p.get(SqlSuffix.KEY);
+		} else {
+			sqlSuffix = new SqlSuffix();
+		}
+		sqlSuffix.setLimiter(pageParam);
+		p.put(SqlSuffix.KEY, sqlSuffix);
 	}
 
 	protected void supportInsert(MapperFace<T> mapper, T t) {

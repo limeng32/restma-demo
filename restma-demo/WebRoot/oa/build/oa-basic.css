@@ -7,12 +7,31 @@ audio, canvas, video {
 	display: inline-block
 }
 
-audio:not ([controls] ){
-	display: none;
-	height: 0;
-	width: 0
-}
+audio
+:not
+ 
+(
+[
+controls
+]
+ 
+){
+display
+:
+ 
+none
+;
 
+	
+height
+:
+ 
+0;
+width
+:
+ 
+0
+}
 [hidden] {
 	display: none
 }
@@ -170,10 +189,20 @@ img {
 	-ms-interpolation-mode: bicubic
 }
 
-svg:not (:root ){
-	overflow: hidden
-}
+svg
+:not
+ 
+(
+:root
+ 
+){
+overflow
+:
+ 
+hidden
 
+
+}
 form {
 	margin: 0
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import limeng32.mybatis.plugin.SqlSuffix;
 import limeng32.testSpring.enums.ARTICLE;
 import limeng32.testSpring.enums.GENDER;
 import limeng32.testSpring.enums.USER;
@@ -59,14 +60,25 @@ public class testController {
 		ModelAndView view = new ModelAndView();
 		User u = userService.select(1);
 		Article a = articleService.select(1);
-		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
+		// Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
 		List<Queryable[]> l = new LinkedList<>();
 		l.add(new Queryable[] { ARTICLE.title, SQL.desc });
 		l.add(new Queryable[] { ARTICLE.id, SQL.desc });
-		pm.put(SQL.sorter, l);
-		pm.put(SQL.limit, new PageParam(2, 10));
-		userService.loadArticle(u, pm);
-		System.out.println(u.getArticle());
+		// pm.put(SQL.sorter, l);
+		// pm.put(SQL.limit, new PageParam(1, 3));
+		// userService.loadArticle(u, pm);
+		// System.out.println(u.getArticle());
+		Map<String, Object> pms = new HashMap<String, Object>();
+		SqlSuffix sqlSuffix = new SqlSuffix();
+		sqlSuffix.setLimiter(new PageParam(1, 10));
+		pms.put(SqlSuffix.KEY, sqlSuffix);
+		List<Article> ll = articleService.selectAll(pms);
+		System.out.println("++"
+				+ ((SqlSuffix) pms.get(SqlSuffix.KEY)).getLimiter()
+						.getTotalCount()
+				+ ","
+				+ ((SqlSuffix) pms.get(SqlSuffix.KEY)).getLimiter()
+						.getMaxPageNum());
 		u.removeArticle(a);
 		// u.setSex(GENDER.male.getValue());
 		List<GENDER> genderList = new ArrayList<GENDER>();

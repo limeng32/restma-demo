@@ -11,8 +11,6 @@ import java.util.Properties;
 
 import javax.xml.bind.PropertyException;
 
-import limeng32.mybatis.enums.PLUGIN;
-
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.statement.BaseStatementHandler;
@@ -82,7 +80,7 @@ public class SqlPlugin implements Interceptor {
 					SqlSuffix sqlSuffix = null;
 					if (parameterObject instanceof Map) {
 						sqlSuffix = (SqlSuffix) (((Map<String, Object>) parameterObject)
-								.get(PLUGIN.sqlSuffix.toString()));
+								.get(SqlSuffix.KEY));
 					} else if (parameterObject instanceof SqlSuffix) {
 						sqlSuffix = (SqlSuffix) parameterObject;
 					} else {
@@ -101,7 +99,7 @@ public class SqlPlugin implements Interceptor {
 					}
 					String sql = boundSql.getSql();
 					if (sqlSuffix != null) {
-						if (sqlSuffix.getShowCount() > 0) {
+						if (sqlSuffix.getLimiter() != null) {
 							Connection connection = (Connection) ivk.getArgs()[0];
 							String countSql = "select count(0) from (" + sql
 									+ ") myCount";
@@ -120,7 +118,7 @@ public class SqlPlugin implements Interceptor {
 							}
 							rs.close();
 							countStmt.close();
-							sqlSuffix.setTotalResult(count);
+							sqlSuffix.getLimiter().setTotalCount(count);
 						}
 					}
 					String pageSql = generatePageSql(sql, sqlSuffix);
@@ -211,9 +209,10 @@ public class SqlPlugin implements Interceptor {
 					}
 					pageSql.deleteCharAt(pageSql.length() - 1);
 				}
-				if (suffix.getShowCount() > 0) {
-					pageSql.append(" limit " + suffix.getCurrentResult() + ","
-							+ suffix.getShowCount());
+				if (suffix.getLimiter() != null) {
+					pageSql.append(" limit "
+							+ suffix.getLimiter().getLimitFrom() + ","
+							+ suffix.getLimiter().getPageSize());
 				}
 			}
 			return pageSql.toString();
