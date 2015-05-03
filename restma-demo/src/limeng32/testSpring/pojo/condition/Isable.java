@@ -1,4 +1,4 @@
-package limeng32.testSpring.pojo;
+package limeng32.testSpring.pojo.condition;
 
 public interface Isable {
 
@@ -9,5 +9,9 @@ public interface Isable {
 	String isableNo = "0";
 
 	String isableIgnore = "-1";
+
+	public String getIsable();
+
+	public void setIsable(String isable);
 
 }

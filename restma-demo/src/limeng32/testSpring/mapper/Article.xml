@@ -18,6 +18,18 @@
 
 	<sql id="conditions2">
 		<where>
+			<if test="id != 0">and id = #{id}</if>
+			<if test="user != null and user.id != 0">
+				and userid = #{user.id}
+			</if>
+			<if test="title != null">and title like #{title}</if>
+			<if test="content != null">and content like #{content}</if>
+			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
+		</where>
+	</sql>
+
+	<sql id="conditionsByEnum">
+		<where>
 			<if test="article__title != null">and article.title like #{article__title}</if>
 		</where>
 	</sql>
@@ -43,15 +55,15 @@
 		<include refid="columns" />
 		from
 		<include refid="tableName" />
-		<include refid="conditions2" />
+		<include refid="conditionsByEnum" />
 	</select>
 
-	<select id="selectAllByParam" resultMap="result">
+	<select id="select2" resultMap="result">
 		select
 		<include refid="columns" />
 		from
 		<include refid="tableName" />
-		<include refid="conditions" />
+		<include refid="conditions2" />
 	</select>
 
 	<select id="count" parameterType="hashMap" resultType="int">

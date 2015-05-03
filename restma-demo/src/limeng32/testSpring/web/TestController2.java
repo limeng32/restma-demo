@@ -1,5 +1,8 @@
 package limeng32.testSpring.web;
 
+import limeng32.testSpring.pojo.User;
+import limeng32.testSpring.pojo.condition.ArticleCondition;
+import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +17,16 @@ public class TestController2 {
 	@Autowired
 	private UserService userService;
 
-	// @RequestMapping(method = RequestMethod.GET)
-	// public ModelAndView get() {
-	// ModelAndView view = new ModelAndView();
-	// User u = userService.select(1);
-	// // System.out.println(u.getName());
-	// view.addObject("user", u);
-	// view.setViewName("testt");
-	// System.out.println(userService);
-	// // return "redirect:/test.jsp";
-	// return view;
-	// }
+	@Autowired
+	private ArticleService articleService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get() {
+		ArticleCondition articleCon = new ArticleCondition();
+		User user = userService.select(1);
+		articleCon.setTitle("%55%");
+		userService.loadArticle(user, articleCon);
+		System.out.println("--" + user.getArticle());
 		return "testt";
 	}
 }

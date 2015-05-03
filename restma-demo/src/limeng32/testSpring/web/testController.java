@@ -22,6 +22,7 @@ import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.User;
+import limeng32.testSpring.pojo.condition.ArticleCondition;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.UserService;
 
@@ -72,7 +73,7 @@ public class testController {
 		SqlSuffix sqlSuffix = new SqlSuffix();
 		sqlSuffix.setLimiter(new PageParam(1, 10));
 		pms.put(SqlSuffix.KEY, sqlSuffix);
-		List<Article> ll = articleService.selectAll(pms);
+		// List<Article> ll = articleService.selectAll(pms);
 		System.out.println("++"
 				+ ((SqlSuffix) pms.get(SqlSuffix.KEY)).getLimiter()
 						.getTotalCount()
@@ -168,7 +169,7 @@ public class testController {
 	@RequestMapping(value = "/handle51")
 	public ResponseEntity<User> handle51(@RequestParam int id) {
 		User user = userService.select(id);
-		userService.loadArticle(user, new HashMap<Queryable, Object>());
+		userService.loadArticle(user, new ArticleCondition());
 		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 
@@ -237,7 +238,7 @@ public class testController {
 		// sqlSuffix.setSortField(ARTICLE.id.value());
 		// sqlSuffix.setOrder(SQL.asc.value());
 		// pm.put(PLUGIN.sqlSuffix, sqlSuffix);
-		userService.loadArticle(u, pm);
+		// userService.loadArticle(u, pm);
 		u.addArticle(a);
 		Article a1 = (Article) u.getArticle().toArray()[0];
 		// a2.setUser(null);
@@ -262,9 +263,9 @@ public class testController {
 	@RequestMapping(value = "/showArticleJson3")
 	public String showArticleJson3(ModelMap mm) {
 		User u = userService.select(1);
-		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
-		pm.put(ARTICLE.title, "%5%");
-		userService.loadArticle(u, pm);
+		ArticleCondition articleCon = new ArticleCondition();
+		articleCon.setTitle("%5%");
+		userService.loadArticle(u, articleCon);
 		Article a = (Article) u.getArticle().toArray()[0];
 		Article a1 = articleService.select(13);
 		System.out.println("1-" + (a == a1));

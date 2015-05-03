@@ -5,6 +5,6 @@
 <head>
 <title>Insert title here</title>
 </head>
-<body>testt.jsp ${user.name }
+<body>testt.jsp
 </body>
 </html>

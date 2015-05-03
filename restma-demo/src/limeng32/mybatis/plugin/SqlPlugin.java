@@ -11,6 +11,9 @@ import java.util.Properties;
 
 import javax.xml.bind.PropertyException;
 
+import limeng32.testSpring.enums.ARTICLE;
+import limeng32.testSpring.pojo.Queryable;
+
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.statement.BaseStatementHandler;
@@ -61,7 +64,7 @@ public class SqlPlugin implements Interceptor {
 		}
 	}
 
-	/* 此方法中当SqlSuffix.getShowCount()不为null时，则自动获取totalResult */
+	/* 此方法中当SqlSuffix.getLimiter()不为null时，则自动获取totalCount */
 	@SuppressWarnings("unchecked")
 	public Object intercept(Invocation ivk) throws Throwable {
 		if (ivk.getTarget() instanceof RoutingStatementHandler) {
@@ -79,6 +82,9 @@ public class SqlPlugin implements Interceptor {
 				} else {
 					SqlSuffix sqlSuffix = null;
 					if (parameterObject instanceof Map) {
+						System.out.println("---"
+								+ ((Map<Queryable, Object>) parameterObject)
+										.get(ARTICLE.title));
 						sqlSuffix = (SqlSuffix) (((Map<String, Object>) parameterObject)
 								.get(SqlSuffix.KEY));
 					} else if (parameterObject instanceof SqlSuffix) {
@@ -98,6 +104,7 @@ public class SqlPlugin implements Interceptor {
 						}
 					}
 					String sql = boundSql.getSql();
+					System.out.println("-" + sql);
 					if (sqlSuffix != null) {
 						if (sqlSuffix.getLimiter() != null) {
 							Connection connection = (Connection) ivk.getArgs()[0];

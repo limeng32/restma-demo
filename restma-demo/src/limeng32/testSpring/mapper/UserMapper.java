@@ -1,11 +1,9 @@
 package limeng32.testSpring.mapper;
 
-import java.util.Map;
-
-import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.User;
+import limeng32.testSpring.pojo.condition.ArticleCondition;
 
 public interface UserMapper extends MapperFace<User> {
 
-	public void loadArticle(User user, Map<Queryable, Object> map);
+	public void loadArticle(User user, ArticleCondition articleCondition);
 }

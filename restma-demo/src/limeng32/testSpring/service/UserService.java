@@ -3,11 +3,10 @@ package limeng32.testSpring.service;
 import java.util.List;
 import java.util.Map;
 
-import limeng32.testSpring.enums.ARTICLE;
-import limeng32.testSpring.enums.USER;
 import limeng32.testSpring.mapper.UserMapper;
 import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.User;
+import limeng32.testSpring.pojo.condition.ArticleCondition;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,9 +44,8 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 		return supportSelectAllUseEnum(mapper, map);
 	}
 
-	public void loadArticle(User user, Map<Queryable, Object> map) {
-		map.put(ARTICLE.userid, user);
-		map.put(USER.id, 100);
-		user.setArticle(articleService.selectAllUseEnum(map));
+	public void loadArticle(User user, ArticleCondition articleCondition) {
+		articleCondition.setUser(user);
+		user.setArticle(articleService.select2(articleCondition));
 	}
 }

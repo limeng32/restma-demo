@@ -6,6 +6,7 @@ import java.util.Map;
 import limeng32.testSpring.mapper.ArticleMapper;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Queryable;
+import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,10 @@ public class ArticleService extends ServiceSupport<Article> implements
 
 	public List<Article> selectAll(Map<String, Object> map) {
 		return supportSelectAll(mapper, map);
+	}
+
+	@Override
+	public List<Article> select2(Conditionable conditionable) {
+		return mapper.select2(conditionable);
 	}
 }
