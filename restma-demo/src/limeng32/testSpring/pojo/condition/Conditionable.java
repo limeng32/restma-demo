@@ -1,6 +1,7 @@
 package limeng32.testSpring.pojo.condition;
 
 import limeng32.mybatis.plugin.Limitable;
+import limeng32.mybatis.plugin.Sortable;
 
 public interface Conditionable {
 
@@ -8,4 +9,7 @@ public interface Conditionable {
 
 	public void setLimiter(Limitable limiter);
 
+	public Sortable getSorter();
+
+	public void setSorter(Sortable sorter);
 }

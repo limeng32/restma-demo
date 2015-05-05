@@ -13,6 +13,7 @@ import javax.xml.bind.PropertyException;
 
 import limeng32.testSpring.enums.ARTICLE;
 import limeng32.testSpring.pojo.Queryable;
+import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.ExecutorException;
@@ -79,7 +80,7 @@ public class SqlPlugin implements Interceptor {
 				Object parameterObject = boundSql.getParameterObject();
 				if (parameterObject == null) {
 					throw new NullPointerException("parameterObject error");
-				} else {
+				} else if ("1".equals("2")) {
 					SqlSuffix sqlSuffix = null;
 					if (parameterObject instanceof Map) {
 						System.out.println("---"
@@ -104,7 +105,6 @@ public class SqlPlugin implements Interceptor {
 						}
 					}
 					String sql = boundSql.getSql();
-					System.out.println("-" + sql);
 					if (sqlSuffix != null) {
 						if (sqlSuffix.getLimiter() != null) {
 							Connection connection = (Connection) ivk.getArgs()[0];
@@ -129,6 +129,33 @@ public class SqlPlugin implements Interceptor {
 						}
 					}
 					String pageSql = generatePageSql(sql, sqlSuffix);
+					System.out.println("-" + pageSql);
+					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql);
+				} else {
+					Conditionable condition = (Conditionable) parameterObject;
+					String sql = boundSql.getSql();
+					if (condition.getLimiter() != null) {
+						Connection connection = (Connection) ivk.getArgs()[0];
+						String countSql = "select count(0) from (" + sql
+								+ ") myCount";
+						PreparedStatement countStmt = connection
+								.prepareStatement(countSql);
+						BoundSql countBS = new BoundSql(
+								mappedStatement.getConfiguration(), countSql,
+								boundSql.getParameterMappings(),
+								parameterObject);
+						setParameters(countStmt, mappedStatement, countBS,
+								parameterObject);
+						ResultSet rs = countStmt.executeQuery();
+						int count = 0;
+						if (rs.next()) {
+							count = rs.getInt(1);
+						}
+						rs.close();
+						countStmt.close();
+						condition.getLimiter().setTotalCount(count);
+					}
+					String pageSql = generatePageSql(sql, condition);
 					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql);
 				}
 			} else {
@@ -220,6 +247,23 @@ public class SqlPlugin implements Interceptor {
 					pageSql.append(" limit "
 							+ suffix.getLimiter().getLimitFrom() + ","
 							+ suffix.getLimiter().getPageSize());
+				}
+			}
+			return pageSql.toString();
+		} else {
+			return sql;
+		}
+	}
+
+	private String generatePageSql(String sql, Conditionable condition) {
+		if (condition != null && (dialect != null || !dialect.equals(""))) {
+			StringBuffer pageSql = new StringBuffer();
+			if ("mysql".equals(dialect)) {
+				pageSql.append(sql);
+				if (condition.getLimiter() != null) {
+					pageSql.append(" limit "
+							+ condition.getLimiter().getLimitFrom() + ","
+							+ condition.getLimiter().getPageSize());
 				}
 			}
 			return pageSql.toString();

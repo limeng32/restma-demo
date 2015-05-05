@@ -14,7 +14,7 @@
 	<plugins>
 		<plugin interceptor="limeng32.mybatis.plugin.SqlPlugin">
 			<property name="dialect" value="mysql" />
-			<property name="selectAllMatcher" value=".*selectAll.*" />
+			<property name="selectAllMatcher" value=".*select2.*" />
 		</plugin>
 	</plugins>
 </configuration>
