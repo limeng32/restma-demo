@@ -24,4 +24,19 @@ public class SortParam implements Sortable {
 		return list.size() + "";
 	}
 
+	@Override
+	public String toSql() {
+		StringBuffer ret = new StringBuffer();
+		if (list != null) {
+			ret.append(" order by");
+			for (Order order : list) {
+				ret.append(order.toSql());
+			}
+			if (ret.lastIndexOf(",") == ret.length() - 1) {
+				ret.deleteCharAt(ret.length() - 1);
+			}
+		}
+		return ret.toString();
+	}
+
 }

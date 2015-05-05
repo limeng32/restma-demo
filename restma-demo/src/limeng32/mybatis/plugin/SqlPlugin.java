@@ -128,9 +128,10 @@ public class SqlPlugin implements Interceptor {
 							sqlSuffix.getLimiter().setTotalCount(count);
 						}
 					}
-					String pageSql = generatePageSql(sql, sqlSuffix);
-					System.out.println("-" + pageSql);
-					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql);
+					// String pageSql = generatePageSql(sql, sqlSuffix);
+					// System.out.println("-" + pageSql);
+					// ReflectHelper.setValueByFieldName(boundSql, "sql",
+					// pageSql);
 				} else {
 					Conditionable condition = (Conditionable) parameterObject;
 					String sql = boundSql.getSql();
@@ -156,6 +157,7 @@ public class SqlPlugin implements Interceptor {
 						condition.getLimiter().setTotalCount(count);
 					}
 					String pageSql = generatePageSql(sql, condition);
+					System.out.println("-" + pageSql);
 					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql);
 				}
 			} else {
@@ -220,46 +222,14 @@ public class SqlPlugin implements Interceptor {
 		}
 	}
 
-	private String generatePageSql(String sql, SqlSuffix suffix) {
-		if (suffix != null && (dialect != null || !dialect.equals(""))) {
-			StringBuffer pageSql = new StringBuffer();
-			if ("mysql".equals(dialect)) {
-				pageSql.append(sql);
-				if (suffix.getGroupField() != null) {
-					pageSql.append(" group by ").append(suffix.getGroupField());
-				}
-				// if (suffix.getSortField() != null) {
-				// pageSql.append(" order by ").append(suffix.getSortField());
-				// if (suffix.getOrder() != null) {
-				// pageSql.append(" ").append(suffix.getOrder());
-				// }
-				// }
-				if (suffix.getSorterList() != null
-						&& suffix.getSorterList().size() > 0) {
-					pageSql.append(" order by ");
-					for (String[] sorter : suffix.getSorterList()) {
-						pageSql.append(sorter[0]).append(" ").append(sorter[1])
-								.append(",");
-					}
-					pageSql.deleteCharAt(pageSql.length() - 1);
-				}
-				if (suffix.getLimiter() != null) {
-					pageSql.append(" limit "
-							+ suffix.getLimiter().getLimitFrom() + ","
-							+ suffix.getLimiter().getPageSize());
-				}
-			}
-			return pageSql.toString();
-		} else {
-			return sql;
-		}
-	}
-
 	private String generatePageSql(String sql, Conditionable condition) {
 		if (condition != null && (dialect != null || !dialect.equals(""))) {
 			StringBuffer pageSql = new StringBuffer();
 			if ("mysql".equals(dialect)) {
 				pageSql.append(sql);
+				if (condition.getSorter() != null) {
+					pageSql.append(condition.getSorter().toSql());
+				}
 				if (condition.getLimiter() != null) {
 					pageSql.append(" limit "
 							+ condition.getLimiter().getLimitFrom() + ","

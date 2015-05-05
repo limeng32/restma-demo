@@ -28,8 +28,8 @@ public class TestController2 {
 		ArticleCondition articleCon = new ArticleCondition();
 		User user = userService.select(1);
 		articleCon.setLimiter(new PageParam(1, 3));
-		articleCon.setSorter(new SortParam(new Order(), new Order(),
-				new Order()));
+		articleCon.setSorter(new SortParam(new Order("id", "asc"), new Order(
+				"title", "asc")));
 		System.out.println("--" + articleCon.getSorter().toString());
 		userService.loadArticle(user, articleCon);
 		System.out.println("--" + user.getArticle());

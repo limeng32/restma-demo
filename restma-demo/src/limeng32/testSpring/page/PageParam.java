@@ -37,7 +37,7 @@ public class PageParam implements Limitable {
 
 	@Override
 	public int getLimitFrom() {
-		return (pageNo - 1) * pageSize + 1;
+		return (pageNo - 1) * pageSize;
 	}
 
 	@Override
