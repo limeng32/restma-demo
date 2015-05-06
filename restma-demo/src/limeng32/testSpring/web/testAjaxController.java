@@ -2,13 +2,10 @@ package limeng32.testSpring.web;
 
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import limeng32.testSpring.enums.ARTICLE;
-import limeng32.testSpring.enums.USER;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.User;
+import limeng32.testSpring.pojo.condition.ArticleCondition;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.UserService;
 
@@ -32,14 +29,11 @@ public class testAjaxController {
 	public ModelAndView init() {
 		ModelAndView ret = new ModelAndView();
 		ret.setViewName("testAjax");
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(USER.name.toString(), "%1%");
-		int count = userService.count(map);
-		ret.addObject("count", count);
+		ret.addObject("count", 0);
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2.put(ARTICLE.title.toString(), "%1%");
-		int articleCount = articleService.count(map2);
+		ArticleCondition ac = new ArticleCondition();
+		ac.setTitle("%1%");
+		int articleCount = articleService.count(ac);
 		ret.addObject("articleCount", articleCount);
 
 		return ret;
@@ -48,9 +42,7 @@ public class testAjaxController {
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	public void test(User user, PrintWriter printWriter) {
 		userService.insert(user);
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(USER.name.toString(), "%1%");
-		int count = userService.count(map);
+		int count = 0;
 		printWriter.write(count + "");
 		printWriter.flush();
 		printWriter.close();
@@ -59,9 +51,6 @@ public class testAjaxController {
 	@RequestMapping(value = "/test2")
 	public void test2(Article article, PrintWriter printWriter) {
 		articleService.insert(article);
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(ARTICLE.title.toString(), "%1%");
-		// int count = articleService.count(map);
 		Date count = articleService.select(1).getUpdateTime();
 		printWriter.write(count + "");
 		printWriter.flush();

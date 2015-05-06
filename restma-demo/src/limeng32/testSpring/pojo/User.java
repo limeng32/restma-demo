@@ -183,15 +183,6 @@ public class User extends PojoSupport<User> implements Serializable {
 
 	//
 	// public void loadPublisher(SqlSession session, Map<String, Object> map) {
-	// map.put(PUBLISHER.userid.toPojo(), this);
-	// this.setPublisher(session.getMapper(PublisherMapper.class).selectAll(
-	// map));
-	// }
-	//
-	// public String toString() {
-	// return "User [id:" + this.id + ";name:" + this.name + ";address:"
-	// + address + ";article:" + article + ";publisher:" + publisher
-	// + "]";
 	// }
 
 	public String getNickname() {

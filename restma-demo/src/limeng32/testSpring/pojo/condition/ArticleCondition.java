@@ -3,26 +3,38 @@ package limeng32.testSpring.pojo.condition;
 import limeng32.mybatis.plugin.Limitable;
 import limeng32.mybatis.plugin.Sortable;
 import limeng32.testSpring.pojo.Article;
+import limeng32.testSpring.pojo.Queryable;
 
 public class ArticleCondition extends Article implements Conditionable, Isable {
 
 	private static final long serialVersionUID = 1L;
 
+	public enum Field implements Queryable {
+		tableName("article"), id("id"), userid("userid"), title("title"), content(
+				"content");
+
+		private final String value;
+
+		private Field(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String value() {
+			return value;
+		}
+
+		@Override
+		public String getTableName() {
+			return tableName.value;
+		}
+	}
+
 	private Limitable limiter;
 
 	private Sortable sorter;
 
-	private String title;
-
 	private String isable;
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
 
 	@Override
 	public Limitable getLimiter() {

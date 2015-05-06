@@ -1,15 +1,16 @@
 package limeng32.testSpring.mapper;
 
 import java.util.List;
-import java.util.Map;
+
+import limeng32.testSpring.pojo.condition.Conditionable;
 
 public interface MapperFace<T> {
 
 	public T select(int id);
 
-	public List<T> selectAll(Map<String, Object> map);
+	public List<T> selectAll(Conditionable conditionable);
 
-	public int count(Map<String, Object> map);
+	public int count(Conditionable conditionable);
 
 	public void insert(T t);
 

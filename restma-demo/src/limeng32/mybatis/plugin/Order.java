@@ -1,10 +1,19 @@
 package limeng32.mybatis.plugin;
 
+import limeng32.testSpring.pojo.Queryable;
+import limeng32.testSpring.pojo.condition.Conditionable;
+
 public class Order {
 
-	public Order(String field, String sequence) {
+	public Order(String field, Conditionable.Sequence sequence) {
 		this.field = field;
-		this.sequence = sequence;
+		this.sequence = sequence.toString();
+	}
+
+	public Order(Queryable queryable, Conditionable.Sequence sequence) {
+		this.field = queryable.getTableName() + Conditionable.dot
+				+ queryable.value();
+		this.sequence = sequence.toString();
 	}
 
 	private String field;

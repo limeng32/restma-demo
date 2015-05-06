@@ -5,6 +5,7 @@ import limeng32.mybatis.plugin.SortParam;
 import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
+import limeng32.testSpring.pojo.condition.Conditionable;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.UserService;
 
@@ -27,9 +28,11 @@ public class TestController2 {
 	public String get() {
 		ArticleCondition articleCon = new ArticleCondition();
 		User user = userService.select(1);
-		articleCon.setLimiter(new PageParam(1, 3));
-		articleCon.setSorter(new SortParam(new Order("id", "asc"), new Order(
-				"title", "asc")));
+		articleCon.setTitle("%55%");
+		articleCon.setLimiter(new PageParam(1, 2));
+		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
+				Conditionable.Sequence.asc), new Order(
+				ArticleCondition.Field.title, Conditionable.Sequence.asc)));
 		System.out.println("--" + articleCon.getSorter().toString());
 		userService.loadArticle(user, articleCon);
 		System.out.println("--" + user.getArticle());

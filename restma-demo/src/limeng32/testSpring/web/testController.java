@@ -6,21 +6,13 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import limeng32.mybatis.plugin.SqlSuffix;
-import limeng32.testSpring.enums.ARTICLE;
 import limeng32.testSpring.enums.GENDER;
-import limeng32.testSpring.enums.USER;
-import limeng32.testSpring.enums.sql.SQL;
-import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Article;
-import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
 import limeng32.testSpring.service.ArticleService;
@@ -60,35 +52,13 @@ public class testController {
 
 		ModelAndView view = new ModelAndView();
 		User u = userService.select(1);
-		Article a = articleService.select(1);
-		// Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
-		List<Queryable[]> l = new LinkedList<>();
-		l.add(new Queryable[] { ARTICLE.title, SQL.desc });
-		l.add(new Queryable[] { ARTICLE.id, SQL.desc });
-		// pm.put(SQL.sorter, l);
-		// pm.put(SQL.limit, new PageParam(1, 3));
-		// userService.loadArticle(u, pm);
-		// System.out.println(u.getArticle());
-		Map<String, Object> pms = new HashMap<String, Object>();
-		SqlSuffix sqlSuffix = new SqlSuffix();
-		sqlSuffix.setLimiter(new PageParam(1, 10));
-		pms.put(SqlSuffix.KEY, sqlSuffix);
-		// List<Article> ll = articleService.selectAll(pms);
-		System.out.println("++"
-				+ ((SqlSuffix) pms.get(SqlSuffix.KEY)).getLimiter()
-						.getTotalCount()
-				+ ","
-				+ ((SqlSuffix) pms.get(SqlSuffix.KEY)).getLimiter()
-						.getMaxPageNum());
-		u.removeArticle(a);
 		// u.setSex(GENDER.male.getValue());
 		List<GENDER> genderList = new ArrayList<GENDER>();
 		for (GENDER gender : GENDER.values()) {
 			genderList.add(gender);
 		}
 
-		Map<String, Object> map = new HashMap<String, Object>();
-		int count = userService.count(map);
+		int count = 0;
 		view.addObject("user", u);
 		view.addObject("count", count);
 		view.addObject("s", s);
@@ -199,10 +169,7 @@ public class testController {
 
 	@RequestMapping(value = "/userListByFtl")
 	public String showUserListByFtl(ModelMap mm) {
-		Map<String, Object> pm = new HashMap<String, Object>();
-		pm.put(USER.name.value(), "%中文%");
-		List<User> userList = userService.selectAll(pm);
-		mm.addAttribute(userList);
+		mm.addAttribute(new LinkedList<User>());
 		return "userListByFtl";
 	}
 
@@ -232,8 +199,6 @@ public class testController {
 		Article a = articleService.select(13);
 		User u = userService.select(1);
 		// u.removeArticle(a);
-		Map<Queryable, Object> pm = new HashMap<Queryable, Object>();
-		pm.put(ARTICLE.title, "%5%");
 		// SqlSuffix sqlSuffix = new SqlSuffix();
 		// sqlSuffix.setSortField(ARTICLE.id.value());
 		// sqlSuffix.setOrder(SQL.asc.value());
@@ -286,9 +251,9 @@ public class testController {
 
 	@RequestMapping(value = "/showArticleJson5")
 	public String showArticleJson5(ModelMap mm) {
-		Map<String, Object> pm = new HashMap<String, Object>();
-		pm.put(ARTICLE.title.value(), "%555%");
-		List<Article> l = articleService.selectAll(pm);
+		ArticleCondition ac = new ArticleCondition();
+		ac.setTitle("%555%");
+		List<Article> l = articleService.selectAll(ac);
 		Article a = (Article) l.toArray()[0];
 		Article a1 = (Article) l.toArray()[1];
 		System.out.println("1-" + (a.getUser() == a1.getUser()));
@@ -299,11 +264,11 @@ public class testController {
 
 	@RequestMapping(value = "/showArticleJson6")
 	public String showArticleJson6(ModelMap mm) {
-		Map<String, Object> pm = new HashMap<String, Object>();
-		pm.put(ARTICLE.title.value(), "%555%");
-		List<Article> l = articleService.selectAll(pm);
-		pm.put(ARTICLE.title.value(), "%55%");
-		List<Article> l1 = articleService.selectAll(pm);
+		ArticleCondition ac = new ArticleCondition();
+		ac.setTitle("%555%");
+		List<Article> l = articleService.selectAll(ac);
+		ac.setTitle("%55%");
+		List<Article> l1 = articleService.selectAll(ac);
 		Article a = (Article) l.toArray()[0];
 		Article a1 = (Article) l1.toArray()[1];
 		System.out.println("1-" + (a.getUser() == a1.getUser()));
@@ -314,10 +279,10 @@ public class testController {
 
 	@RequestMapping(value = "/showArticleJson7")
 	public String showArticleJson7(ModelMap mm) {
-		Map<String, Object> pm = new HashMap<String, Object>();
-		pm.put(ARTICLE.title.value(), "%555%");
-		List<Article> l = articleService.selectAll(pm);
-		List<Article> l1 = articleService.selectAll(pm);
+		ArticleCondition ac = new ArticleCondition();
+		ac.setTitle("%555%");
+		List<Article> l = articleService.selectAll(ac);
+		List<Article> l1 = articleService.selectAll(ac);
 		Article a = (Article) l.toArray()[0];
 		Article a1 = (Article) l1.toArray()[1];
 		System.out.println("1-" + (a.getUser() == a1.getUser()));
@@ -386,11 +351,7 @@ public class testController {
 
 	@RequestMapping(value = "/useEnum2")
 	public String useEnum2() {
-		Map<Queryable, Object> map = new HashMap<Queryable, Object>();
-		map.put(ARTICLE.id, 2);
-		// map.put(USER.id, 2);
-		// List<Article> list = articleService.selectAllUseEnum(map);
-		List<User> list = userService.selectAllUseEnum(map);
+		List<User> list = null;
 		System.out.println("-" + list);
 		return null;
 	}

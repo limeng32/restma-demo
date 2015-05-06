@@ -1,18 +1,14 @@
 package limeng32.mybatis.plugin;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.bind.PropertyException;
 
-import limeng32.testSpring.enums.ARTICLE;
-import limeng32.testSpring.pojo.Queryable;
 import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.apache.ibatis.executor.ErrorContext;
@@ -65,8 +61,7 @@ public class SqlPlugin implements Interceptor {
 		}
 	}
 
-	/* 此方法中当SqlSuffix.getLimiter()不为null时，则自动获取totalCount */
-	@SuppressWarnings("unchecked")
+	/* 此方法中当Conditionable.getLimiter()不为null时，则自动获取totalCount */
 	public Object intercept(Invocation ivk) throws Throwable {
 		if (ivk.getTarget() instanceof RoutingStatementHandler) {
 			RoutingStatementHandler statementHandler = (RoutingStatementHandler) ivk
@@ -80,59 +75,7 @@ public class SqlPlugin implements Interceptor {
 				Object parameterObject = boundSql.getParameterObject();
 				if (parameterObject == null) {
 					throw new NullPointerException("parameterObject error");
-				} else if ("1".equals("2")) {
-					SqlSuffix sqlSuffix = null;
-					if (parameterObject instanceof Map) {
-						System.out.println("---"
-								+ ((Map<Queryable, Object>) parameterObject)
-										.get(ARTICLE.title));
-						sqlSuffix = (SqlSuffix) (((Map<String, Object>) parameterObject)
-								.get(SqlSuffix.KEY));
-					} else if (parameterObject instanceof SqlSuffix) {
-						sqlSuffix = (SqlSuffix) parameterObject;
-					} else {
-						Field pageField = ReflectHelper.getFieldByFieldName(
-								parameterObject, "sqlSuffix");
-						if (pageField != null) {
-							sqlSuffix = (SqlSuffix) ReflectHelper
-									.getValueByFieldName(parameterObject,
-											"sqlSuffix");
-							ReflectHelper.setValueByFieldName(parameterObject,
-									"sqlSuffix", sqlSuffix);
-						} else {
-							throw new NoSuchFieldException(parameterObject
-									.getClass().getName());
-						}
-					}
-					String sql = boundSql.getSql();
-					if (sqlSuffix != null) {
-						if (sqlSuffix.getLimiter() != null) {
-							Connection connection = (Connection) ivk.getArgs()[0];
-							String countSql = "select count(0) from (" + sql
-									+ ") myCount";
-							PreparedStatement countStmt = connection
-									.prepareStatement(countSql);
-							BoundSql countBS = new BoundSql(
-									mappedStatement.getConfiguration(),
-									countSql, boundSql.getParameterMappings(),
-									parameterObject);
-							setParameters(countStmt, mappedStatement, countBS,
-									parameterObject);
-							ResultSet rs = countStmt.executeQuery();
-							int count = 0;
-							if (rs.next()) {
-								count = rs.getInt(1);
-							}
-							rs.close();
-							countStmt.close();
-							sqlSuffix.getLimiter().setTotalCount(count);
-						}
-					}
-					// String pageSql = generatePageSql(sql, sqlSuffix);
-					// System.out.println("-" + pageSql);
-					// ReflectHelper.setValueByFieldName(boundSql, "sql",
-					// pageSql);
-				} else {
+				} else if (parameterObject instanceof Conditionable) {
 					Conditionable condition = (Conditionable) parameterObject;
 					String sql = boundSql.getSql();
 					if (condition.getLimiter() != null) {

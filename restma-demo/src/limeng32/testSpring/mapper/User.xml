@@ -6,7 +6,7 @@
 	<sql id="columns">id,name,address,nickname</sql>
 	<sql id="conditions">
 		<where>
-			<if test="id != null">and id = #{id}</if>
+			<if test="id != 0">and id = #{id}</if>
 			<if test="name != null">and name like #{name}</if>
 			<if test="address != null">and address like #{address}</if>
 			<if test="nickname != null">
@@ -24,7 +24,7 @@
 		where id=#{id}
 	</select>
 
-	<select id="selectAll" parameterType="hashMap" resultMap="result">
+	<select id="selectAll" resultMap="result">
 		select
 		<include refid="columns" />
 		from
@@ -32,7 +32,7 @@
 		<include refid="conditions" />
 	</select>
 
-	<select id="count" parameterType="hashMap" resultType="int">
+	<select id="count" resultType="int">
 		select count(id) from
 		<include refid="tableName" />
 		<include refid="conditions" />

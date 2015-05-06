@@ -8,8 +8,6 @@ public interface Queryable {
 
 	public String value();
 
-	public String tableAndValue();
-
-	public String tableAndValueByEscape();
+	public String getTableName();
 
 }

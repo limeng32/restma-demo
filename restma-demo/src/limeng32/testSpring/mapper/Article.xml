@@ -4,19 +4,8 @@
 	<cache />
 	<sql id="tableName">article</sql>
 	<sql id="columns">id,userid,title,content</sql>
-	<sql id="conditions">
-		<where>
-			<if test="id != null">and id = #{id}</if>
-			<if test="user != null and user.id != null">
-				and userid = #{user.id}
-			</if>
-			<if test="title != null">and title like #{title}</if>
-			<if test="content != null">and content like #{content}</if>
-			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
-		</where>
-	</sql>
 
-	<sql id="conditions2">
+	<sql id="conditions">
 		<where>
 			<if test="id != 0">and id = #{id}</if>
 			<if test="user != null and user.id != 0">
@@ -25,12 +14,6 @@
 			<if test="title != null">and title like #{title}</if>
 			<if test="content != null">and content like #{content}</if>
 			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
-		</where>
-	</sql>
-
-	<sql id="conditionsByEnum">
-		<where>
-			<if test="article__title != null">and article.title like #{article__title}</if>
 		</where>
 	</sql>
 
@@ -50,23 +33,7 @@
 		<include refid="conditions" />
 	</select>
 
-	<select id="selectAllByEnum" resultMap="result">
-		select
-		<include refid="columns" />
-		from
-		<include refid="tableName" />
-		<include refid="conditionsByEnum" />
-	</select>
-
-	<select id="select2" resultMap="result">
-		select
-		<include refid="columns" />
-		from
-		<include refid="tableName" />
-		<include refid="conditions2" />
-	</select>
-
-	<select id="count" parameterType="hashMap" resultType="int">
+	<select id="count" resultType="int">
 		select count(id) from
 		<include refid="tableName" />
 		<include refid="conditions" />
