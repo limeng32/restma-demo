@@ -20,11 +20,6 @@ public class SortParam implements Sortable {
 	}
 
 	@Override
-	public String toString() {
-		return list.size() + "";
-	}
-
-	@Override
 	public String toSql() {
 		StringBuffer ret = new StringBuffer();
 		if (list != null) {

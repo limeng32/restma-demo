@@ -31,12 +31,16 @@ public class TestController2 {
 		articleCon.setTitle("%55%");
 		articleCon.setLimiter(new PageParam(1, 2));
 		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
-				Conditionable.Sequence.asc), new Order(
-				ArticleCondition.Field.title, Conditionable.Sequence.asc)));
-		System.out.println("--" + articleCon.getSorter().toString());
+				Conditionable.Sequence.asc)));
+		System.out.println("1--" + articleCon.getSorter().toString());
 		userService.loadArticle(user, articleCon);
-		System.out.println("--" + user.getArticle());
-		System.out.println("--" + articleCon.getLimiter().getTotalCount());
+		System.out.println("1--" + user.getArticle());
+		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
+				Conditionable.Sequence.desc)));
+		System.out.println("2--" + articleCon.getSorter().toString());
+		userService.loadArticle(user, articleCon);
+		System.out.println("2--" + user.getArticle());
+		// System.out.println("--" + articleCon.getLimiter().getTotalCount());
 		return "testt";
 	}
 }
