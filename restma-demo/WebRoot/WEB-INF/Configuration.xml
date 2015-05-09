@@ -12,6 +12,9 @@
 		<setting name="lazyLoadTriggerMethods" value="" />
 	</settings>
 	<plugins>
+		<plugin interceptor="limeng32.mybatis.plugin.CachePlugin">
+			<property name="cacheFixMatcher" value=".*selectAll.*" />
+		</plugin>
 		<plugin interceptor="limeng32.mybatis.plugin.SqlPlugin">
 			<property name="dialect" value="mysql" />
 			<property name="selectAllMatcher" value=".*selectAll.*" />

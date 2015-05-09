@@ -38,10 +38,17 @@ public class SqlPlugin implements Interceptor {
 
 	private static String selectAllMatcher = "";
 
-	public Object plugin(Object arg0) {
-		return Plugin.wrap(arg0, this);
+	@Override
+	public Object plugin(Object target) {
+		// 当目标类是StatementHandler类型时，才包装目标类，否者直接返回目标本身,减少目标被代理的次数
+		if (target instanceof StatementHandler) {
+			return Plugin.wrap(target, this);
+		} else {
+			return target;
+		}
 	}
 
+	@Override
 	public void setProperties(Properties p) {
 		dialect = p.getProperty("dialect");
 		if (dialect == null || dialect.equals("")) {
@@ -62,6 +69,7 @@ public class SqlPlugin implements Interceptor {
 	}
 
 	/* 此方法中当Conditionable.getLimiter()不为null时，则自动获取totalCount */
+	@Override
 	public Object intercept(Invocation ivk) throws Throwable {
 		if (ivk.getTarget() instanceof RoutingStatementHandler) {
 			RoutingStatementHandler statementHandler = (RoutingStatementHandler) ivk
@@ -100,7 +108,6 @@ public class SqlPlugin implements Interceptor {
 						condition.getLimiter().setTotalCount(count);
 					}
 					String pageSql = generatePageSql(sql, condition);
-					System.out.println("-" + pageSql);
 					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql);
 				}
 			} else {

@@ -27,17 +27,17 @@ public class TestController2 {
 	@RequestMapping(method = RequestMethod.GET)
 	public String get() {
 		ArticleCondition articleCon = new ArticleCondition();
-		User user = userService.select(1);
-		articleCon.setTitle("%55%");
+		User user = new User();
+		user.setId(1);
+		// articleCon.setTitle("%55%");
+		articleCon.setLimiter(new PageParam(2, 2));
+		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
+				Conditionable.Sequence.asc)));
+		userService.loadArticle(user, articleCon);
+		System.out.println("1--" + user.getArticle());
 		articleCon.setLimiter(new PageParam(1, 2));
 		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
 				Conditionable.Sequence.asc)));
-		System.out.println("1--" + articleCon.getSorter().toString());
-		userService.loadArticle(user, articleCon);
-		System.out.println("1--" + user.getArticle());
-		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
-				Conditionable.Sequence.desc)));
-		System.out.println("2--" + articleCon.getSorter().toString());
 		userService.loadArticle(user, articleCon);
 		System.out.println("2--" + user.getArticle());
 		// System.out.println("--" + articleCon.getLimiter().getTotalCount());
