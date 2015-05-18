@@ -73,15 +73,19 @@
         });
         
         $("#userJson").click(function() { 
-            $.ajax( { 
-                type : "POST", 
-                url : "test/handle51.xml?", 
-                data : {id:'1'}, 
-                dataType: "text", 
-                success : function(user) { 
-                    alert(user); 
-                } 
-            }); 
+        	var testStr = '{ a:{$ref:"#"},id:"root", c:{d:"e",f:{$ref:"root.c"}},b:{$ref:"#.c"},"an array":["a string"],"a string":{$ref:"#an array.0"}}'; 
+        	console.log(testStr);
+        	var j = eval("("+testStr+")");
+        	alert(j.a == j);
+           // $.ajax( { 
+           //     type : "POST", 
+           //     url : "test/handle51.xml?", 
+           //     data : {id:'1'}, 
+           //     dataType: "text", 
+           //     success : function(user) { 
+           //         alert(user); 
+           //     } 
+           // }); 
         });
         
         $("#articleJson").click(function() { 
@@ -91,9 +95,10 @@
                 url : "test/showArticleMix?_content=json", 
                 data : {id:$("#articleId").val()}, 
                 dataType : "text", 
-                success : function(article) { 
-                	alert(article);
-                    //alert(article._json.user == null);
+                success : function(data) { 
+                	console.log(data);
+                	//alert(data.pageItems[0].user.article[1].title);
+                    //alert(article.pageItems[0].user == null);
                     //alert($(article).find('title').text());
                 } 
             }); 

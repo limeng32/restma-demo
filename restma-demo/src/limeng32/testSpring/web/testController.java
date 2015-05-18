@@ -11,10 +11,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import limeng32.mybatis.plugin.Order;
+import limeng32.mybatis.plugin.SortParam;
 import limeng32.testSpring.enums.GENDER;
+import limeng32.testSpring.page.Page;
+import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
+import limeng32.testSpring.pojo.condition.Conditionable;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.UserService;
 
@@ -320,13 +325,21 @@ public class testController {
 
 	@RequestMapping(value = "/showArticleMix")
 	public String showArticleMix(ModelMap mm, @RequestParam("id") int id) {
-		Article a = articleService.select(id);
+		User user = userService.select(id);
+		ArticleCondition articleCon = new ArticleCondition();
+		articleCon.setLimiter(new PageParam(1, 2));
+		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
+				Conditionable.Sequence.desc)));
+		userService.loadArticle(user, articleCon);
+		Page<Article> page = new Page<>(user.getArticle(),
+				articleCon.getLimiter());
+
 		// articleService.insert(a);
 		// User user = new User();
 		// user.setId(2);
 		// a.setUser(user);
 		// user.removeAllArticle();
-		mm.addAttribute("_content", a);
+		mm.addAttribute("_content", page);
 		return "showArticleMix";
 	}
 

@@ -1,16 +1,22 @@
 package limeng32.testSpring.page;
 
-import java.util.List;
+import java.util.Collection;
 
-import limeng32.testSpring.pojo.PojoFace;
+import limeng32.mybatis.plugin.Limitable;
 
-public class Page<T extends PojoFace<T>> {
+public class Page<T> {
 
 	private int pageNo;
 
-	private int totalPageNum;
+	private int maxPageNum;
 
-	private List<T> pageItems;
+	private Collection<T> pageItems;
+
+	public Page(Collection<T> items, Limitable limitable) {
+		pageItems = items;
+		pageNo = limitable.getPageNo();
+		maxPageNum = limitable.getMaxPageNum();
+	}
 
 	public int getPageNo() {
 		return pageNo;
@@ -20,19 +26,19 @@ public class Page<T extends PojoFace<T>> {
 		this.pageNo = pageNo;
 	}
 
-	public int getTotalPageNum() {
-		return totalPageNum;
+	public int getMaxPageNum() {
+		return maxPageNum;
 	}
 
-	public void setTotalPageNum(int totalPageNum) {
-		this.totalPageNum = totalPageNum;
+	public void setMaxPageNum(int maxPageNum) {
+		this.maxPageNum = maxPageNum;
 	}
 
-	public List<T> getPageItems() {
+	public Collection<T> getPageItems() {
 		return pageItems;
 	}
 
-	public void setPageItems(List<T> pageItems) {
+	public void setPageItems(Collection<T> pageItems) {
 		this.pageItems = pageItems;
 	}
 
