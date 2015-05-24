@@ -9,20 +9,39 @@
 	data-config="{combine:true}"></script>
 </head>
 <body>
-<input type="button" value="articleJson" id="articleJson">
-<script>
-	require(['node', 'io'], function($, IO){
-		//var testStr = '{"maxPageNum":3,"pageItems":[{"content":"","id":9,"title":"ff","updateTime":1431565579447,"user":{"address":"west","article":[{"$ref":"$.pageItems[0]"},{"content":"asdasd","id":10,"title":"_","updateTime":1431565579455,"user":{"$ref":"$.pageItems[0].user"}}],"id":1,"iteratorArticle":{},"name":"zzhang3","nickname":"xiaozhang","publisher":[]}},{"$ref":"$.pageItems[0].user.article[1]"}],"pageNo":2}'; 
-       	//var j = JSON.parse(testStr);
-       	//console.log(j.pageItems[0].user.name);
-
-		$('#articleJson').on('click', function(ev){
-			IO.get('test/showArticleMix?_content=json', {'id': 1}, function(data){
-				//console.log(data._content.pageItems[1]);	
-				console.log(data);
-			}, 'text')
+	<input type="button" value="articleJson" id="articleJson">
+	<script>
+		require.config({
+		    packages: [
+		        {
+		            name: "mypkg",
+		            tag: "201505242050",
+		            path: "${resourceRoot}/js/kissy/module", 
+		            combine : false,
+		            charset: "utf-8"
+		        }
+		    ]
+		});
+		require([ 'node', 'io', 'json', 'mypkg/jsonx', 'util' ], function($, IO, JSON, JSONX, UTIL) {
+			//var testStr = '{"maxPageNum":3,"pageItems":[{"content":"","id":9,"title":"ff","updateTime":1431565579447,"user":{"address":"west","article":[{"$ref":"$.pageItems[0]"},{"content":"asdasd","id":10,"title":"_","updateTime":1431565579455,"user":{"$ref":"$.pageItems[0].user"}}],"id":1,"iteratorArticle":{},"name":"zzhang3","nickname":"xiaozhang","publisher":[]}},{"$ref":"$.pageItems[0].user.article[1]"}],"pageNo":2}'; 
+			//var j = JSON.parse(testStr);
+			//console.log(j.pageItems[0].user.name);
+			//console.log(JSONX.decode(j).pageItems[1].user.name);
+			$('#articleJson').on(
+					'click',
+					function(ev) {
+						IO.jsonp('http://localhost:8080/restma-demo/test/asd',
+								function(d) {
+									console.log(d.address);
+								});
+					})
+			IO.get('test/showArticleMix?_content=json', {
+				'id' : 1
+			}, function(data) {
+				console.log(JSONX.decode(data).pageItems[1].user.name);
+				//console.log(data);
+			}, 'json')
 		})
-	})
-</script>
+	</script>
 </body>
 </html>

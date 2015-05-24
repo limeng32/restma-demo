@@ -37,7 +37,7 @@ public class TestController2 {
 		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
 				Conditionable.Sequence.asc)));
 		userService.loadArticle(user, articleCon);
-		System.out.println("1--" + user.getArticle());
+		// System.out.println("1--" + user.getArticle());
 		articleCon.setLimiter(new PageParam(2, 2));
 		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
 				Conditionable.Sequence.asc)));
@@ -45,7 +45,7 @@ public class TestController2 {
 		Page<Article> page = new Page<>(user.getArticle(),
 				articleCon.getLimiter());
 		String text = JSON.toJSONString(page);
-		System.out.println("2--" + text);
+		// System.out.println("2--" + text);
 		// System.out.println("--" + articleCon.getLimiter().getTotalCount());
 		return "testt";
 	}

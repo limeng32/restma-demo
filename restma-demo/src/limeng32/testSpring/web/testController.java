@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
+
 @Controller
 @RequestMapping(value = "/test")
 public class testController {
@@ -87,12 +89,14 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/asd", method = RequestMethod.GET)
-	public void asd2(PrintWriter printWriter, HttpServletResponse response) {
+	public void asd2(@RequestParam String callback, PrintWriter printWriter,
+			HttpServletResponse response) {
 		response.setContentType("text/html;");
 		User u = userService.select(2);
 		// System.out.println(u.getName());
 		// return "redirect:/test.jsp";
-		printWriter.write(u.getName());
+		String methodStr = callback + "(" + JSON.toJSONString(u) + ")";
+		printWriter.write(methodStr);
 		printWriter.flush();
 		printWriter.close();
 	}
