@@ -12,6 +12,7 @@ import limeng32.testSpring.annotation.Status;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -89,6 +90,7 @@ public class User extends PojoSupport<User> implements Serializable {
 	}
 
 	@JsonIgnore
+	@JSONField(serialize = false)
 	public java.util.Iterator<Article> getIteratorArticle() {
 		if (article == null)
 			article = new java.util.LinkedHashSet<Article>();

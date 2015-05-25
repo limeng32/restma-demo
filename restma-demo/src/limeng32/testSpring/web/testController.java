@@ -347,6 +347,32 @@ public class testController {
 		return "showArticleMix";
 	}
 
+	@RequestMapping(value = "/showArticle2Mix")
+	public String showArticle2Mix(ModelMap mm) {
+		User u = new User();
+		u.setId(3);
+		u.setName("姓名");
+		Article a = new Article();
+		a.setId(2);
+		a.setTitle("标题");
+		u.addArticle(a);
+		mm.addAttribute("_content", u);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle3Mix")
+	public String showArticle3Mix(ModelMap mm) {
+		User u = new User();
+		u.setId(3);
+		u.setName("姓名");
+		Article a = new Article();
+		a.setId(2);
+		a.setTitle("标题");
+		a.setUser(u);
+		mm.addAttribute("_content", a);
+		return "showArticleMix";
+	}
+
 	@RequestMapping(value = "/upload")
 	public String upload(@RequestParam("name") String name,
 			@RequestParam("file") MultipartFile file) throws Exception {

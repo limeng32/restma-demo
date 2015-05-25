@@ -41,6 +41,14 @@
 				console.log(JSONX.decode(data).pageItems[1].user.name);
 				//console.log(data);
 			}, 'json')
+			IO.get('test/showArticle2Mix?_content=json', {
+			}, function(data) {
+				console.log('2-' + data);
+			}, 'text')
+			IO.get('test/showArticle3Mix?_content=json', {
+			}, function(data) {
+				console.log('3-' + data);
+			}, 'text')
 		})
 	</script>
 </body>
