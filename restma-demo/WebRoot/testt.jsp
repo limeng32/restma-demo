@@ -49,6 +49,19 @@
 			}, function(data) {
 				console.log('3-' + data);
 			}, 'text')
+			IO.get('test/showArticle4Mix?_content=json', {
+			}, function(data) {
+				console.log('4-' + data);
+			}, 'text')
+			IO.get('test/showArticle5Mix?_content=json', {
+			}, function(data) {
+				console.log('5-' + data);
+			}, 'text')
+			IO.get('test/showArticle7Mix?_content=json', {
+			}, function(data) {
+				data = JSONX.decode(data);
+				console.log(data.bookWriter[1].book.bookWriter[1].writer.bookWriter[0].book.title);
+			}, 'text')
 		})
 	</script>
 </body>

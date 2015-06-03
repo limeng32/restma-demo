@@ -22,6 +22,9 @@ import limeng32.testSpring.pojo.condition.ArticleCondition;
 import limeng32.testSpring.pojo.condition.Conditionable;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.UserService;
+import limeng32.testSpring.testPojo.Book;
+import limeng32.testSpring.testPojo.BookWriter;
+import limeng32.testSpring.testPojo.Writer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -370,6 +373,108 @@ public class testController {
 		a.setTitle("标题");
 		a.setUser(u);
 		mm.addAttribute("_content", a);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle4Mix")
+	public String showArticle4Mix(ModelMap mm) {
+		User u = new User();
+		u.setId(3);
+		u.setName("姓名");
+		Article a = new Article();
+		a.setId(2);
+		a.setTitle("标题");
+		a.setUser(u);
+		Article otherA = new Article();
+		otherA.setId(5);
+		otherA.setTitle("另一篇");
+		u.addArticle(otherA);
+		mm.addAttribute("_content", a);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle5Mix")
+	public String showArticle5Mix(ModelMap mm) {
+		User u = new User();
+		u.setId(3);
+		u.setName("姓名");
+		Article a = new Article();
+		a.setId(2);
+		a.setTitle("标题");
+		a.setUser(u);
+		Article otherA = new Article();
+		otherA.setId(5);
+		otherA.setTitle("另一篇");
+		u.addArticle(otherA);
+		mm.addAttribute("_content", otherA);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle6Mix")
+	public String showArticle6Mix(ModelMap mm) {
+		User u = new User();
+		u.setId(3);
+		u.setName("姓名");
+		Article a = new Article();
+		a.setId(2);
+		a.setTitle("标题");
+		a.setUser(u);
+		Article otherA = new Article();
+		otherA.setId(5);
+		otherA.setTitle("另一篇");
+		u.addArticle(otherA);
+		mm.addAttribute("_content", u);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle7Mix")
+	public String showArticle7Mix(ModelMap mm) {
+		Writer w1 = new Writer();
+		w1.setId(1);
+		w1.setName("张三");
+
+		Writer w2 = new Writer();
+		w2.setId(2);
+		w2.setName("李四");
+
+		Book b3 = new Book();
+		b3.setId(3);
+		b3.setTitle("3的故事");
+
+		Book b4 = new Book();
+		b4.setId(4);
+		b4.setTitle("4的诗歌");
+
+		Book b7 = new Book();
+		b7.setId(7);
+		b7.setTitle("7的传奇");
+
+		BookWriter bw31 = new BookWriter();
+		bw31.setId(31);
+		bw31.setBook(b3);
+		bw31.setWriter(w1);
+
+		BookWriter bw42 = new BookWriter();
+		bw42.setId(42);
+		bw42.setBook(b4);
+		bw42.setWriter(w2);
+
+		BookWriter bw71 = new BookWriter();
+		bw71.setId(71);
+		bw71.setBook(b7);
+		bw71.setWriter(w1);
+
+		BookWriter bw72 = new BookWriter();
+		bw72.setId(72);
+		bw72.setBook(b7);
+		bw72.setWriter(w2);
+
+		w1.addBookWriter(bw31);
+		w1.addBookWriter(bw71);
+		w2.addBookWriter(bw42);
+		w2.addBookWriter(bw72);
+
+		mm.addAttribute("_content", w1);
 		return "showArticleMix";
 	}
 
