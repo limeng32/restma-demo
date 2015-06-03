@@ -1,10 +1,12 @@
-package limeng32.testSpring.testPojo;
+package limeng32.testSpring.pojo;
 
-import limeng32.testSpring.pojo.PojoSupport;
+import java.io.Serializable;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class BookWriter extends PojoSupport<BookWriter> {
+public class BookWriter extends PojoSupport<BookWriter> implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@JSONField(serialize = false)
 	public int id;
 

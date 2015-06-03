@@ -17,14 +17,13 @@ import limeng32.testSpring.enums.GENDER;
 import limeng32.testSpring.page.Page;
 import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Article;
+import limeng32.testSpring.pojo.Book;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
 import limeng32.testSpring.pojo.condition.Conditionable;
 import limeng32.testSpring.service.ArticleService;
+import limeng32.testSpring.service.BookService;
 import limeng32.testSpring.service.UserService;
-import limeng32.testSpring.testPojo.Book;
-import limeng32.testSpring.testPojo.BookWriter;
-import limeng32.testSpring.testPojo.Writer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -55,6 +54,9 @@ public class testController {
 
 	@Autowired
 	private ArticleService articleService;
+
+	@Autowired
+	private BookService bookService;
 
 	@RequestMapping()
 	public ModelAndView get(
@@ -429,52 +431,8 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle7Mix")
 	public String showArticle7Mix(ModelMap mm) {
-		Writer w1 = new Writer();
-		w1.setId(1);
-		w1.setName("张三");
-
-		Writer w2 = new Writer();
-		w2.setId(2);
-		w2.setName("李四");
-
-		Book b3 = new Book();
-		b3.setId(3);
-		b3.setTitle("3的故事");
-
-		Book b4 = new Book();
-		b4.setId(4);
-		b4.setTitle("4的诗歌");
-
-		Book b7 = new Book();
-		b7.setId(7);
-		b7.setTitle("7的传奇");
-
-		BookWriter bw31 = new BookWriter();
-		bw31.setId(31);
-		bw31.setBook(b3);
-		bw31.setWriter(w1);
-
-		BookWriter bw42 = new BookWriter();
-		bw42.setId(42);
-		bw42.setBook(b4);
-		bw42.setWriter(w2);
-
-		BookWriter bw71 = new BookWriter();
-		bw71.setId(71);
-		bw71.setBook(b7);
-		bw71.setWriter(w1);
-
-		BookWriter bw72 = new BookWriter();
-		bw72.setId(72);
-		bw72.setBook(b7);
-		bw72.setWriter(w2);
-
-		w1.addBookWriter(bw31);
-		w1.addBookWriter(bw71);
-		w2.addBookWriter(bw42);
-		w2.addBookWriter(bw72);
-
-		mm.addAttribute("_content", w1);
+		Book b = bookService.select(1);
+		mm.addAttribute("_content", b);
 		return "showArticleMix";
 	}
 

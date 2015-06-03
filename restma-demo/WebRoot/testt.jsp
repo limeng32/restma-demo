@@ -59,8 +59,7 @@
 			}, 'text')
 			IO.get('test/showArticle7Mix?_content=json', {
 			}, function(data) {
-				data = JSONX.decode(data);
-				console.log(data.bookWriter[1].book.bookWriter[1].writer.bookWriter[0].book.title);
+				console.log('7-' + data);
 			}, 'text')
 		})
 	</script>

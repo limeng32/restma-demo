@@ -1,12 +1,13 @@
-package limeng32.testSpring.testPojo;
+package limeng32.testSpring.pojo;
 
-import limeng32.testSpring.pojo.PojoSupport;
+import java.io.Serializable;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class Writer extends PojoSupport<Writer> {
+public class Book extends PojoSupport<Book> implements Serializable {
+	private static final long serialVersionUID = 1L;
 	public int id;
-	public java.lang.String name;
+	public java.lang.String title;
 
 	public java.util.Collection<BookWriter> bookWriter;
 
@@ -37,7 +38,7 @@ public class Writer extends PojoSupport<Writer> {
 			this.bookWriter = new java.util.LinkedHashSet<BookWriter>();
 		if (!newBookWriter.belongs(this.bookWriter)) {
 			this.bookWriter.add(newBookWriter);
-			newBookWriter.setWriter(this);
+			newBookWriter.setBook(this);
 		}
 	}
 
@@ -47,7 +48,7 @@ public class Writer extends PojoSupport<Writer> {
 		if (this.bookWriter != null)
 			if (oldBookWriter.belongs(this.bookWriter)) {
 				oldBookWriter.quit(this.bookWriter);
-				oldBookWriter.setWriter((Writer) null);
+				oldBookWriter.setBook((Book) null);
 			}
 	}
 
@@ -58,7 +59,7 @@ public class Writer extends PojoSupport<Writer> {
 					.hasNext();) {
 				oldBookWriter = (BookWriter) iter.next();
 				iter.remove();
-				oldBookWriter.setWriter((Writer) null);
+				oldBookWriter.setBook((Book) null);
 			}
 		}
 	}
@@ -73,12 +74,12 @@ public class Writer extends PojoSupport<Writer> {
 		this.id = id;
 	}
 
-	public java.lang.String getName() {
-		return name;
+	public java.lang.String getTitle() {
+		return title;
 	}
 
-	public void setName(java.lang.String name) {
-		this.name = name;
+	public void setTitle(java.lang.String title) {
+		this.title = title;
 	}
 
 }
