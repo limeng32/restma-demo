@@ -4,6 +4,7 @@ import java.util.List;
 
 import limeng32.testSpring.mapper.BookMapper;
 import limeng32.testSpring.pojo.Book;
+import limeng32.testSpring.pojo.condition.BookWriterCondition;
 import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 
 	@Autowired
 	private BookMapper mapper;
+
+	@Autowired
+	private BookWriterService bookWriterService;
 
 	@Override
 	public Book select(int id) {
@@ -38,5 +42,12 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 	@Override
 	public int count(Conditionable conditionable) {
 		return mapper.count(conditionable);
+	}
+
+	@Override
+	public void loadBookWriter(Book book,
+			BookWriterCondition bookWriterCondition) {
+		bookWriterCondition.setBook(book);
+		book.setBookWriter(bookWriterService.selectAll(bookWriterCondition));
 	}
 }

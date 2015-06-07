@@ -20,9 +20,11 @@ import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Book;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
+import limeng32.testSpring.pojo.condition.BookWriterCondition;
 import limeng32.testSpring.pojo.condition.Conditionable;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.BookService;
+import limeng32.testSpring.service.BookWriterService;
 import limeng32.testSpring.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,9 @@ public class testController {
 
 	@Autowired
 	private BookService bookService;
+
+	@Autowired
+	private BookWriterService bookWriterService;
 
 	@RequestMapping()
 	public ModelAndView get(
@@ -431,7 +436,15 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle7Mix")
 	public String showArticle7Mix(ModelMap mm) {
+		// BookWriter bw = bookWriterService.select(4);
 		Book b = bookService.select(1);
+		BookWriterCondition bwc = new BookWriterCondition();
+		bwc.setLimiter(new PageParam(1, 2));
+		bookService.loadBookWriter(b, bwc);
+		// User u = userService.select(1);
+		// ArticleCondition articleCon = new ArticleCondition();
+		// articleCon.setLimiter(new PageParam(1, 2));
+		// userService.loadArticle(u, articleCon);
 		mm.addAttribute("_content", b);
 		return "showArticleMix";
 	}

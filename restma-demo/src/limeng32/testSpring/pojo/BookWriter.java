@@ -8,26 +8,10 @@ public class BookWriter extends PojoSupport<BookWriter> implements Serializable 
 	private static final long serialVersionUID = 1L;
 
 	@JSONField(serialize = false)
-	public int id;
+	private int id;
 
-	public Book book;
-	public Writer writer;
-
-	public BookWriter() {
-	}
-
-	public BookWriter(Book book) {
-		this.setBook(book);
-	}
-
-	public BookWriter(Writer writer) {
-		this.setWriter(writer);
-	}
-
-	public BookWriter(Book book, Writer writer) {
-		this.setBook(book);
-		this.setWriter(writer);
-	}
+	private Book book;
+	private Writer writer;
 
 	public Book getBook() {
 		return book;

@@ -6,10 +6,10 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 public class Book extends PojoSupport<Book> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	public int id;
-	public java.lang.String title;
+	private int id;
+	private java.lang.String title;
 
-	public java.util.Collection<BookWriter> bookWriter;
+	private java.util.Collection<BookWriter> bookWriter;
 
 	public java.util.Collection<BookWriter> getBookWriter() {
 		if (bookWriter == null)

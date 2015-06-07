@@ -3,12 +3,17 @@
 <mapper namespace="limeng32.testSpring.mapper.BookWriterMapper">
 	<cache />
 	<sql id="tableName">BookWriter</sql>
-	<sql id="columns">id,title</sql>
+	<sql id="columns">id, bookid, writerid</sql>
 
 	<sql id="conditions">
 		<where>
 			<if test="id != 0">and id = #{id}</if>
-			<if test="title != null">and title like #{title}</if>
+			<if test="book != null and book.id != 0">
+				and bookid = #{book.id}
+			</if>
+			<if test="writer != null and writer.id != 0">
+				and writerid = #{writer.id}
+			</if>
 			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
 		</where>
 	</sql>
@@ -35,39 +40,41 @@
 		<include refid="conditions" />
 	</select>
 
-	<insert id="insert" parameterType="Book" useGeneratedKeys="true"
+	<insert id="insert" parameterType="BookWriter" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into
 		<include refid="tableName" />
-		(title
-		,isable) values(#{title}
+		(bookid, writerid
+		, isable) values(#{book.id},#{writer.id}
 		,'1')
 	</insert>
 
-	<update id="update" parameterType="Book">
+	<update id="update" parameterType="BookWriter">
 		update
 		<include refid="tableName" />
 		<set>
 			<if test="id != null">id=#{id},</if>
-			<if test="title != null">title=#{title},</if>
+			<if test="book != null and book.id != 0">bookid=#{book.id},</if>
+			<if test="writer != null and writer.id != 0">writerid=#{writer.id},</if>
 		</set>
 		where id=#{id}
 	</update>
 
-	<update id="disable" parameterType="Book">
+	<update id="disable" parameterType="BookWriter">
 		update
 		<include refid="tableName" />
 		<include refid="limeng32.testSpring.mapper.PojoMapper.disable" />
 	</update>
 
-	<update id="enable" parameterType="Book">
+	<update id="enable" parameterType="BookWriter">
 		update
 		<include refid="tableName" />
 		<include refid="limeng32.testSpring.mapper.PojoMapper.enable" />
 	</update>
 
-	<resultMap id="result" type="Book" autoMapping="true">
+	<resultMap id="result" type="BookWriter" autoMapping="true">
 		<id property="id" column="id" />
-		<collection property="bookWriter" ofType="BookWriter" />
+		<association property="book" javaType="Book"
+			select="limeng32.testSpring.mapper.BookMapper.select" column="bookid" />
 	</resultMap>
 </mapper>
