@@ -115,8 +115,10 @@ public class CachePlugin implements Interceptor {
 			}
 			if (metaObject.hasGetter("limiter")) {
 				Limitable limiter = (Limitable) metaObject.getValue("limiter");
-				cacheKey.update(limiter.getPageNo());
-				cacheKey.update(limiter.getPageSize());
+				if (limiter != null) {
+					cacheKey.update(limiter.getPageNo());
+					cacheKey.update(limiter.getPageSize());
+				}
 			}
 		}
 		return cacheKey;

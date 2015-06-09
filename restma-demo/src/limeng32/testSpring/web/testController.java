@@ -439,7 +439,6 @@ public class testController {
 		// BookWriter bw = bookWriterService.select(4);
 		Book b = bookService.select(1);
 		BookWriterCondition bwc = new BookWriterCondition();
-		bwc.setLimiter(new PageParam(1, 2));
 		bookService.loadBookWriter(b, bwc);
 		// User u = userService.select(1);
 		// ArticleCondition articleCon = new ArticleCondition();
