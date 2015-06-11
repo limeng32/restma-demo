@@ -3,9 +3,17 @@
 <mapper namespace="limeng32.testSpring.mapper.PojoMapper">
 	<sql id="dealIsable">
 		<choose>
-			<when test="isable == null">and isable = '1'</when>
+			<when test="isable == null">
+				and
+				<include refid="tableName" />
+				.isable = '1'
+			</when>
 			<when test="isable == '-1'"></when>
-			<otherwise>and isable = #{isable}</otherwise>
+			<otherwise>
+				and
+				<include refid="tableName" />
+				.isable = #{isable}
+			</otherwise>
 		</choose>
 	</sql>
 	<sql id="enable">set isable='1' where id=#{id}</sql>

@@ -19,6 +19,7 @@ import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Book;
 import limeng32.testSpring.pojo.User;
+import limeng32.testSpring.pojo.Writer;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
 import limeng32.testSpring.pojo.condition.BookWriterCondition;
 import limeng32.testSpring.pojo.condition.Conditionable;
@@ -439,6 +440,9 @@ public class testController {
 		// BookWriter bw = bookWriterService.select(4);
 		Book b = bookService.select(1);
 		BookWriterCondition bwc = new BookWriterCondition();
+		Writer w = new Writer();
+//		w.setName("%四%");
+		bwc.setWriter(w);
 		bookService.loadBookWriter(b, bwc);
 		// User u = userService.select(1);
 		// ArticleCondition articleCon = new ArticleCondition();

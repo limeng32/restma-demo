@@ -3,16 +3,46 @@
 <mapper namespace="limeng32.testSpring.mapper.BookWriterMapper">
 	<cache />
 	<sql id="tableName">BookWriter</sql>
-	<sql id="columns">id, bookid, writerid</sql>
+	<sql id="columns">
+		<include refid="tableName" />
+		.id,
+		<include refid="tableName" />
+		.bookid,
+		<include refid="tableName" />
+		.writerid
+	</sql>
 
 	<sql id="conditions">
 		<where>
 			<if test="id != 0">and id = #{id}</if>
+			<if test="book != null">
+				and
+				<include refid="tableName" />
+				.bookid =
+				<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
+				.id
+			</if>
 			<if test="book != null and book.id != 0">
-				and bookid = #{book.id}
+				and
+				<include refid="tableName" />
+				.bookid = #{book.id}
+			</if>
+			<if test="writer != null">
+				and
+				<include refid="tableName" />
+				.writerid =
+				<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
+				.id
 			</if>
 			<if test="writer != null and writer.id != 0">
-				and writerid = #{writer.id}
+				and
+				<include refid="tableName" />
+				.writerid = #{writer.id}
+			</if>
+			<if test="writer != null and writer.name != null">
+				and
+				<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
+				.name like #{writer.name}
 			</if>
 			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
 		</where>
@@ -31,6 +61,14 @@
 		<include refid="columns" />
 		from
 		<include refid="tableName" />
+		<if test="book != null">
+			,
+			<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
+		</if>
+		<if test="writer != null">
+			,
+			<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
+		</if>
 		<include refid="conditions" />
 	</select>
 
@@ -76,5 +114,7 @@
 		<id property="id" column="id" />
 		<association property="book" javaType="Book"
 			select="limeng32.testSpring.mapper.BookMapper.select" column="bookid" />
+		<association property="writer" javaType="Writer"
+			select="limeng32.testSpring.mapper.WriterMapper.select" column="writerid" />
 	</resultMap>
 </mapper>

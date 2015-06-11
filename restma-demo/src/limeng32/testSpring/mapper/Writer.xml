@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="limeng32.testSpring.mapper.WriterMapper">
+	<cache />
+	<sql id="tableName">Writer</sql>
+	<sql id="columns">id,name</sql>
+
+	<sql id="conditions">
+		<where>
+			<if test="id != 0">and id = #{id}</if>
+			<if test="name != null">and name like #{name}</if>
+			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
+		</where>
+	</sql>
+
+	<select id="select" parameterType="int" resultMap="result">
+		select
+		<include refid="columns" />
+		from
+		<include refid="tableName" />
+		where id=#{id}
+	</select>
+
+	<select id="selectAll" resultMap="result">
+		select
+		<include refid="columns" />
+		from
+		<include refid="tableName" />
+		<include refid="conditions" />
+	</select>
+
+	<select id="count" resultType="int">
+		select count(id) from
+		<include refid="tableName" />
+		<include refid="conditions" />
+	</select>
+
+	<insert id="insert" parameterType="Writer" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		<include refid="tableName" />
+		(name
+		,isable) values(#{name}
+		,'1')
+	</insert>
+
+	<update id="update" parameterType="Writer">
+		update
+		<include refid="tableName" />
+		<set>
+			<if test="id != null">id=#{id},</if>
+			<if test="title != null">name=#{name},</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="disable" parameterType="Writer">
+		update
+		<include refid="tableName" />
+		<include refid="limeng32.testSpring.mapper.PojoMapper.disable" />
+	</update>
+
+	<update id="enable" parameterType="Writer">
+		update
+		<include refid="tableName" />
+		<include refid="limeng32.testSpring.mapper.PojoMapper.enable" />
+	</update>
+
+	<resultMap id="result" type="Writer" autoMapping="true">
+		<id property="id" column="id" />
+		<collection property="bookWriter" ofType="BookWriter" />
+	</resultMap>
+</mapper>
