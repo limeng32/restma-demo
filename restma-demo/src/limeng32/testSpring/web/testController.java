@@ -18,6 +18,7 @@ import limeng32.testSpring.page.Page;
 import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Book;
+import limeng32.testSpring.pojo.BookWriter;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.Writer;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
@@ -27,6 +28,7 @@ import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.BookService;
 import limeng32.testSpring.service.BookWriterService;
 import limeng32.testSpring.service.UserService;
+import limeng32.testSpring.service.WriterService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -63,6 +65,9 @@ public class testController {
 
 	@Autowired
 	private BookWriterService bookWriterService;
+
+	@Autowired
+	private WriterService writerService;
 
 	@RequestMapping()
 	public ModelAndView get(
@@ -438,17 +443,48 @@ public class testController {
 	@RequestMapping(value = "/showArticle7Mix")
 	public String showArticle7Mix(ModelMap mm) {
 		// BookWriter bw = bookWriterService.select(4);
-		Book b = bookService.select(1);
+		// Book b = bookService.select(1);
+		Writer w = writerService.select(1);
 		BookWriterCondition bwc = new BookWriterCondition();
-		Writer w = new Writer();
-//		w.setName("%四%");
-		bwc.setWriter(w);
-		bookService.loadBookWriter(b, bwc);
+		bwc.setBook(new Book());
+		bwc.setLimiter(new PageParam(1, 1));
+		// bwc.getBook().setTitle("3%");
+		writerService.loadBookWriter(w, bwc);
+
+		// Writer w = new Writer();
+		// w.setName("%四%");
+		// bwc.setWriter(w);
+		// bookService.loadBookWriter(b, bwc);
 		// User u = userService.select(1);
 		// ArticleCondition articleCon = new ArticleCondition();
 		// articleCon.setLimiter(new PageParam(1, 2));
 		// userService.loadArticle(u, articleCon);
-		mm.addAttribute("_content", b);
+		Page<BookWriter> page = new Page<>(w.getBookWriter(), bwc.getLimiter());
+		mm.addAttribute("_content", page);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle8Mix")
+	public String showArticle8Mix(ModelMap mm) {
+		// BookWriter bw = bookWriterService.select(4);
+		// Book b = bookService.select(1);
+		Writer w = writerService.select(1);
+		BookWriterCondition bwc = new BookWriterCondition();
+		bwc.setBook(new Book());
+		bwc.setLimiter(new PageParam(2, 1));
+		// bwc.getBook().setTitle("3%");
+		writerService.loadBookWriter(w, bwc);
+
+		// Writer w = new Writer();
+		// w.setName("%四%");
+		// bwc.setWriter(w);
+		// bookService.loadBookWriter(b, bwc);
+		// User u = userService.select(1);
+		// ArticleCondition articleCon = new ArticleCondition();
+		// articleCon.setLimiter(new PageParam(1, 2));
+		// userService.loadArticle(u, articleCon);
+		Page<BookWriter> page = new Page<>(w.getBookWriter(), bwc.getLimiter());
+		mm.addAttribute("_content", page);
 		return "showArticleMix";
 	}
 

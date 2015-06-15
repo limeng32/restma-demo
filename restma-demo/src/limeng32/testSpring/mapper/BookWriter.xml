@@ -21,11 +21,16 @@
 				.bookid =
 				<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
 				.id
-			</if>
-			<if test="book != null and book.id != 0">
-				and
-				<include refid="tableName" />
-				.bookid = #{book.id}
+				<if test="book.id != 0">
+					and
+					<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
+					.id = #{book.id}
+				</if>
+				<if test="book.title != null">
+					and
+					<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
+					.title like #{book.title}
+				</if>
 			</if>
 			<if test="writer != null">
 				and
@@ -33,16 +38,16 @@
 				.writerid =
 				<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
 				.id
-			</if>
-			<if test="writer != null and writer.id != 0">
-				and
-				<include refid="tableName" />
-				.writerid = #{writer.id}
-			</if>
-			<if test="writer != null and writer.name != null">
-				and
-				<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
-				.name like #{writer.name}
+				<if test="writer.id != 0">
+					and
+					<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
+					.id = #{writer.id}
+				</if>
+				<if test="writer.name != null">
+					and
+					<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
+					.name like #{writer.name}
+				</if>
 			</if>
 			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
 		</where>

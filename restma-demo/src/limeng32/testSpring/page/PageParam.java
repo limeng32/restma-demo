@@ -1,8 +1,12 @@
 package limeng32.testSpring.page;
 
+import java.io.Serializable;
+
 import limeng32.mybatis.plugin.Limitable;
 
-public class PageParam implements Limitable {
+public class PageParam implements Limitable, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public PageParam() {
 

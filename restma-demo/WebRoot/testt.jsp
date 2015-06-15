@@ -61,6 +61,10 @@
 			}, function(data) {
 				console.log('7-' + data);
 			}, 'text')
+			IO.get('test/showArticle8Mix?_content=json', {
+			}, function(data) {
+				console.log('8-' + data);
+			}, 'text')
 		})
 	</script>
 </body>

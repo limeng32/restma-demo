@@ -1,12 +1,15 @@
 package limeng32.mybatis.plugin;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
 import javax.xml.bind.PropertyException;
 
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
+import org.apache.ibatis.cache.TransactionalCacheManager;
 import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -71,6 +74,51 @@ public class CachePlugin implements Interceptor {
 		BoundSql boundSql = ms.getBoundSql(parameterObject);
 		CacheKey cacheKey = createCacheKey(ms, parameterObject, rowBounds,
 				boundSql);
+		return this.query(metaExecutor, ms, cacheKey, parameterObject,
+				rowBounds, resultHandler, boundSql);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <E> List<E> query(MetaObject metaExecutor, MappedStatement ms,
+			CacheKey cacheKey, Object parameterObject, RowBounds rowBounds,
+			ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+		MetaObject metaParameter = MetaObject.forObject(parameterObject,
+				DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
+		// 当需要分页查询时，缓存里加入page信息
+		if (ms.getId().matches(cacheFixMatcher)
+				&& metaParameter.hasGetter("limiter")) {
+			Cache cache = ms.getCache();
+			if (cache != null) {
+				if (ms.isUseCache() && resultHandler == null) {
+					synchronized (cache) {
+						Object value = cache.getObject(cacheKey);
+						if (value != null) {
+							HashMap<String, Object> cachedMap = (HashMap<String, Object>) value;
+							Limitable cachedPage = (Limitable) cachedMap
+									.get("limiter");
+							Limitable originalPage = (Limitable) metaParameter
+									.getValue("limiter");
+							if (null != originalPage && null != cachedPage) {
+								originalPage.setTotalCount(cachedPage
+										.getTotalCount());
+								return (List<E>) cachedMap.get("list");
+							}
+						}
+					}
+				}
+				Executor delegate = (Executor) metaExecutor
+						.getValue("delegate");
+				List<E> list = delegate.query(ms, parameterObject, rowBounds,
+						resultHandler, cacheKey, boundSql);
+				TransactionalCacheManager tcm = (TransactionalCacheManager) metaExecutor
+						.getValue("tcm");
+				HashMap<String, Object> cachedMap = new HashMap<String, Object>();
+				cachedMap.put("limiter", metaParameter.getValue("limiter"));
+				cachedMap.put("list", list);
+				tcm.putObject(cache, cacheKey, cachedMap);
+				return list;
+			}
+		}
 		Executor executor = (Executor) metaExecutor.getOriginalObject();
 		return executor.query(ms, parameterObject, rowBounds, resultHandler,
 				cacheKey, boundSql);
@@ -147,4 +195,5 @@ public class CachePlugin implements Interceptor {
 			}
 		}
 	}
+
 }
