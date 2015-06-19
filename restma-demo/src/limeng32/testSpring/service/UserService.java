@@ -49,4 +49,9 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 	public List<User> selectAll(Conditionable condition) {
 		return supportSelectAll(mapper, condition);
 	}
+
+	@Override
+	public User select1(User user) {
+		return mapper.select1(user);
+	}
 }

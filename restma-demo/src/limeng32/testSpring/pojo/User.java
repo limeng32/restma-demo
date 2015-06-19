@@ -7,8 +7,12 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 
+import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.UniqueKeyType;
 import limeng32.testSpring.annotation.Status;
 
+import org.apache.ibatis.type.JdbcType;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,15 +23,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@")
+@TableMapperAnnotation(tableName = "user", uniqueKeyType = UniqueKeyType.Single, uniqueKey = "address")
 public class User extends PojoSupport<User> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER)
 	private int id;
 
 	@NotBlank
+	@FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR)
 	private String name;
 
+	@FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
 	private String address;
 
 	private String nickname;

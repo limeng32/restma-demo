@@ -27,43 +27,27 @@
 			//var j = JSON.parse(testStr);
 			//console.log(j.pageItems[0].user.name);
 			//console.log(JSONX.decode(j).pageItems[1].user.name);
-			$('#articleJson').on(
-					'click',
-					function(ev) {
-						IO.jsonp('http://localhost:8080/restma-demo/test/asd',
-								function(d) {
-									console.log(d.address);
-								});
-					})
-			IO.get('test/showArticleMix?_content=json', {
-				'id' : 1
+			//$('#articleJson').on(
+			//		'click',
+			//		function(ev) {
+			//			IO.jsonp('http://localhost:8080/restma-demo/test/asd',
+			//					function(d) {
+			//						console.log(d.address);
+			//					});
+			//		})
+			//IO.get('test/showArticle7Mix?_content=json', {
+			//	pageNo: 1
+			//}, function(data) {
+			//	console.log('71-' + data);
+			//}, 'text')
+			//IO.get('test/showArticle7Mix?_content=json', {
+			//	pageNo: 2
+			//}, function(data) {
+			//	console.log('72-' + data);
+			//}, 'text')
+			IO.get('test/showArticle9Mix?_content=json', {
 			}, function(data) {
-				console.log(JSONX.decode(data).pageItems[1].user.name);
-				//console.log(data);
-			}, 'json')
-			IO.get('test/showArticle2Mix?_content=json', {
-			}, function(data) {
-				console.log('2-' + data);
-			}, 'text')
-			IO.get('test/showArticle3Mix?_content=json', {
-			}, function(data) {
-				console.log('3-' + data);
-			}, 'text')
-			IO.get('test/showArticle4Mix?_content=json', {
-			}, function(data) {
-				console.log('4-' + data);
-			}, 'text')
-			IO.get('test/showArticle5Mix?_content=json', {
-			}, function(data) {
-				console.log('5-' + data);
-			}, 'text')
-			IO.get('test/showArticle7Mix?_content=json', {
-			}, function(data) {
-				console.log('7-' + data);
-			}, 'text')
-			IO.get('test/showArticle8Mix?_content=json', {
-			}, function(data) {
-				console.log('8-' + data);
+				console.log('9-' + data);
 			}, 'text')
 		})
 	</script>

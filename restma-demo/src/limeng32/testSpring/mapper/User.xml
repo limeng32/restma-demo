@@ -24,6 +24,8 @@
 		where id=#{id}
 	</select>
 
+	<select id="select1" parameterType="User" resultMap="result"></select>
+
 	<select id="selectAll" resultMap="result">
 		select
 		<include refid="columns" />

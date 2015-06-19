@@ -136,6 +136,7 @@
 					<property name="features">
 						<array>
 							<value>WriteMapNullValue</value>
+							<value>PrettyFormat</value>
 						</array>
 					</property>
 					<property name="extractValueFromSingleKeyModel" value="true"></property>

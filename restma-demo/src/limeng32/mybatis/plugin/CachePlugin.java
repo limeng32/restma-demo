@@ -90,19 +90,27 @@ public class CachePlugin implements Interceptor {
 			Cache cache = ms.getCache();
 			if (cache != null) {
 				if (ms.isUseCache() && resultHandler == null) {
-					synchronized (cache) {
-						Object value = cache.getObject(cacheKey);
-						if (value != null) {
-							HashMap<String, Object> cachedMap = (HashMap<String, Object>) value;
-							Limitable cachedPage = (Limitable) cachedMap
-									.get("limiter");
-							Limitable originalPage = (Limitable) metaParameter
-									.getValue("limiter");
-							if (null != originalPage && null != cachedPage) {
-								originalPage.setTotalCount(cachedPage
-										.getTotalCount());
-								return (List<E>) cachedMap.get("list");
+					if (!(Boolean) metaExecutor.getValue("dirty")) {
+						cache.getReadWriteLock().readLock().lock();
+						try {
+							synchronized (cache) {
+								Object value = cache.getObject(cacheKey);
+								if (value != null) {
+									HashMap<String, Object> cachedMap = (HashMap<String, Object>) value;
+									Limitable cachedPage = (Limitable) cachedMap
+											.get("limiter");
+									Limitable originalPage = (Limitable) metaParameter
+											.getValue("limiter");
+									if (null != originalPage
+											&& null != cachedPage) {
+										originalPage.setTotalCount(cachedPage
+												.getTotalCount());
+										return (List<E>) cachedMap.get("list");
+									}
+								}
 							}
+						} finally {
+							cache.getReadWriteLock().readLock().unlock();
 						}
 					}
 				}

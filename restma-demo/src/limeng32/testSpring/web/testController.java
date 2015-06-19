@@ -441,13 +441,14 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/showArticle7Mix")
-	public String showArticle7Mix(ModelMap mm) {
+	public String showArticle7Mix(ModelMap mm,
+			@RequestParam(required = false) int pageNo) {
 		// BookWriter bw = bookWriterService.select(4);
 		// Book b = bookService.select(1);
 		Writer w = writerService.select(1);
 		BookWriterCondition bwc = new BookWriterCondition();
 		bwc.setBook(new Book());
-		bwc.setLimiter(new PageParam(1, 1));
+		bwc.setLimiter(new PageParam(pageNo, 1));
 		// bwc.getBook().setTitle("3%");
 		writerService.loadBookWriter(w, bwc);
 
@@ -471,7 +472,7 @@ public class testController {
 		Writer w = writerService.select(1);
 		BookWriterCondition bwc = new BookWriterCondition();
 		bwc.setBook(new Book());
-		bwc.setLimiter(new PageParam(2, 1));
+		bwc.setLimiter(new PageParam(1, 2));
 		// bwc.getBook().setTitle("3%");
 		writerService.loadBookWriter(w, bwc);
 
@@ -485,6 +486,15 @@ public class testController {
 		// userService.loadArticle(u, articleCon);
 		Page<BookWriter> page = new Page<>(w.getBookWriter(), bwc.getLimiter());
 		mm.addAttribute("_content", page);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String showArticle9Mix(ModelMap mm) {
+		User condition = new User();
+		condition.setAddress("west");
+		User u = userService.select1(condition);
+		mm.addAttribute("_content", u);
 		return "showArticleMix";
 	}
 
