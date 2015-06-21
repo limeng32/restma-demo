@@ -3,6 +3,10 @@ package limeng32.testSpring.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
+
+import org.apache.ibatis.type.JdbcType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -11,26 +15,27 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@")
+@TableMapperAnnotation(tableName = "article", uniqueKey = "id")
 public class Article extends PojoSupport<Article> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER)
 	private int id;
 
+	@FieldMapperAnnotation(dbFieldName = "userid", jdbcType = JdbcType.INTEGER)
 	private User user;
 
+	@FieldMapperAnnotation(dbFieldName = "title", jdbcType = JdbcType.VARCHAR)
 	private String title;
 
+	@FieldMapperAnnotation(dbFieldName = "content", jdbcType = JdbcType.LONGVARCHAR)
 	private String content;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	@JSONField(serialize = false)
 	private Date updateTime = new Date();
-
-	public Article() {
-
-	}
 
 	public int getId() {
 		return id;

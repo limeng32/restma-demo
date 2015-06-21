@@ -24,13 +24,6 @@ public @interface TableMapperAnnotation {
 
 	/**
 	 * 
-	 * @return 数据库表唯一键类型：UniqueKeyType.Single（单个字段的唯一键）,UniqueKeyType.Union（
-	 *         几个字段组合起来的唯一键）
-	 */
-	public UniqueKeyType uniqueKeyType();
-
-	/**
-	 * 
 	 * @return 唯一键名称，多个唯一键用逗号隔开,只能用数据库字段名
 	 */
 	public String uniqueKey();

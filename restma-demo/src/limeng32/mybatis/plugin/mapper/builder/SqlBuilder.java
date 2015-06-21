@@ -10,7 +10,6 @@ import limeng32.mybatis.plugin.mapper.annotation.FieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapper;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
-import limeng32.mybatis.plugin.mapper.annotation.UniqueKeyType;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -107,13 +106,7 @@ public class SqlBuilder {
 	private static String[] buildUniqueKey(TableMapper tableMapper) {
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
-		String[] uniqueKeyNames = null;
-		if (tma.uniqueKeyType().equals(UniqueKeyType.Single)) {
-			uniqueKeyNames = new String[1];
-			uniqueKeyNames[0] = tma.uniqueKey();
-		} else {
-			uniqueKeyNames = tma.uniqueKey().split(",");
-		}
+		String[] uniqueKeyNames = tma.uniqueKey().split(",");
 		return uniqueKeyNames;
 	}
 
@@ -284,13 +277,46 @@ public class SqlBuilder {
 	 * @return sql
 	 * @throws Exception
 	 */
-	public static String buildSelectSql(Object object) throws Exception {
+	public static String buildSelectSql(Class<?> clazz) throws Exception {
+		TableMapper tableMapper = buildTableMapper(clazz);
+		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation();
+		String tableName = tma.tableName();
+		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("select ");
+		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
+			selectSql.append(dbFieldName).append(",");
+		}
+		selectSql.delete(selectSql.lastIndexOf(","),
+				selectSql.lastIndexOf(",") + 3);
+		selectSql.append(" from ").append(tableName);
+
+		StringBuffer whereSql = new StringBuffer(" where ");
+		for (int i = 0; i < uniqueKeyNames.length; i++) {
+			whereSql.append(uniqueKeyNames[i]);
+			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
+					uniqueKeyNames[i]);
+			String fieldName = fieldMapper.getFieldName();
+			whereSql.append("=#{").append(fieldName).append(",")
+					.append("jdbcType=")
+					.append(fieldMapper.getJdbcType().toString())
+					.append("} and ");
+		}
+		whereSql.delete(whereSql.lastIndexOf("and"),
+				whereSql.lastIndexOf("and") + 3);
+		return selectSql.append(whereSql).toString();
+	}
+
+	public static String buildSelectSql1(Class<?> clazz, Object object)
+			throws Exception {
 		if (null == object) {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
 		Map dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(object.getClass());
+		TableMapper tableMapper = buildTableMapper(clazz);
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
@@ -325,5 +351,4 @@ public class SqlBuilder {
 				whereSql.lastIndexOf("and") + 3);
 		return selectSql.append(whereSql).toString();
 	}
-
 }

@@ -13,13 +13,7 @@
 		</where>
 	</sql>
 
-	<select id="select" parameterType="int" resultMap="result">
-		select
-		<include refid="columns" />
-		from
-		<include refid="tableName" />
-		where id=#{id}
-	</select>
+	<select id="select" resultMap="result"></select>
 
 	<select id="selectAll" resultMap="result">
 		select

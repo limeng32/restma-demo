@@ -70,15 +70,21 @@ public class AutoMapperInterceptor implements Interceptor {
 			MappedStatement mappedStatement = (MappedStatement) metaStatementHandler
 					.getValue("delegate.mappedStatement");
 			String id = mappedStatement.getId();
+			Class<?> clazz = mappedStatement.getResultMaps().get(0).getType();
 			id = id.substring(id.lastIndexOf(".") + 1);
-			if ("insert".equals(id)) {
+			switch (id) {
+			case "insert":
 				newSql = SqlBuilder.buildInsertSql(parameterObject);
-			} else if ("update".equals(id)) {
+				break;
+			case "update":
 				newSql = SqlBuilder.buildUpdateSql(parameterObject);
-			} else if ("delete".equals(id)) {
+				break;
+			case "delete":
 				newSql = SqlBuilder.buildDeleteSql(parameterObject);
-			} else if ("select1".equals(id)) {
-				newSql = SqlBuilder.buildSelectSql(parameterObject);
+				break;
+			case "select":
+				newSql = SqlBuilder.buildSelectSql(clazz);
+				break;
 			}
 			logger.debug("Auto generated sql:" + newSql);
 			SqlSource sqlSource = buildSqlSource(configuration, newSql,

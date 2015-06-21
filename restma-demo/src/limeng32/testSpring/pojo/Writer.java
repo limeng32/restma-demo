@@ -2,11 +2,19 @@ package limeng32.testSpring.pojo;
 
 import java.io.Serializable;
 
+import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
+
+import org.apache.ibatis.type.JdbcType;
+
 import com.alibaba.fastjson.annotation.JSONField;
 
+@TableMapperAnnotation(tableName = "Writer", uniqueKey = "id")
 public class Writer extends PojoSupport<Writer> implements Serializable {
 	private static final long serialVersionUID = 1L;
+	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER)
 	private int id;
+	@FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR)
 	private java.lang.String name;
 
 	private java.util.Collection<BookWriter> bookWriter;

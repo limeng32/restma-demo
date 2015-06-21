@@ -9,7 +9,6 @@ import javax.validation.constraints.Past;
 
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
-import limeng32.mybatis.plugin.mapper.annotation.UniqueKeyType;
 import limeng32.testSpring.annotation.Status;
 
 import org.apache.ibatis.type.JdbcType;
@@ -23,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@")
-@TableMapperAnnotation(tableName = "user", uniqueKeyType = UniqueKeyType.Single, uniqueKey = "address")
+@TableMapperAnnotation(tableName = "user", uniqueKey = "id")
 public class User extends PojoSupport<User> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -38,6 +37,7 @@ public class User extends PojoSupport<User> implements Serializable {
 	@FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
 	private String address;
 
+	@FieldMapperAnnotation(dbFieldName = "nickname", jdbcType = JdbcType.VARCHAR)
 	private String nickname;
 
 	@Max(10000)
