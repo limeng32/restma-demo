@@ -9,9 +9,19 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String field_tableName = "article";
+
+	public static final String field_id = "id";
+
+	public static final String field_userid = "userid";
+
+	public static final String field_title = "title";
+
+	public static final String field_content = "content";
+
 	public enum Field implements Queryable {
-		tableName("article"), id("id"), userid("userid"), title("title"), content(
-				"content");
+		tableName(field_tableName), id(field_id), userid(field_userid), title(
+				field_title), content(field_content);
 
 		private final String value;
 

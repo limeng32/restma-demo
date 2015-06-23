@@ -309,46 +309,4 @@ public class SqlBuilder {
 		return selectSql.append(whereSql).toString();
 	}
 
-	public static String buildSelectSql1(Class<?> clazz, Object object)
-			throws Exception {
-		if (null == object) {
-			throw new RuntimeException(
-					"Sorry,I refuse to build sql for a null object!");
-		}
-		Map dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(clazz);
-		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
-				.getTableMapperAnnotation();
-		String tableName = tma.tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
-
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("select ");
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			selectSql.append(dbFieldName).append(",");
-		}
-		selectSql.delete(selectSql.lastIndexOf(","),
-				selectSql.lastIndexOf(",") + 3);
-		selectSql.append(" from ").append(tableName);
-
-		StringBuffer whereSql = new StringBuffer(" where ");
-		for (int i = 0; i < uniqueKeyNames.length; i++) {
-			whereSql.append(uniqueKeyNames[i]);
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					uniqueKeyNames[i]);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
-			if (value == null) {
-				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
-						+ "' can't be null, build query sql failed!");
-			}
-			whereSql.append("=#{").append(fieldName).append(",")
-					.append("jdbcType=")
-					.append(fieldMapper.getJdbcType().toString())
-					.append("} and ");
-		}
-		whereSql.delete(whereSql.lastIndexOf("and"),
-				whereSql.lastIndexOf("and") + 3);
-		return selectSql.append(whereSql).toString();
-	}
 }
