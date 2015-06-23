@@ -70,7 +70,6 @@ public class AutoMapperInterceptor implements Interceptor {
 			MappedStatement mappedStatement = (MappedStatement) metaStatementHandler
 					.getValue("delegate.mappedStatement");
 			String id = mappedStatement.getId();
-			Class<?> clazz = mappedStatement.getResultMaps().get(0).getType();
 			id = id.substring(id.lastIndexOf(".") + 1);
 			switch (id) {
 			case "insert":
@@ -83,7 +82,8 @@ public class AutoMapperInterceptor implements Interceptor {
 				newSql = SqlBuilder.buildDeleteSql(parameterObject);
 				break;
 			case "select":
-				newSql = SqlBuilder.buildSelectSql(clazz);
+				newSql = SqlBuilder.buildSelectSql(mappedStatement
+						.getResultMaps().get(0).getType());
 				break;
 			}
 			logger.debug("Auto generated sql:" + newSql);

@@ -494,6 +494,11 @@ public class testController {
 		// User condition = new User();
 		// condition.setName("zzhang3");
 		// condition.setId(1);
+		Article na = new Article();
+		na.setTitle("na");
+		// na.setUser(new User());
+		// na.getUser().setId(2);
+		articleService.insert(na);
 		Article a = articleService.select(1);
 		mm.addAttribute("_content", a);
 		return "showArticleMix";

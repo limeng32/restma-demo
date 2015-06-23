@@ -123,6 +123,49 @@ public class SqlBuilder {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(object.getClass());
+		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation();
+		String tableName = tma.tableName();
+		StringBuffer tableSql = new StringBuffer();
+		StringBuffer valueSql = new StringBuffer();
+
+		tableSql.append("insert into ").append(tableName).append("(");
+		valueSql.append("values(");
+
+		boolean allFieldNull = true;
+		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
+			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
+					dbFieldName);
+			String fieldName = fieldMapper.getFieldName();
+			Object value = dtoFieldMap.get(fieldName);
+			if (value == null) {
+				continue;
+			}
+			allFieldNull = false;
+			tableSql.append(dbFieldName).append(",");
+			valueSql.append("#{").append(fieldName).append(",")
+					.append("jdbcType=")
+					.append(fieldMapper.getJdbcType().toString()).append("},");
+		}
+		if (allFieldNull) {
+			throw new RuntimeException("Are you joking? Object "
+					+ object.getClass().getName()
+					+ "'s all fields are null, how can i build sql for it?!");
+		}
+		tableSql.delete(tableSql.lastIndexOf(","),
+				tableSql.lastIndexOf(",") + 1);
+		valueSql.delete(valueSql.lastIndexOf(","),
+				valueSql.lastIndexOf(",") + 1);
+		return tableSql.append(") ").append(valueSql).append(")").toString();
+	}
+
+	public static String buildInsertSql1(Object object) throws Exception {
+		if (null == object) {
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for a null object!");
+		}
 		Map dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(object.getClass());
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
@@ -290,7 +333,7 @@ public class SqlBuilder {
 			selectSql.append(dbFieldName).append(",");
 		}
 		selectSql.delete(selectSql.lastIndexOf(","),
-				selectSql.lastIndexOf(",") + 3);
+				selectSql.lastIndexOf(",") + 1);
 		selectSql.append(" from ").append(tableName);
 
 		StringBuffer whereSql = new StringBuffer(" where ");
