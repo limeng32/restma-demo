@@ -26,6 +26,17 @@ public @interface FieldMapperAnnotation {
 
 	/**
 	 * 
+	 * 如果是外键，对应数据库其他表的主键字段的名称。默认为空，表示不是外键。
+	 */
+	String dbAssociationUniqueKey() default "";
+
+	/**
+	 * 
+	 * 此变量是否对应数据库表的主键。默认为否。
+	 */
+	boolean isUniqueKey() default false;
+
+	/**
 	 * 
 	 * 字段用JDBC接口存入数据库需要设置的数据类型,Integer,Long,Short,Float,Double,String,Date
 	 * ,Timestamp,Time

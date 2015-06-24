@@ -21,10 +21,10 @@ public class Article extends PojoSupport<Article> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@FieldMapperAnnotation(dbFieldName = ArticleCondition.field_id, jdbcType = JdbcType.INTEGER)
+	@FieldMapperAnnotation(dbFieldName = ArticleCondition.field_id, jdbcType = JdbcType.INTEGER, isUniqueKey = true)
 	private int id;
 
-	@FieldMapperAnnotation(dbFieldName = ArticleCondition.field_userid, jdbcType = JdbcType.INTEGER)
+	@FieldMapperAnnotation(dbFieldName = ArticleCondition.field_userid, jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "id")
 	private User user;
 
 	@FieldMapperAnnotation(dbFieldName = ArticleCondition.field_title, jdbcType = JdbcType.VARCHAR)
