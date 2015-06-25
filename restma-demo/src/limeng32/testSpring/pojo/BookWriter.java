@@ -9,12 +9,12 @@ import org.apache.ibatis.type.JdbcType;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-@TableMapperAnnotation(tableName = "BookWriter", uniqueKey = "id")
+@TableMapperAnnotation(tableName = "BookWriter")
 public class BookWriter extends PojoSupport<BookWriter> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@JSONField(serialize = false)
-	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER)
+	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
 	private int id;
 
 	@FieldMapperAnnotation(dbFieldName = "bookid", jdbcType = JdbcType.INTEGER)

@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@")
-@TableMapperAnnotation(tableName = ArticleCondition.field_tableName, uniqueKey = ArticleCondition.field_id)
+@TableMapperAnnotation(tableName = ArticleCondition.field_tableName)
 public class Article extends PojoSupport<Article> implements Serializable {
 
 	private static final long serialVersionUID = 1L;

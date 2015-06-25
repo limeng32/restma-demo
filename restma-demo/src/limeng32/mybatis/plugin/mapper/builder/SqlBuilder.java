@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapper;
@@ -83,6 +84,22 @@ public class SqlBuilder {
 								.dbFieldName());
 						fieldMapper.setJdbcType(fieldMapperAnnotation
 								.jdbcType());
+						fieldMapper.setUniqueKey(fieldMapperAnnotation
+								.isUniqueKey());
+						if ("".equals(fieldMapperAnnotation
+								.dbAssociationUniqueKey())) {
+						} else {
+							fieldMapper
+									.setDbAssociationUniqueKey(fieldMapperAnnotation
+											.dbAssociationUniqueKey());
+							fieldMapper.setForeignKey(true);
+						}
+						if (fieldMapper.isForeignKey()) {
+							// 这里先用dbField代替field做测试
+							fieldMapper
+									.setForeignFieldName(fieldMapperAnnotation
+											.dbAssociationUniqueKey());
+						}
 						fieldMapperCache.put(
 								fieldMapperAnnotation.dbFieldName(),
 								fieldMapper);
@@ -104,9 +121,18 @@ public class SqlBuilder {
 	 * @return
 	 */
 	private static String[] buildUniqueKey(TableMapper tableMapper) {
-		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
-				.getTableMapperAnnotation();
-		String[] uniqueKeyNames = tma.uniqueKey().split(",");
+		List<String> l = new ArrayList<String>();
+		for (FieldMapper fm : tableMapper.getFieldMapperList()) {
+			// System.out.println("---" + fm.getDbFieldName() + "---"
+			// + fm.getFieldName() + "---" + fm.isUniqueKey() + "---"
+			// + fm.getDbAssociationUniqueKey() + "---"
+			// + fm.isForeignKey());
+			if (fm.isUniqueKey()) {
+				l.add(fm.getDbFieldName());
+			}
+		}
+		String[] uniqueKeyNames = new String[l.size()];
+		l.toArray(uniqueKeyNames);
 		return uniqueKeyNames;
 	}
 
@@ -145,8 +171,14 @@ public class SqlBuilder {
 			}
 			allFieldNull = false;
 			tableSql.append(dbFieldName).append(",");
-			valueSql.append("#{").append(fieldName).append(",")
-					.append("jdbcType=")
+			valueSql.append("#{");
+			if (fieldMapper.isForeignKey()) {
+				valueSql.append(fieldName).append(".")
+						.append(fieldMapper.getForeignFieldName());
+			} else {
+				valueSql.append(fieldName);
+			}
+			valueSql.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString()).append("},");
 		}
 		if (allFieldNull) {
