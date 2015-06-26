@@ -32,13 +32,7 @@
 		<include refid="conditions" />
 	</select>
 
-	<insert id="insert" parameterType="User" useGeneratedKeys="true"
-		keyProperty="id">
-		insert into
-		<include refid="tableName" />
-		(name,address,nickname,isable)
-		values(#{name},#{address},#{nickname},'1')
-	</insert>
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 
 	<update id="update" parameterType="User">
 		update

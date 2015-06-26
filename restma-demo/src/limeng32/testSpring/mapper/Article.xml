@@ -33,21 +33,11 @@
 		<include refid="conditions" />
 	</select>
 
-	<insert id="insert1" parameterType="Article" useGeneratedKeys="true"
-		keyProperty="id">
-		insert into
-		<include refid="tableName" />
-		(title,content
-		<if test="user != null and user.id > 0">,userid</if>
-		,isable) values(#{title},#{content}
-		<if test="user != null and user.id > 0">,#{user.id}</if>
-		,'1')
-	</insert>
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 
-	<insert id="insert" parameterType="Article" useGeneratedKeys="true"
-		keyProperty="id"></insert>
+	<update id="update"></update>
 
-	<update id="update" parameterType="Article">
+	<update id="update1" parameterType="Article">
 		update
 		<include refid="tableName" />
 		<set>
