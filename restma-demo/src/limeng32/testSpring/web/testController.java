@@ -491,16 +491,28 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle9Mix(ModelMap mm) {
+
+		Article na3 = new Article();
+		na3.setTitle("naa3");
+		na3.setUser(new User());
+		articleService.insert(na3);
+
+		Article na2 = new Article();
+		na2.setTitle("naa2");
+		na2.setUser(new User());
+		na2.getUser().setId(2);
+		articleService.insert(na2);
+		// Article a = articleService.select(1);
+
 		// User condition = new User();
 		// condition.setName("zzhang3");
 		// condition.setId(1);
 		Article na = new Article();
-		na.setTitle("na");
-		na.setUser(new User());
-		na.getUser().setId(1);
+		na.setTitle("naa");
+		// na.setUser(new User());
+		// na.getUser().setId(2);
 		articleService.insert(na);
-		Article a = articleService.select(1);
-		mm.addAttribute("_content", a);
+		mm.addAttribute("_content", na);
 		return "showArticleMix";
 	}
 

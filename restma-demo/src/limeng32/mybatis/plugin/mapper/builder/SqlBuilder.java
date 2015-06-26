@@ -95,10 +95,17 @@ public class SqlBuilder {
 							fieldMapper.setForeignKey(true);
 						}
 						if (fieldMapper.isForeignKey()) {
-							// 这里先用dbField代替field做测试
-							fieldMapper
-									.setForeignFieldName(fieldMapperAnnotation
-											.dbAssociationUniqueKey());
+							if (!tableMapperCache.containsKey(field.getType())) {
+								buildTableMapper(field.getType());
+							}
+							TableMapper tm = tableMapperCache.get(field
+									.getType());
+							String foreignFieldName = tm
+									.getFieldMapperCache()
+									.get(fieldMapperAnnotation
+											.dbAssociationUniqueKey())
+									.getFieldName();
+							fieldMapper.setForeignFieldName(foreignFieldName);
 						}
 						fieldMapperCache.put(
 								fieldMapperAnnotation.dbFieldName(),
