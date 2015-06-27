@@ -34,16 +34,7 @@
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 
-	<update id="update" parameterType="User">
-		update
-		<include refid="tableName" />
-		<set>
-			<if test="id != null">id=#{id},</if>
-			<if test="name != null">name=#{name},</if>
-			<if test="address != null">address=#{address},</if>
-		</set>
-		where id=#{id}
-	</update>
+	<update id="update"></update>
 
 	<resultMap id="result" type="User" autoMapping="true">
 		<id property="id" column="id" />
