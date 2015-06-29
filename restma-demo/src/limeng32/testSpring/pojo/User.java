@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
 import limeng32.testSpring.annotation.Status;
 
@@ -235,4 +236,6 @@ public class User extends PojoSupport<User> implements Serializable {
 		this.sex = sex;
 	}
 
+	@PersistentFlagAnnotation
+	private String _persistent;
 }

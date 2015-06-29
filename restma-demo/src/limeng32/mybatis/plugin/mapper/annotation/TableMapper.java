@@ -18,6 +18,8 @@ public class TableMapper {
 
 	private List<FieldMapper> fieldMapperList;
 
+	private Annotation persistentFlagAnnotation;
+
 	public List<FieldMapper> getFieldMapperList() {
 		return fieldMapperList;
 	}
@@ -40,6 +42,14 @@ public class TableMapper {
 
 	public void setFieldMapperCache(Map<String, FieldMapper> fieldMapperCache) {
 		this.fieldMapperCache = fieldMapperCache;
+	}
+
+	public Annotation getPersistentFlagAnnotation() {
+		return persistentFlagAnnotation;
+	}
+
+	public void setPersistentFlagAnnotation(Annotation persistentFlagAnnotation) {
+		this.persistentFlagAnnotation = persistentFlagAnnotation;
 	}
 
 }

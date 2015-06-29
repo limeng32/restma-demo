@@ -78,6 +78,9 @@ public class AutoMapperInterceptor implements Interceptor {
 			case "update":
 				newSql = SqlBuilder.buildUpdateSql(parameterObject);
 				break;
+			case "updatePersistent":
+				newSql = SqlBuilder.buildUpdatePersistentSql(parameterObject);
+				break;
 			case "delete":
 				newSql = SqlBuilder.buildDeleteSql(parameterObject);
 				break;

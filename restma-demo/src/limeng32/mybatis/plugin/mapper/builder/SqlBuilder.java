@@ -9,6 +9,7 @@ import java.util.Map;
 
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapper;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
 
@@ -58,6 +59,8 @@ public class SqlBuilder {
 			for (Annotation an : classAnnotations) {
 				if (an instanceof TableMapperAnnotation) {
 					tableMapper.setTableMapperAnnotation(an);
+				} else if (an instanceof PersistentFlagAnnotation) {
+					tableMapper.setPersistentFlagAnnotation(an);
 				}
 			}
 			if (tableMapper.getTableMapperAnnotation() == null) {
@@ -111,6 +114,9 @@ public class SqlBuilder {
 								fieldMapperAnnotation.dbFieldName(),
 								fieldMapper);
 						fieldMapperList.add(fieldMapper);
+					} else if (an instanceof PersistentFlagAnnotation) {
+						System.out.println("--------------------"
+								+ field.getName());
 					}
 				}
 			}
@@ -130,10 +136,6 @@ public class SqlBuilder {
 	private static String[] buildUniqueKey(TableMapper tableMapper) {
 		List<String> l = new ArrayList<String>();
 		for (FieldMapper fm : tableMapper.getFieldMapperList()) {
-			// System.out.println("---" + fm.getDbFieldName() + "---"
-			// + fm.getFieldName() + "---" + fm.isUniqueKey() + "---"
-			// + fm.getDbAssociationUniqueKey() + "---"
-			// + fm.isForeignKey());
 			if (fm.isUniqueKey()) {
 				l.add(fm.getDbFieldName());
 			}
@@ -146,8 +148,7 @@ public class SqlBuilder {
 	/**
 	 * 由传入的对象生成insert sql语句
 	 * 
-	 * @param tableMapper
-	 * @param dto
+	 * @param object
 	 * @return sql
 	 * @throws Exception
 	 */
@@ -274,7 +275,81 @@ public class SqlBuilder {
 	}
 
 	/**
-	 * 由传入的对象生成update sql语句
+	 * 由传入的对象生成update持久态对象的 sql语句
+	 * 
+	 * @param object
+	 * @return sql
+	 * @throws Exception
+	 */
+	public static String buildUpdatePersistentSql(Object object)
+			throws Exception {
+		if (null == object) {
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for a null object!");
+		}
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(object.getClass());
+		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation();
+		String tableName = tma.tableName();
+		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+
+		StringBuffer tableSql = new StringBuffer();
+		StringBuffer whereSql = new StringBuffer(" where ");
+
+		tableSql.append("update ").append(tableName).append(" set ");
+
+		boolean allFieldNull = true;
+
+		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
+			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
+					dbFieldName);
+			String fieldName = fieldMapper.getFieldName();
+			Object value = dtoFieldMap.get(fieldName);
+			if (value == null) {
+				continue;
+			}
+			allFieldNull = false;
+			tableSql.append(dbFieldName).append("=#{");
+			if (fieldMapper.isForeignKey()) {
+				tableSql.append(fieldName).append(".")
+						.append(fieldMapper.getForeignFieldName());
+			} else {
+				tableSql.append(fieldName);
+			}
+			tableSql.append(",").append("jdbcType=")
+					.append(fieldMapper.getJdbcType().toString()).append("},");
+		}
+		if (allFieldNull) {
+			throw new RuntimeException("Are you joking? Object "
+					+ object.getClass().getName()
+					+ "'s all fields are null, how can i build sql for it?!");
+		}
+
+		tableSql.delete(tableSql.lastIndexOf(","),
+				tableSql.lastIndexOf(",") + 1);
+		for (int i = 0; i < uniqueKeyNames.length; i++) {
+			whereSql.append(uniqueKeyNames[i]);
+			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
+					uniqueKeyNames[i]);
+			String fieldName = fieldMapper.getFieldName();
+			Object value = dtoFieldMap.get(fieldName);
+			if (value == null) {
+				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
+						+ "' can't be null, build update sql failed!");
+			}
+			whereSql.append("=#{").append(fieldName).append(",")
+					.append("jdbcType=")
+					.append(fieldMapper.getJdbcType().toString())
+					.append("} and ");
+		}
+		whereSql.delete(whereSql.lastIndexOf("and"),
+				whereSql.lastIndexOf("and") + 3);
+		return tableSql.append(whereSql).toString();
+	}
+
+	/**
+	 * 由传入的对象生成delete sql语句
 	 * 
 	 * @param object
 	 * @return sql
@@ -318,7 +393,7 @@ public class SqlBuilder {
 	/**
 	 * 由传入的对象生成query sql语句
 	 * 
-	 * @param object
+	 * @param clazz
 	 * @return sql
 	 * @throws Exception
 	 */
