@@ -334,8 +334,9 @@ public class SqlBuilder {
 		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
 			selectSql.append(dbFieldName).append(",");
 		}
-		selectSql.delete(selectSql.lastIndexOf(","),
-				selectSql.lastIndexOf(",") + 1);
+		// selectSql.delete(selectSql.lastIndexOf(","),
+		// selectSql.lastIndexOf(",") + 1);
+		selectSql.append("true as _persistent");
 		selectSql.append(" from ").append(tableName);
 
 		StringBuffer whereSql = new StringBuffer(" where ");

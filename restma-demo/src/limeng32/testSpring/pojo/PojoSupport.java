@@ -2,8 +2,13 @@ package limeng32.testSpring.pojo;
 
 import java.util.Collection;
 
+import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
+
 public abstract class PojoSupport<T extends PojoSupport<T>> implements
 		PojoFace<T> {
+
+	@PersistentFlagAnnotation
+	protected String _persistent;
 
 	abstract protected int getId();
 
@@ -28,5 +33,4 @@ public abstract class PojoSupport<T extends PojoSupport<T>> implements
 		}
 		return ret;
 	}
-
 }

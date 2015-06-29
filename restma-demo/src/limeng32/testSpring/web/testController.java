@@ -491,10 +491,10 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle9Mix(ModelMap mm) {
-
-		User u = userService.select(266);
-//		u.setNickname("Nickle");
-//		userService.update(u);
+		User u = new User();
+		u = userService.select(266);
+		u.setNickname("Nickle2");
+		userService.update(u);
 
 		mm.addAttribute("_content", u);
 		return "showArticleMix";
