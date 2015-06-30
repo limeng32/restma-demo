@@ -40,4 +40,9 @@ public class ArticleService extends ServiceSupport<Article> implements
 	public int count(Conditionable conditionable) {
 		return mapper.count(conditionable);
 	}
+
+	@Override
+	public void updatePersistent(Article t) {
+		supportUpdatePersistent(mapper, t);
+	}
 }

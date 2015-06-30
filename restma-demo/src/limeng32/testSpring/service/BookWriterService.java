@@ -40,4 +40,9 @@ public class BookWriterService extends ServiceSupport<BookWriter> implements
 	public int count(Conditionable conditionable) {
 		return mapper.count(conditionable);
 	}
+
+	@Override
+	public void updatePersistent(BookWriter t) {
+		supportUpdatePersistent(mapper, t);
+	}
 }

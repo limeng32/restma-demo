@@ -34,7 +34,9 @@
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 
-	<update id="update"></update>
+	<update id="update" />
+
+	<update id="updatePersistent" />
 
 	<resultMap id="result" type="User" autoMapping="true">
 		<id property="id" column="id" />

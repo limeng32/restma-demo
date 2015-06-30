@@ -27,4 +27,8 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 	protected void supportUpdate(MapperFace<T> mapper, T t) {
 		mapper.update(t);
 	}
+
+	protected void supportUpdatePersistent(MapperFace<T> mapper, T t) {
+		mapper.updatePersistent(t);
+	}
 }

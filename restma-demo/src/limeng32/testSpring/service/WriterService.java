@@ -51,4 +51,9 @@ public class WriterService extends ServiceSupport<Writer> implements
 		bookWriterCondition.setWriter(writer);
 		writer.setBookWriter(bookWriterService.selectAll(bookWriterCondition));
 	}
+
+	@Override
+	public void updatePersistent(Writer t) {
+		supportUpdatePersistent(mapper, t);
+	}
 }

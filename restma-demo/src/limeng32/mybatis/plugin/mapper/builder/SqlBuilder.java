@@ -3,10 +3,12 @@ package limeng32.mybatis.plugin.mapper.builder;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
@@ -59,8 +61,6 @@ public class SqlBuilder {
 			for (Annotation an : classAnnotations) {
 				if (an instanceof TableMapperAnnotation) {
 					tableMapper.setTableMapperAnnotation(an);
-				} else if (an instanceof PersistentFlagAnnotation) {
-					tableMapper.setPersistentFlagAnnotation(an);
 				}
 			}
 			if (tableMapper.getTableMapperAnnotation() == null) {
@@ -115,8 +115,7 @@ public class SqlBuilder {
 								fieldMapper);
 						fieldMapperList.add(fieldMapper);
 					} else if (an instanceof PersistentFlagAnnotation) {
-						System.out.println("--------------------"
-								+ field.getName());
+						tableMapper.getPersistentFlags().add(field.getName());
 					}
 				}
 			}
@@ -213,8 +212,10 @@ public class SqlBuilder {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
+
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(object.getClass());
+
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
@@ -287,8 +288,17 @@ public class SqlBuilder {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
+
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(object.getClass());
+		Collection<String> persistentFlags = tableMapper.getPersistentFlags();
+		for (String persistentFlag : persistentFlags) {
+			if (ReflectHelper.getValueByFieldName(object, persistentFlag) == null) {
+				throw new RuntimeException(
+						"Sorry,I refuse to updatePersistent a unretrieved pojo!");
+			}
+		}
+
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
@@ -305,10 +315,6 @@ public class SqlBuilder {
 			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
 					dbFieldName);
 			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
-			if (value == null) {
-				continue;
-			}
 			allFieldNull = false;
 			tableSql.append(dbFieldName).append("=#{");
 			if (fieldMapper.isForeignKey()) {
@@ -399,6 +405,7 @@ public class SqlBuilder {
 	 */
 	public static String buildSelectSql(Class<?> clazz) throws Exception {
 		TableMapper tableMapper = buildTableMapper(clazz);
+		Collection<String> persistentFlags = tableMapper.getPersistentFlags();
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
@@ -409,9 +416,11 @@ public class SqlBuilder {
 		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
 			selectSql.append(dbFieldName).append(",");
 		}
-		// selectSql.delete(selectSql.lastIndexOf(","),
-		// selectSql.lastIndexOf(",") + 1);
-		selectSql.append("true as _persistent");
+		for (String persistentFlag : persistentFlags) {
+			selectSql.append("true as ").append(persistentFlag).append(",");
+		}
+		selectSql.delete(selectSql.lastIndexOf(","),
+				selectSql.lastIndexOf(",") + 1);
 		selectSql.append(" from ").append(tableName);
 
 		StringBuffer whereSql = new StringBuffer(" where ");

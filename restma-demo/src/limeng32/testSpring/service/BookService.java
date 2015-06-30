@@ -50,4 +50,9 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 		bookWriterCondition.setBook(book);
 		book.setBookWriter(bookWriterService.selectAll(bookWriterCondition));
 	}
+
+	@Override
+	public void updatePersistent(Book t) {
+		supportUpdatePersistent(mapper, t);
+	}
 }

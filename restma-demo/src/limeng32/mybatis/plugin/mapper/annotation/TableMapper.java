@@ -1,6 +1,8 @@
 package limeng32.mybatis.plugin.mapper.annotation;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ public class TableMapper {
 
 	private List<FieldMapper> fieldMapperList;
 
-	private Annotation persistentFlagAnnotation;
+	private Collection<String> persistentFlags;
 
 	public List<FieldMapper> getFieldMapperList() {
 		return fieldMapperList;
@@ -44,12 +46,14 @@ public class TableMapper {
 		this.fieldMapperCache = fieldMapperCache;
 	}
 
-	public Annotation getPersistentFlagAnnotation() {
-		return persistentFlagAnnotation;
+	public Collection<String> getPersistentFlags() {
+		if (persistentFlags == null)
+			persistentFlags = new HashSet<>();
+		return persistentFlags;
 	}
 
-	public void setPersistentFlagAnnotation(Annotation persistentFlagAnnotation) {
-		this.persistentFlagAnnotation = persistentFlagAnnotation;
+	public void setPersistentFlags(Collection<String> persistentFlags) {
+		this.persistentFlags = persistentFlags;
 	}
 
 }

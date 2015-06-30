@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
 
@@ -88,10 +89,6 @@ public class Article extends PojoSupport<Article> implements Serializable {
 		this.updateTime = updateTime;
 	}
 
-	public String toString() {
-		return "Article [id:" + this.id + ";title:" + this.title + ";content:"
-				+ content + (user == null ? "" : (";user:" + user.getName()))
-				+ "]";
-	}
-
+	@PersistentFlagAnnotation
+	private String _persistent;
 }

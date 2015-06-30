@@ -15,4 +15,6 @@ public interface MapperFace<T> {
 	public void insert(T t);
 
 	public void update(T t);
+
+	public void updatePersistent(T t);
 }
