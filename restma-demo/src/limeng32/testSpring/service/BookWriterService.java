@@ -45,4 +45,9 @@ public class BookWriterService extends ServiceSupport<BookWriter> implements
 	public void updatePersistent(BookWriter t) {
 		supportUpdatePersistent(mapper, t);
 	}
+
+	@Override
+	public void retrieve(BookWriter t) {
+		supportRetrieve(mapper, t);
+	}
 }

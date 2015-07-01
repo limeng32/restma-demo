@@ -44,7 +44,10 @@ public class Writer extends PojoSupport<Writer> implements Serializable {
 			return;
 		if (this.bookWriter == null)
 			this.bookWriter = new java.util.LinkedHashSet<BookWriter>();
-		if (!newBookWriter.belongs(this.bookWriter)) {
+		if (!this.bookWriter.contains(newBookWriter)) {
+			if (newBookWriter.getById(this.bookWriter) != null) {
+				removeBookWriter(newBookWriter.getById(this.bookWriter));
+			}
 			this.bookWriter.add(newBookWriter);
 			newBookWriter.setWriter(this);
 		}

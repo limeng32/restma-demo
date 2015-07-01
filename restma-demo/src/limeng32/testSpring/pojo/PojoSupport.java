@@ -5,9 +5,9 @@ import java.util.Collection;
 public abstract class PojoSupport<T extends PojoSupport<T>> implements
 		PojoFace<T> {
 
-	abstract protected int getId();
+	abstract public int getId();
 
-	abstract protected void setId(int id);
+	abstract public void setId(int id);
 
 	public void quit(Collection<T> c) {
 		for (T i : c) {
@@ -23,6 +23,17 @@ public abstract class PojoSupport<T extends PojoSupport<T>> implements
 		for (T i : c) {
 			if (this.getId() == i.getId()) {
 				ret = true;
+				break;
+			}
+		}
+		return ret;
+	}
+
+	public T getById(Collection<T> c) {
+		T ret = null;
+		for (T i : c) {
+			if (this.getId() == i.getId()) {
+				ret = i;
 				break;
 			}
 		}

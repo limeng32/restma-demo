@@ -55,4 +55,9 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 	public void updatePersistent(Book t) {
 		supportUpdatePersistent(mapper, t);
 	}
+
+	@Override
+	public void retrieve(Book t) {
+		supportRetrieve(mapper, t);
+	}
 }

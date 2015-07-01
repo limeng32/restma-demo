@@ -45,4 +45,9 @@ public class ArticleService extends ServiceSupport<Article> implements
 	public void updatePersistent(Article t) {
 		supportUpdatePersistent(mapper, t);
 	}
+
+	@Override
+	public void retrieve(Article t) {
+		supportRetrieve(mapper, t);
+	}
 }

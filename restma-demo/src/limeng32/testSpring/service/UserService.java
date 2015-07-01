@@ -54,4 +54,9 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 	public void updatePersistent(User t) {
 		supportUpdatePersistent(mapper, t);
 	}
+
+	@Override
+	public void retrieve(User t) {
+		supportRetrieve(mapper, t);
+	}
 }

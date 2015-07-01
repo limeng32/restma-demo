@@ -17,4 +17,6 @@ public interface MapperFace<T> {
 	public void update(T t);
 
 	public void updatePersistent(T t);
+
+	public void retrieve(T t);
 }

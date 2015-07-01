@@ -1,6 +1,10 @@
 package limeng32.mybatis.plugin;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
 
 public class ReflectHelper {
 	public static Field getFieldByFieldName(Object obj, String fieldName) {
@@ -64,4 +68,56 @@ public class ReflectHelper {
 		}
 	}
 
+	/**
+	 * 
+	 * @param dest
+	 * @param source
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	public static void copyBeanByField(Object dest, Object source)
+			throws SecurityException, NoSuchFieldException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
+		Method[] destMethods = dest.getClass().getDeclaredMethods();
+		Method[] sourceMethods = source.getClass().getDeclaredMethods();
+		HashMap<String, Method> destMethodMap = new HashMap<>();
+		HashMap<String, Method> sourceMethodMap = new HashMap<>();
+
+		if (null != sourceMethods && null != destMethods) {
+			for (Method m : sourceMethods) {
+				sourceMethodMap.put(m.getName(), m);
+			}
+			for (Method m : destMethods) {
+				destMethodMap.put(m.getName(), m);
+			}
+		} else {
+			return;
+		}
+		for (Field field : source.getClass().getDeclaredFields()) {
+			if (Modifier.isStatic(field.getModifiers())
+					|| Modifier.isFinal(field.getModifiers())) {
+				continue;
+			}
+			String getMethodName = "get"
+					+ field.getName().substring(0, 1).toUpperCase()
+					+ field.getName().substring(1);
+			String setMethodName = "set"
+					+ field.getName().substring(0, 1).toUpperCase()
+					+ field.getName().substring(1);
+			if (destMethodMap.get(setMethodName) == null
+					|| sourceMethodMap.get(getMethodName) == null) {
+				setValueByFieldName(dest, field.getName(),
+						getValueByFieldName(source, field.getName()));
+			} else {
+				Method destMethod = (Method) destMethodMap.get(setMethodName);
+				Method sourceMethod = (Method) sourceMethodMap
+						.get(getMethodName);
+				destMethod.invoke(dest, sourceMethod.invoke(source));
+			}
+		}
+	}
 }

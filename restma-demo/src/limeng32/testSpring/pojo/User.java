@@ -92,7 +92,10 @@ public class User extends PojoSupport<User> implements Serializable {
 			return;
 		if (this.article == null)
 			this.article = new java.util.LinkedHashSet<Article>();
-		if (!newArticle.belongs(this.article)) {
+		if (!this.article.contains(newArticle)) {
+			if (newArticle.getById(this.article) != null) {
+				removeArticle(newArticle.getById(this.article));
+			}
 			this.article.add(newArticle);
 			newArticle.setUser(this);
 		}

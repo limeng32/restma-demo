@@ -1,11 +1,15 @@
 package limeng32.testSpring.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.testSpring.mapper.MapperFace;
+import limeng32.testSpring.pojo.PojoSupport;
 import limeng32.testSpring.pojo.condition.Conditionable;
 
-public abstract class ServiceSupport<T> implements ServiceFace<T> {
+public abstract class ServiceSupport<T extends PojoSupport<T>> implements
+		ServiceFace<T> {
 
 	protected T supportSelect(MapperFace<T> mapper, int id) {
 		return mapper.select(id);
@@ -30,5 +34,15 @@ public abstract class ServiceSupport<T> implements ServiceFace<T> {
 
 	protected void supportUpdatePersistent(MapperFace<T> mapper, T t) {
 		mapper.updatePersistent(t);
+	}
+
+	protected void supportRetrieve(MapperFace<T> mapper, T t) {
+		try {
+			ReflectHelper.copyBeanByField(t, mapper.select(t.getId()));
+		} catch (SecurityException | NoSuchFieldException
+				| IllegalArgumentException | IllegalAccessException
+				| InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	}
 }

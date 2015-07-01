@@ -56,4 +56,9 @@ public class WriterService extends ServiceSupport<Writer> implements
 	public void updatePersistent(Writer t) {
 		supportUpdatePersistent(mapper, t);
 	}
+
+	@Override
+	public void retrieve(Writer t) {
+		supportRetrieve(mapper, t);
+	}
 }
