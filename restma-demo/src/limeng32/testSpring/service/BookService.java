@@ -60,4 +60,9 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 	public void retrieve(Book t) {
 		supportRetrieve(mapper, t);
 	}
+
+	@Override
+	public void retrieveOnlyNull(Book t) {
+		supportRetrieveOnlyNull(mapper, t);
+	}
 }

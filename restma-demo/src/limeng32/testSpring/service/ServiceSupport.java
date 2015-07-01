@@ -38,7 +38,17 @@ public abstract class ServiceSupport<T extends PojoSupport<T>> implements
 
 	protected void supportRetrieve(MapperFace<T> mapper, T t) {
 		try {
-			ReflectHelper.copyBeanByField(t, mapper.select(t.getId()));
+			ReflectHelper.copyBean(t, mapper.select(t.getId()));
+		} catch (SecurityException | NoSuchFieldException
+				| IllegalArgumentException | IllegalAccessException
+				| InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void supportRetrieveOnlyNull(MapperFace<T> mapper, T t) {
+		try {
+			ReflectHelper.copyBeanByNullField(t, mapper.select(t.getId()));
 		} catch (SecurityException | NoSuchFieldException
 				| IllegalArgumentException | IllegalAccessException
 				| InvocationTargetException e) {

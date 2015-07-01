@@ -78,7 +78,7 @@ public class ReflectHelper {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	public static void copyBeanByField(Object dest, Object source)
+	public static void copyBean(Object dest, Object source)
 			throws SecurityException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException {
@@ -117,6 +117,66 @@ public class ReflectHelper {
 				Method sourceMethod = (Method) sourceMethodMap
 						.get(getMethodName);
 				destMethod.invoke(dest, sourceMethod.invoke(source));
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param dest
+	 * @param source
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	public static void copyBeanByNullField(Object dest, Object source)
+			throws SecurityException, NoSuchFieldException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
+		Method[] destMethods = dest.getClass().getDeclaredMethods();
+		Method[] sourceMethods = source.getClass().getDeclaredMethods();
+		HashMap<String, Method> destMethodMap = new HashMap<>();
+		HashMap<String, Method> sourceMethodMap = new HashMap<>();
+
+		if (null != sourceMethods && null != destMethods) {
+			for (Method m : sourceMethods) {
+				sourceMethodMap.put(m.getName(), m);
+			}
+			for (Method m : destMethods) {
+				destMethodMap.put(m.getName(), m);
+			}
+		} else {
+			return;
+		}
+		for (Field field : source.getClass().getDeclaredFields()) {
+			if (Modifier.isStatic(field.getModifiers())
+					|| Modifier.isFinal(field.getModifiers())) {
+				continue;
+			}
+			String getMethodName = "get"
+					+ field.getName().substring(0, 1).toUpperCase()
+					+ field.getName().substring(1);
+			String setMethodName = "set"
+					+ field.getName().substring(0, 1).toUpperCase()
+					+ field.getName().substring(1);
+			if (destMethodMap.get(setMethodName) == null
+					|| sourceMethodMap.get(getMethodName) == null) {
+				if (getValueByFieldName(dest, field.getName()) == null) {
+					setValueByFieldName(dest, field.getName(),
+							getValueByFieldName(source, field.getName()));
+				}
+			} else {
+				Method destGetterMethod = (Method) destMethodMap
+						.get(getMethodName);
+				if (destGetterMethod.invoke(dest) == null) {
+					Method destMethod = (Method) destMethodMap
+							.get(setMethodName);
+					Method sourceMethod = (Method) sourceMethodMap
+							.get(getMethodName);
+					destMethod.invoke(dest, sourceMethod.invoke(source));
+				}
 			}
 		}
 	}

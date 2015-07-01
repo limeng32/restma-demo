@@ -50,4 +50,9 @@ public class ArticleService extends ServiceSupport<Article> implements
 	public void retrieve(Article t) {
 		supportRetrieve(mapper, t);
 	}
+
+	@Override
+	public void retrieveOnlyNull(Article t) {
+		supportRetrieveOnlyNull(mapper, t);
+	}
 }

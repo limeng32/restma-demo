@@ -19,4 +19,6 @@ public interface MapperFace<T> {
 	public void updatePersistent(T t);
 
 	public void retrieve(T t);
+
+	public void retrieveOnlyNull(T t);
 }

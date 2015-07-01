@@ -61,4 +61,9 @@ public class WriterService extends ServiceSupport<Writer> implements
 	public void retrieve(Writer t) {
 		supportRetrieve(mapper, t);
 	}
+
+	@Override
+	public void retrieveOnlyNull(Writer t) {
+		supportRetrieveOnlyNull(mapper, t);
+	}
 }

@@ -59,4 +59,9 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 	public void retrieve(User t) {
 		supportRetrieve(mapper, t);
 	}
+
+	@Override
+	public void retrieveOnlyNull(User t) {
+		supportRetrieveOnlyNull(mapper, t);
+	}
 }

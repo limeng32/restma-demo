@@ -50,4 +50,9 @@ public class BookWriterService extends ServiceSupport<BookWriter> implements
 	public void retrieve(BookWriter t) {
 		supportRetrieve(mapper, t);
 	}
+
+	@Override
+	public void retrieveOnlyNull(BookWriter t) {
+		supportRetrieveOnlyNull(mapper, t);
+	}
 }

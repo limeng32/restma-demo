@@ -493,9 +493,9 @@ public class testController {
 	public String showArticle9Mix(ModelMap mm) {
 		Article a = new Article();
 		a.setId(268);
-		a.setTitle("aaaa");
-		articleService.retrieve(a);
-		a.setTitle(null);
+		a.setTitle("bbb");
+		articleService.retrieveOnlyNull(a);
+		// a.setTitle("aaa");
 		articleService.updatePersistent(a);
 
 		mm.addAttribute("_content", a);
