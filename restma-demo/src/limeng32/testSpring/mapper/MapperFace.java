@@ -10,7 +10,7 @@ public interface MapperFace<T> {
 
 	public List<T> selectAll(Conditionable conditionable);
 
-	public int count(Conditionable conditionable);
+//	public int count(Conditionable conditionable);
 
 	public void insert(T t);
 
@@ -21,4 +21,8 @@ public interface MapperFace<T> {
 	public void retrieve(T t);
 
 	public void retrieveOnlyNull(T t);
+
+	public void delete(T t);
+
+	public int count(T t);
 }

@@ -36,10 +36,10 @@ public class ArticleService extends ServiceSupport<Article> implements
 		return mapper.selectAll(conditionable);
 	}
 
-	@Override
-	public int count(Conditionable conditionable) {
-		return mapper.count(conditionable);
-	}
+//	@Override
+//	public int count(Conditionable conditionable) {
+//		return mapper.count(conditionable);
+//	}
 
 	@Override
 	public void updatePersistent(Article t) {
@@ -54,5 +54,15 @@ public class ArticleService extends ServiceSupport<Article> implements
 	@Override
 	public void retrieveOnlyNull(Article t) {
 		supportRetrieveOnlyNull(mapper, t);
+	}
+
+	@Override
+	public void delete(Article t) {
+		supportDelete(mapper, t);
+	}
+
+	@Override
+	public int count(Article t) {
+		return supportCount(mapper, t);
 	}
 }

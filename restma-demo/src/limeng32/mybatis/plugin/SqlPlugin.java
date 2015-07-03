@@ -69,6 +69,7 @@ public class SqlPlugin implements Interceptor {
 	}
 
 	/* 此方法中当Conditionable.getLimiter()不为null时，则自动获取totalCount */
+	/* 此方法对不实现Conditionable接口的parameterObject不产生效果 */
 	@Override
 	public Object intercept(Invocation ivk) throws Throwable {
 		if (ivk.getTarget() instanceof RoutingStatementHandler) {
@@ -109,6 +110,7 @@ public class SqlPlugin implements Interceptor {
 					}
 					String pageSql = generatePageSql(sql, condition);
 					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql);
+				} else {
 				}
 			} else {
 			}

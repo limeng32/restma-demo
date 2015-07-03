@@ -39,10 +39,10 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 		return mapper.selectAll(conditionable);
 	}
 
-	@Override
-	public int count(Conditionable conditionable) {
-		return mapper.count(conditionable);
-	}
+	// @Override
+	// public int count(Conditionable conditionable) {
+	// return mapper.count(conditionable);
+	// }
 
 	@Override
 	public void loadBookWriter(Book book,
@@ -64,5 +64,15 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 	@Override
 	public void retrieveOnlyNull(Book t) {
 		supportRetrieveOnlyNull(mapper, t);
+	}
+
+	@Override
+	public void delete(Book t) {
+		supportDelete(mapper, t);
+	}
+
+	@Override
+	public int count(Book t) {
+		return supportCount(mapper, t);
 	}
 }

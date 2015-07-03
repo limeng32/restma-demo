@@ -491,14 +491,11 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle9Mix(ModelMap mm) {
-		Article a = new Article();
-		a.setId(268);
-		a.setTitle("bbb");
-		articleService.retrieveOnlyNull(a);
-		// a.setTitle("aaa");
-		articleService.updatePersistent(a);
-
-		mm.addAttribute("_content", a);
+		ArticleCondition ac = new ArticleCondition();
+		// Article ac = new Article();
+		ac.setTitle("%1%");
+		int articleCount = articleService.count(ac);
+		mm.addAttribute("_content", articleCount);
 		return "showArticleMix";
 	}
 
@@ -510,6 +507,32 @@ public class testController {
 		a2.setTitle("~");
 		a.getUser().addArticle(a2);
 
+		mm.addAttribute("_content", a);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle92Mix")
+	public String showArticle92Mix(ModelMap mm) {
+		Article a = articleService.select(268);
+		Article a2 = new Article();
+		a2.setId(268);
+		a2.setTitle("~");
+		a.getUser().addArticle(a2);
+
+		mm.addAttribute("_content", a);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle93Mix")
+	public String showArticle93Mix(ModelMap mm) {
+		Article a = articleService.select(270);
+		if (a != null) {
+			articleService.delete(a);
+		}
+		// Article a = new Article();
+		// a.setTitle("new");
+		// a.setUser(userService.select(2));
+		// articleService.insert(a);
 		mm.addAttribute("_content", a);
 		return "showArticleMix";
 	}

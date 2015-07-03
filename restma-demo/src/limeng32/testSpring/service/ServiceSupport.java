@@ -15,10 +15,6 @@ public abstract class ServiceSupport<T extends PojoSupport<T>> implements
 		return mapper.select(id);
 	}
 
-	protected int supportCount(MapperFace<T> mapper, Conditionable conditionable) {
-		return mapper.count(conditionable);
-	}
-
 	protected List<T> supportSelectAll(MapperFace<T> mapper,
 			Conditionable conditionable) {
 		return mapper.selectAll(conditionable);
@@ -54,5 +50,13 @@ public abstract class ServiceSupport<T extends PojoSupport<T>> implements
 				| InvocationTargetException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected void supportDelete(MapperFace<T> mapper, T t) {
+		mapper.delete(t);
+	}
+
+	protected int supportCount(MapperFace<T> mapper, T t) {
+		return mapper.count(t);
 	}
 }

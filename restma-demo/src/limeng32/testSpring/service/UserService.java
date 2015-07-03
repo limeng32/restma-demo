@@ -40,10 +40,10 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 		user.setArticle(articleService.selectAll(articleCondition));
 	}
 
-	@Override
-	public int count(Conditionable conditionable) {
-		return supportCount(mapper, conditionable);
-	}
+	// @Override
+	// public int count(Conditionable conditionable) {
+	// return supportCount(mapper, conditionable);
+	// }
 
 	@Override
 	public List<User> selectAll(Conditionable condition) {
@@ -63,5 +63,15 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 	@Override
 	public void retrieveOnlyNull(User t) {
 		supportRetrieveOnlyNull(mapper, t);
+	}
+
+	@Override
+	public void delete(User t) {
+		supportDelete(mapper, t);
+	}
+
+	@Override
+	public int count(User t) {
+		return supportCount(mapper, t);
 	}
 }

@@ -375,7 +375,6 @@ public class SqlBuilder {
 
 		StringBuffer sql = new StringBuffer();
 
-		// delete from tableName where primaryKeyName=?
 		sql.append("delete from ").append(tableName).append(" where ");
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			sql.append(uniqueKeyNames[i]);
@@ -392,8 +391,9 @@ public class SqlBuilder {
 					.append("} and ");
 		}
 		sql.delete(sql.lastIndexOf("and"), sql.lastIndexOf("and") + 3);
-
-		return sql.toString();
+		String ret = sql.toString();
+		System.out.println("--------------------------" + ret);
+		return ret;
 	}
 
 	/**

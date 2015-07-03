@@ -13,7 +13,6 @@
 			</if>
 			<if test="title != null">and title like #{title}</if>
 			<if test="content != null">and content like #{content}</if>
-			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
 		</where>
 	</sql>
 
@@ -39,22 +38,7 @@
 
 	<update id="updatePersistent" />
 
-	<update id="update1" parameterType="Article">
-		update
-		<include refid="tableName" />
-		<set>
-			<if test="id != null">id=#{id},</if>
-			<if test="title != null">title=#{title},</if>
-			<if test="content != null">content=#{content},</if>
-			<choose>
-				<when test="user == null">userid=null,</when>
-				<when test="user != null and user.id > 0">
-					userid=#{user.id},
-				</when>
-			</choose>
-		</set>
-		where id=#{id}
-	</update>
+	<delete id="delete" />
 
 	<update id="disable" parameterType="Article">
 		update
