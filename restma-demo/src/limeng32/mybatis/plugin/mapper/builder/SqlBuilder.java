@@ -52,22 +52,10 @@ public class SqlBuilder {
 			}
 			tableMapper = new TableMapper();
 			Annotation[] classAnnotations = dtoClass.getDeclaredAnnotations();
-			if (classAnnotations.length == 0) {
-				throw new RuntimeException(
-						"Class "
-								+ dtoClass.getName()
-								+ " has no annotation, I can't build 'TableMapper' for it.");
-			}
 			for (Annotation an : classAnnotations) {
 				if (an instanceof TableMapperAnnotation) {
 					tableMapper.setTableMapperAnnotation(an);
 				}
-			}
-			if (tableMapper.getTableMapperAnnotation() == null) {
-				throw new RuntimeException("Class " + dtoClass.getName()
-						+ " has no 'TableMapperAnnotation', "
-						+ "which has the database table information,"
-						+ " I can't build 'TableMapper' for it.");
 			}
 			fields = dtoClass.getDeclaredFields();
 			fieldMapperCache = new HashMap<String, FieldMapper>();
@@ -127,6 +115,47 @@ public class SqlBuilder {
 	}
 
 	/**
+	 * 查找类clazz及其所有父类，直到找到一个拥有TableMapperAnnotation注解的类为止，
+	 * 然后返回这个拥有TableMapperAnnotation注解的类
+	 * 
+	 * @param object
+	 * @return
+	 */
+	private static Class<?> getTableMappedClass(Class<?> clazz) {
+		Class<?> c = clazz;
+		while (!interview(c) && !(c.equals(Object.class))) {
+			c = c.getSuperclass();
+		}
+		if (c.equals(Object.class)) {
+			throw new RuntimeException("Class " + clazz.getName()
+					+ " and all its parents has no 'TableMapperAnnotation', "
+					+ "which has the database table information,"
+					+ " I can't build 'TableMapper' for it.");
+		}
+		return c;
+	}
+
+	/**
+	 * 判断clazz是否符合条件，即是否存在TableMapperAnnotation类型的标注。如存在返回true，否则返回false。
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private static boolean interview(Class<?> clazz) {
+		boolean ret = false;
+		Annotation[] classAnnotations = clazz.getDeclaredAnnotations();
+		if (classAnnotations.length > 0) {
+			for (Annotation an : classAnnotations) {
+				if (an instanceof TableMapperAnnotation) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
 	 * 从注解里获取唯一键信息
 	 * 
 	 * @param tableMapper
@@ -157,7 +186,8 @@ public class SqlBuilder {
 					"Sorry,I refuse to build sql for a null object!");
 		}
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(object.getClass());
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
@@ -214,7 +244,8 @@ public class SqlBuilder {
 		}
 
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(object.getClass());
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
 
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
@@ -290,7 +321,8 @@ public class SqlBuilder {
 		}
 
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(object.getClass());
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
 		Collection<String> persistentFlags = tableMapper.getPersistentFlags();
 		for (String persistentFlag : persistentFlags) {
 			if (ReflectHelper.getValueByFieldName(object, persistentFlag) == null) {
@@ -367,7 +399,8 @@ public class SqlBuilder {
 					"Sorry,I refuse to build sql for a null object!");
 		}
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(object.getClass());
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
@@ -391,9 +424,7 @@ public class SqlBuilder {
 					.append("} and ");
 		}
 		sql.delete(sql.lastIndexOf("and"), sql.lastIndexOf("and") + 3);
-		String ret = sql.toString();
-		System.out.println("--------------------------" + ret);
-		return ret;
+		return sql.toString();
 	}
 
 	/**
@@ -404,7 +435,7 @@ public class SqlBuilder {
 	 * @throws Exception
 	 */
 	public static String buildSelectSql(Class<?> clazz) throws Exception {
-		TableMapper tableMapper = buildTableMapper(clazz);
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(clazz));
 		Collection<String> persistentFlags = tableMapper.getPersistentFlags();
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
@@ -438,5 +469,4 @@ public class SqlBuilder {
 				whereSql.lastIndexOf("and") + 3);
 		return selectSql.append(whereSql).toString();
 	}
-
 }
