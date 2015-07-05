@@ -23,7 +23,7 @@ public class Article extends PojoSupport<Article> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@FieldMapperAnnotation(dbFieldName = ArticleCondition.field_id, jdbcType = JdbcType.INTEGER, isUniqueKey = true)
-	private int id;
+	private Integer id;
 
 	@FieldMapperAnnotation(dbFieldName = ArticleCondition.field_userid, jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "id")
 	private User user;
@@ -39,11 +39,11 @@ public class Article extends PojoSupport<Article> implements Serializable {
 	@JSONField(serialize = false)
 	private Date updateTime = new Date();
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

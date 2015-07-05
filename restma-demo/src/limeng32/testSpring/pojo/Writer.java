@@ -13,7 +13,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class Writer extends PojoSupport<Writer> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
-	private int id;
+	private Integer id;
 	@FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR)
 	private java.lang.String name;
 
@@ -76,12 +76,12 @@ public class Writer extends PojoSupport<Writer> implements Serializable {
 	}
 
 	@Override
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
 	@Override
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

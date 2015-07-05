@@ -15,7 +15,7 @@ public class BookWriter extends PojoSupport<BookWriter> implements Serializable 
 
 	@JSONField(serialize = false)
 	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
-	private int id;
+	private Integer id;
 
 	@FieldMapperAnnotation(dbFieldName = "bookid", jdbcType = JdbcType.INTEGER)
 	private Book book;
@@ -60,12 +60,12 @@ public class BookWriter extends PojoSupport<BookWriter> implements Serializable 
 	}
 
 	@Override
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
 	@Override
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
