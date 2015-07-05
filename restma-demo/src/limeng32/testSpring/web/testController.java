@@ -495,6 +495,7 @@ public class testController {
 		// Article a1 = articleService.select(268);
 		// Article a = new Article();
 		a.setTitle("1");
+		a.setTitleLike("12");
 		a.setUser(new User());
 		a.getUser().setId(2);
 		int i = articleService.count(a);

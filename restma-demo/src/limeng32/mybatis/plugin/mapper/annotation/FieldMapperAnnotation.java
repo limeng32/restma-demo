@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import org.apache.ibatis.type.JdbcType;
 
 /**
- * 用于描述java对象字段对应的数据库表字段的注解（数据库字段名，字段对应的jdbc类型）
+ * 用于描述java对象字段对应的数据库表字段的注解（数据库字段名，对应数据库其他表的主键字段的名称，是否为数据库主键，字段对应的jdbc类型）
  * 
  * @author david
  * 

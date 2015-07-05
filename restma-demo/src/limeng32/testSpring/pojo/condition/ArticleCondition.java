@@ -2,6 +2,8 @@ package limeng32.testSpring.pojo.condition;
 
 import limeng32.mybatis.plugin.Limitable;
 import limeng32.mybatis.plugin.Sortable;
+import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.ConditionType;
 import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Queryable;
 
@@ -74,6 +76,17 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 	@Override
 	public void setSorter(Sortable sorter) {
 		this.sorter = sorter;
+	}
+
+	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_title, conditionMapperType = ConditionType.Like)
+	private String titleLike;
+
+	public String getTitleLike() {
+		return titleLike;
+	}
+
+	public void setTitleLike(String titleLike) {
+		this.titleLike = titleLike;
 	}
 
 }
