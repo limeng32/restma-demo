@@ -72,21 +72,24 @@ public class AutoMapperInterceptor implements Interceptor {
 			String id = mappedStatement.getId();
 			id = id.substring(id.lastIndexOf(".") + 1);
 			switch (id) {
+			case "count":
+				newSql = SqlBuilder.buildCountSql(parameterObject);
+				break;
+			case "delete":
+				newSql = SqlBuilder.buildDeleteSql(parameterObject);
+				break;
 			case "insert":
 				newSql = SqlBuilder.buildInsertSql(parameterObject);
+				break;
+			case "select":
+				newSql = SqlBuilder.buildSelectSql(mappedStatement
+						.getResultMaps().get(0).getType());
 				break;
 			case "update":
 				newSql = SqlBuilder.buildUpdateSql(parameterObject);
 				break;
 			case "updatePersistent":
 				newSql = SqlBuilder.buildUpdatePersistentSql(parameterObject);
-				break;
-			case "delete":
-				newSql = SqlBuilder.buildDeleteSql(parameterObject);
-				break;
-			case "select":
-				newSql = SqlBuilder.buildSelectSql(mappedStatement
-						.getResultMaps().get(0).getType());
 				break;
 			}
 			logger.debug("Auto generated sql:" + newSql);

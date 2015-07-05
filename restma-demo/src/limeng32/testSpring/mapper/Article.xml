@@ -26,7 +26,9 @@
 		<include refid="conditions" />
 	</select>
 
-	<select id="count" resultType="int">
+	<select id="count" resultType="int" />
+
+	<select id="count1" resultType="int">
 		select count(id) from
 		<include refid="tableName" />
 		<include refid="conditions" />

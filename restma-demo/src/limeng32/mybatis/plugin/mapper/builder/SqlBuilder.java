@@ -174,6 +174,89 @@ public class SqlBuilder {
 	}
 
 	/**
+	 * 由传入的对象生成count sql语句
+	 * 
+	 * @param object
+	 * @return sql
+	 * @throws Exception
+	 */
+	public static String buildCountSql(Object object) throws Exception {
+		if (null == object) {
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for a null object!");
+		}
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation();
+		String tableName = tma.tableName();
+		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("select count(");
+		/*
+		 * 如果有且只有一个主键，采用select count("主键")的方式；如果无主键或有多个主键（联合主键），采用select
+		 * count(*)的方式。
+		 */
+		if (uniqueKeyNames.length == 1) {
+			selectSql.append(uniqueKeyNames[0]);
+		} else {
+			selectSql.append("*");
+		}
+		selectSql.append(") from ").append(tableName);
+
+		StringBuffer whereSql = new StringBuffer(" where ");
+
+		boolean allFieldNull = true;
+
+		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
+			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
+					dbFieldName);
+			String fieldName = fieldMapper.getFieldName();
+			Object value = dtoFieldMap.get(fieldName);
+			if (value == null) {
+				continue;
+			}
+			allFieldNull = false;
+			whereSql.append(dbFieldName).append("=#{");
+			if (fieldMapper.isForeignKey()) {
+				whereSql.append(fieldName).append(".")
+						.append(fieldMapper.getForeignFieldName());
+			} else {
+				whereSql.append(fieldName);
+			}
+			whereSql.append(",").append("jdbcType=")
+					.append(fieldMapper.getJdbcType().toString())
+					.append("} and ");
+		}
+		if (allFieldNull) {
+			throw new RuntimeException("Are you joking? Object "
+					+ object.getClass().getName()
+					+ "'s all fields are null, how can i build sql for it?!");
+		}
+
+		whereSql.delete(whereSql.lastIndexOf("and"),
+				whereSql.lastIndexOf("and") + 3);
+
+		// for (int i = 0; i < uniqueKeyNames.length; i++) {
+		// whereSql.append(uniqueKeyNames[i]);
+		// FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
+		// uniqueKeyNames[i]);
+		// String fieldName = fieldMapper.getFieldName();
+		// whereSql.append("=#{").append(fieldName).append(",")
+		// .append("jdbcType=")
+		// .append(fieldMapper.getJdbcType().toString())
+		// .append("} and ");
+		// }
+		// whereSql.delete(whereSql.lastIndexOf("and"),
+		// whereSql.lastIndexOf("and") + 3);
+		String ret = selectSql.append(whereSql).toString();
+		System.out.println("----------------------" + ret);
+		return ret;
+	}
+
+	/**
 	 * 由传入的对象生成insert sql语句
 	 * 
 	 * @param object

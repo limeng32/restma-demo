@@ -10,8 +10,6 @@ public interface MapperFace<T> {
 
 	public List<T> selectAll(Conditionable conditionable);
 
-//	public int count(Conditionable conditionable);
-
 	public void insert(T t);
 
 	public void update(T t);

@@ -491,23 +491,22 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle9Mix(ModelMap mm) {
-		// ArticleCondition ac = new ArticleCondition();
-		// Article a1 = articleService.select(268);
 		ArticleCondition a = new ArticleCondition();
+		// Article a1 = articleService.select(268);
 		// Article a = new Article();
-		a.setId(268);
-		a.setContent("142");
-		// Article ac = new Article();
-		articleService.update(a);
-		mm.addAttribute("_content", a);
+		a.setTitle("1");
+		a.setUser(new User());
+		a.getUser().setId(2);
+		int i = articleService.count(a);
+		mm.addAttribute("_content", i);
 		return "showArticleMix";
 	}
 
 	@RequestMapping(value = "/showArticle91Mix")
 	public String showArticle91Mix(ModelMap mm) {
-		Article a = articleService.select(268);
+		Article a = articleService.select(265);
 		Article a2 = new Article();
-		a2.setId(268);
+		a2.setId(265);
 		a2.setTitle("~");
 		a.getUser().addArticle(a2);
 
