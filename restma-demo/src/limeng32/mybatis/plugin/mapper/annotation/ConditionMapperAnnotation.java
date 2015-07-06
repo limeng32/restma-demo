@@ -23,5 +23,5 @@ public @interface ConditionMapperAnnotation {
 	 */
 	String dbFieldName();
 
-	ConditionType conditionMapperType() default ConditionType.Equal;
+	ConditionType conditionType() default ConditionType.Equal;
 }

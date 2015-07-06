@@ -494,8 +494,8 @@ public class testController {
 		ArticleCondition a = new ArticleCondition();
 		// Article a1 = articleService.select(268);
 		// Article a = new Article();
-		a.setTitle("naa");
-		int j = articleService.count(a);
+		// a.setTitle("naa");
+		// int j = articleService.count(a);
 		a.setTitle("1");
 		a.setTitleLike("12");
 		a.setUser(new User());

@@ -78,7 +78,7 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 		this.sorter = sorter;
 	}
 
-	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_title, conditionMapperType = ConditionType.Like)
+	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_title, conditionType = ConditionType.Like)
 	private String titleLike;
 
 	public String getTitleLike() {

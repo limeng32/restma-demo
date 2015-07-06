@@ -144,9 +144,73 @@ public class SqlBuilder {
 			queryMapper = new QueryMapper();
 
 			fields = dtoClass.getDeclaredFields();
-		}
+			conditionMapperCache = new HashMap<>();
+			conditionMapperList = new ArrayList<>();
+			Annotation[] conditionAnnotations = null;
 
-		return queryMapper;
+			for (Field field : fields) {
+				conditionAnnotations = field.getDeclaredAnnotations();
+				if (conditionAnnotations.length == 0) {
+					continue;
+				}
+				for (Annotation an : conditionAnnotations) {
+					if (an instanceof ConditionMapperAnnotation) {
+						conditionMapperAnnotation = (ConditionMapperAnnotation) an;
+						conditionMapper = new ConditionMapper();
+						conditionMapper.setFieldName(field.getName());
+						conditionMapper
+								.setDbFieldName(conditionMapperAnnotation
+										.dbFieldName());
+						conditionMapper
+								.setConditionType(conditionMapperAnnotation
+										.conditionType());
+						// for (Annotation oan : pojoClassAnnotations) {
+						// if (oan instanceof FieldMapperAnnotation
+						// && ((FieldMapperAnnotation) oan)
+						// .dbFieldName().equals(
+						// conditionMapperAnnotation
+						// .dbFieldName())) {
+						// FieldMapperAnnotation fieldMapperAnnotation =
+						// (FieldMapperAnnotation) oan;
+						// conditionMapper
+						// .setJdbcType(fieldMapperAnnotation
+						// .jdbcType());
+						// if ("".equals(fieldMapperAnnotation
+						// .dbAssociationUniqueKey())) {
+						// } else {
+						// conditionMapper
+						// .setDbAssociationUniqueKey(fieldMapperAnnotation
+						// .dbAssociationUniqueKey());
+						// conditionMapper.setForeignKey(true);
+						// }
+						// if (conditionMapper.isForeignKey()) {
+						// if (!tableMapperCache.containsKey(field
+						// .getType())) {
+						// buildTableMapper(field.getType());
+						// }
+						// TableMapper tm = tableMapperCache.get(field
+						// .getType());
+						// String foreignFieldName = tm
+						// .getFieldMapperCache()
+						// .get(fieldMapperAnnotation
+						// .dbAssociationUniqueKey())
+						// .getFieldName();
+						// conditionMapper
+						// .setForeignFieldName(foreignFieldName);
+						// }
+						// }
+						// }
+						conditionMapperCache.put(field.getName(),
+								conditionMapper);
+						conditionMapperList.add(conditionMapper);
+					}
+				}
+			}
+			queryMapper.setConditionMapperCache(conditionMapperCache);
+			queryMapper.setConditionMapperList(conditionMapperList);
+			queryMapperCache.put(dtoClass, queryMapper);
+			return queryMapper;
+		}
 	}
 
 	/**

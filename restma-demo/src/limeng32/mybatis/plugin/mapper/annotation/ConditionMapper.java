@@ -26,6 +26,11 @@ public class ConditionMapper {
 	private JdbcType jdbcType;
 
 	/**
+	 * 条件类型
+	 */
+	private ConditionType conditionType;
+
+	/**
 	 * 如果是外键，对应数据库其他表的主键字段的名称。不是外键时为null。
 	 */
 	private String dbAssociationUniqueKey;
@@ -86,6 +91,14 @@ public class ConditionMapper {
 
 	public void setForeignFieldName(String foreignFieldName) {
 		ForeignFieldName = foreignFieldName;
+	}
+
+	public ConditionType getConditionType() {
+		return conditionType;
+	}
+
+	public void setConditionType(ConditionType conditionType) {
+		this.conditionType = conditionType;
 	}
 
 }
