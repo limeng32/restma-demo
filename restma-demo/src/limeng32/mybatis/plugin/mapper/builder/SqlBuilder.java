@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 import limeng32.mybatis.plugin.ReflectHelper;
+import limeng32.mybatis.plugin.mapper.annotation.ConditionMapper;
+import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.QueryMapper;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapper;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
 
@@ -30,6 +33,9 @@ public class SqlBuilder {
 	private static HashMap<Class<?>, TableMapper> tableMapperCache = new HashMap<Class<?>, TableMapper>(
 			128);
 
+	private static HashMap<Class<?>, QueryMapper> queryMapperCache = new HashMap<Class<?>, QueryMapper>(
+			128);
+
 	/**
 	 * 由传入的dto对象的class构建TableMapper对象，构建好的对象存入缓存中，以后使用时直接从缓存中获取
 	 * 
@@ -38,8 +44,8 @@ public class SqlBuilder {
 	 */
 	private static TableMapper buildTableMapper(Class<?> dtoClass) {
 
-		HashMap<String, FieldMapper> fieldMapperCache = null;
-		ArrayList<FieldMapper> fieldMapperList = null;
+		Map<String, FieldMapper> fieldMapperCache = null;
+		List<FieldMapper> fieldMapperList = null;
 		Field[] fields = null;
 
 		FieldMapperAnnotation fieldMapperAnnotation = null;
@@ -115,6 +121,35 @@ public class SqlBuilder {
 	}
 
 	/**
+	 * 由传入的dto对象的class构建TableMapper对象，构建好的对象存入缓存中，以后使用时直接从缓存中获取
+	 * 
+	 * @param dtoClass
+	 * @param pojoClass
+	 * @return QueryMapper
+	 */
+	private static QueryMapper buildQueryMapper(Class<?> dtoClass,
+			Class<?> pojoClass) {
+		Map<String, ConditionMapper> conditionMapperCache = null;
+		List<ConditionMapper> conditionMapperList = null;
+		Field[] fields = null;
+
+		ConditionMapperAnnotation conditionMapperAnnotation = null;
+		ConditionMapper conditionMapper = null;
+		QueryMapper queryMapper = null;
+		synchronized (queryMapperCache) {
+			queryMapper = queryMapperCache.get(dtoClass);
+			if (queryMapper != null) {
+				return queryMapper;
+			}
+			queryMapper = new QueryMapper();
+
+			fields = dtoClass.getDeclaredFields();
+		}
+
+		return queryMapper;
+	}
+
+	/**
 	 * 查找类clazz及其所有父类，直到找到一个拥有TableMapperAnnotation注解的类为止，
 	 * 然后返回这个拥有TableMapperAnnotation注解的类
 	 * 
@@ -142,17 +177,15 @@ public class SqlBuilder {
 	 * @return
 	 */
 	private static boolean interview(Class<?> clazz) {
-		boolean ret = false;
 		Annotation[] classAnnotations = clazz.getDeclaredAnnotations();
 		if (classAnnotations.length > 0) {
 			for (Annotation an : classAnnotations) {
 				if (an instanceof TableMapperAnnotation) {
-					ret = true;
-					break;
+					return true;
 				}
 			}
 		}
-		return ret;
+		return false;
 	}
 
 	/**
@@ -186,6 +219,8 @@ public class SqlBuilder {
 					"Sorry,I refuse to build sql for a null object!");
 		}
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
+				getTableMappedClass(object.getClass()));
 		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
 				.getClass()));
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper

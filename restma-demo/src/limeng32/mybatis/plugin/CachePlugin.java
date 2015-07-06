@@ -146,15 +146,20 @@ public class CachePlugin implements Interceptor {
 		cacheKey.update(rowBounds.getLimit());
 		List<ParameterMapping> parameterMappings = boundSql
 				.getParameterMappings();
-		// 解决自动生成SQL，SQL语句为空导致key生成错误的bug
+		/* 解决自动生成SQL，SQL语句为空导致key生成错误的bug，此问题在执行count、select和selectAll操作时会出现。 */
 		if (null == boundSql.getSql() || "".equals(boundSql.getSql())) {
 			String id = ms.getId();
 			id = id.substring(id.lastIndexOf(".") + 1);
 			String newSql = null;
 			try {
-				if ("select".equals(id)) {
+				switch (id) {
+				case "count":
+					newSql = SqlBuilder.buildCountSql(parameterObject);
+					break;
+				case "select":
 					newSql = SqlBuilder.buildSelectSql(ms.getResultMaps()
 							.get(0).getType());
+					break;
 				}
 				SqlSource sqlSource = buildSqlSource(configuration, newSql,
 						parameterObject.getClass());
