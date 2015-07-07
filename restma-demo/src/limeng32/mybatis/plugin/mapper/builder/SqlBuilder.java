@@ -312,6 +312,7 @@ public class SqlBuilder {
 
 		boolean allFieldNull = true;
 
+		// 处理tableMapper中的条件
 		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
 			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
 					dbFieldName);
@@ -332,6 +333,27 @@ public class SqlBuilder {
 					.append(fieldMapper.getJdbcType().toString())
 					.append("} and ");
 		}
+
+		// 处理queryMapper中的条件
+		for (String fieldName : queryMapper.getConditionMapperCache().keySet()) {
+			ConditionMapper conditionMapper = queryMapper
+					.getConditionMapperCache().get(fieldName);
+			Object value = dtoFieldMap.get(fieldName);
+			if (value == null) {
+				continue;
+			}
+			allFieldNull = false;
+			switch (conditionMapper.getConditionType()) {
+			case Equal:
+				break;
+			case Like:
+				dealConditionLike(whereSql, conditionMapper, object, value);
+				break;
+			default:
+				break;
+			}
+		}
+
 		if (allFieldNull) {
 			throw new RuntimeException("Are you joking? Object "
 					+ object.getClass().getName()
@@ -356,6 +378,30 @@ public class SqlBuilder {
 		String ret = selectSql.append(whereSql).toString();
 		System.out.println("----------------------" + ret);
 		return ret;
+	}
+
+	private static void dealConditionLike(StringBuffer whereSql,
+			ConditionMapper conditionMapper, Object object, Object value) {
+		String fieldName = conditionMapper.getFieldName();
+		String dbFieldName = conditionMapper.getDbFieldName();
+		whereSql.append(dbFieldName).append(" like #{");
+		if (conditionMapper.isForeignKey()) {
+			whereSql.append(fieldName).append(".")
+					.append(conditionMapper.getForeignFieldName());
+		} else {
+			whereSql.append(fieldName);
+		}
+		whereSql.append(",").append("jdbcType=")
+				.append(conditionMapper.getJdbcType().toString())
+				.append("} and ");
+		try {
+			ReflectHelper.setValueByFieldName(object, fieldName, "%" + value
+					+ "%");
+		} catch (SecurityException | NoSuchFieldException
+				| IllegalArgumentException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

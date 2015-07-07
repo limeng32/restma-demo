@@ -496,8 +496,9 @@ public class testController {
 		// Article a = new Article();
 		// a.setTitle("naa");
 		// int j = articleService.count(a);
-		a.setTitle("1");
-		a.setTitleLike("12");
+		// a.setTitle("1");
+		a.setTitleLike("1");
+		a.setUserLike(2);
 		a.setUser(new User());
 		a.getUser().setId(2);
 		int i = articleService.count(a);
