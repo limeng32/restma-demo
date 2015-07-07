@@ -142,7 +142,6 @@ public class SqlBuilder {
 				return queryMapper;
 			}
 			queryMapper = new QueryMapper();
-
 			fields = dtoClass.getDeclaredFields();
 			conditionMapperCache = new HashMap<>();
 			conditionMapperList = new ArrayList<>();
@@ -164,42 +163,46 @@ public class SqlBuilder {
 						conditionMapper
 								.setConditionType(conditionMapperAnnotation
 										.conditionType());
-						// for (Annotation oan : pojoClassAnnotations) {
-						// if (oan instanceof FieldMapperAnnotation
-						// && ((FieldMapperAnnotation) oan)
-						// .dbFieldName().equals(
-						// conditionMapperAnnotation
-						// .dbFieldName())) {
-						// FieldMapperAnnotation fieldMapperAnnotation =
-						// (FieldMapperAnnotation) oan;
-						// conditionMapper
-						// .setJdbcType(fieldMapperAnnotation
-						// .jdbcType());
-						// if ("".equals(fieldMapperAnnotation
-						// .dbAssociationUniqueKey())) {
-						// } else {
-						// conditionMapper
-						// .setDbAssociationUniqueKey(fieldMapperAnnotation
-						// .dbAssociationUniqueKey());
-						// conditionMapper.setForeignKey(true);
-						// }
-						// if (conditionMapper.isForeignKey()) {
-						// if (!tableMapperCache.containsKey(field
-						// .getType())) {
-						// buildTableMapper(field.getType());
-						// }
-						// TableMapper tm = tableMapperCache.get(field
-						// .getType());
-						// String foreignFieldName = tm
-						// .getFieldMapperCache()
-						// .get(fieldMapperAnnotation
-						// .dbAssociationUniqueKey())
-						// .getFieldName();
-						// conditionMapper
-						// .setForeignFieldName(foreignFieldName);
-						// }
-						// }
-						// }
+						for (Field pojoField : pojoClass.getDeclaredFields()) {
+							for (Annotation oan : pojoField
+									.getDeclaredAnnotations()) {
+								if (oan instanceof FieldMapperAnnotation
+										&& ((FieldMapperAnnotation) oan)
+												.dbFieldName().equals(
+														conditionMapperAnnotation
+																.dbFieldName())) {
+									FieldMapperAnnotation fieldMapperAnnotation = (FieldMapperAnnotation) oan;
+									conditionMapper
+											.setJdbcType(fieldMapperAnnotation
+													.jdbcType());
+									if ("".equals(fieldMapperAnnotation
+											.dbAssociationUniqueKey())) {
+									} else {
+										conditionMapper
+												.setDbAssociationUniqueKey(fieldMapperAnnotation
+														.dbAssociationUniqueKey());
+										conditionMapper.setForeignKey(true);
+									}
+									if (conditionMapper.isForeignKey()) {
+										if (!tableMapperCache
+												.containsKey(pojoField
+														.getType())) {
+											buildTableMapper(pojoField
+													.getType());
+										}
+										TableMapper tm = tableMapperCache
+												.get(pojoField.getType());
+										String foreignFieldName = tm
+												.getFieldMapperCache()
+												.get(fieldMapperAnnotation
+														.dbAssociationUniqueKey())
+												.getFieldName();
+										conditionMapper
+												.setForeignFieldName(foreignFieldName);
+									}
+								}
+							}
+						}
 						conditionMapperCache.put(field.getName(),
 								conditionMapper);
 						conditionMapperList.add(conditionMapper);
