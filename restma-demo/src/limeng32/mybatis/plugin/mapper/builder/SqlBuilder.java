@@ -394,12 +394,12 @@ public class SqlBuilder {
 		whereSql.append(",").append("jdbcType=")
 				.append(conditionMapper.getJdbcType().toString())
 				.append("} and ");
+		value = SqlEscaper.escape(value);
 		try {
 			ReflectHelper.setValueByFieldName(object, fieldName, "%" + value
 					+ "%");
 		} catch (SecurityException | NoSuchFieldException
 				| IllegalArgumentException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

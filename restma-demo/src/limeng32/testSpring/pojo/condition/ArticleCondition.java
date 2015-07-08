@@ -81,7 +81,7 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_title, conditionType = ConditionType.Like)
 	private String titleLike;
 
-	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_userid, conditionType = ConditionType.LikeOfEnding)
+	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_userid, conditionType = ConditionType.HeadLike)
 	private Integer userLike;
 
 	public String getTitleLike() {

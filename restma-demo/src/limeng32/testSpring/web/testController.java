@@ -497,10 +497,9 @@ public class testController {
 		// a.setTitle("naa");
 		// int j = articleService.count(a);
 		// a.setTitle("1");
-		a.setTitleLike("1");
-		a.setUserLike(2);
-		a.setUser(new User());
-		a.getUser().setId(2);
+		a.setTitleLike("%");
+		// a.setUser(new User());
+		// a.getUser().setId(266);
 		int i = articleService.count(a);
 		mm.addAttribute("_content", i);
 		return "showArticleMix";
@@ -509,10 +508,8 @@ public class testController {
 	@RequestMapping(value = "/showArticle91Mix")
 	public String showArticle91Mix(ModelMap mm) {
 		Article a = articleService.select(265);
-		Article a2 = new Article();
-		a2.setId(265);
-		a2.setTitle("~");
-		a.getUser().addArticle(a2);
+		a.setTitle("ss_ss");
+		articleService.update(a);
 
 		mm.addAttribute("_content", a);
 		return "showArticleMix";
