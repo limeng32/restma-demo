@@ -393,8 +393,8 @@ public class SqlBuilder {
 		}
 		whereSql.append(",").append("jdbcType=")
 				.append(conditionMapper.getJdbcType().toString())
-				.append("} and ");
-		value = SqlEscaper.escape(value);
+				.append(", typeHandler=limeng32.mybatis.plugin.mapper.handler.ConditionLikeHandler2} and ");
+		// value = SqlEscaper.escape(value);
 		try {
 			ReflectHelper.setValueByFieldName(object, fieldName, "%" + value
 					+ "%");

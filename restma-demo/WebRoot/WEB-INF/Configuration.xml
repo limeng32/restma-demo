@@ -11,6 +11,12 @@
 		<setting name="proxyFactory" value="CGLIB" />
 		<setting name="lazyLoadTriggerMethods" value="" />
 	</settings>
+	<typeHandlers>
+		<typeHandler
+			handler="limeng32.mybatis.plugin.mapper.handler.ConditionLikeHandler2" />
+		<typeHandler
+			handler="limeng32.mybatis.plugin.mapper.handler.ConditionLikeHandler" />
+	</typeHandlers>
 	<plugins>
 		<plugin interceptor="limeng32.mybatis.plugin.CachePlugin">
 			<property name="cacheFixMatcher" value=".*selectAll.*" />

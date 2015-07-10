@@ -496,10 +496,10 @@ public class testController {
 		// Article a = new Article();
 		// a.setTitle("naa");
 		// int j = articleService.count(a);
-		// a.setTitle("1");
-		a.setTitleLike("%");
+		// a.setTitle("''");
+		a.setTitleLike("'");
 		// a.setUser(new User());
-		// a.getUser().setId(266);
+		// a.getUser().setId(1);
 		int i = articleService.count(a);
 		mm.addAttribute("_content", i);
 		return "showArticleMix";
