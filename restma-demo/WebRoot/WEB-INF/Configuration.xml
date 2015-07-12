@@ -11,11 +11,15 @@
 		<setting name="proxyFactory" value="CGLIB" />
 		<setting name="lazyLoadTriggerMethods" value="" />
 	</settings>
+	<typeAliases>
+		<package name="limeng32.mybatis.plugin.mapper.handler" />
+		<package name="org.apache.ibatis.type" />
+	</typeAliases>
 	<typeHandlers>
-		<typeHandler
-			handler="limeng32.mybatis.plugin.mapper.handler.ConditionLikeHandler2" />
-		<typeHandler
-			handler="limeng32.mybatis.plugin.mapper.handler.ConditionLikeHandler" />
+		<typeHandler handler="ConditionLikeHandler" />
+		<typeHandler handler="ConditionHeadLikeHandler" />
+		<typeHandler handler="ConditionTailLikeHandler" />
+		<typeHandler handler="AdvancedStringTypeHandler" />
 	</typeHandlers>
 	<plugins>
 		<plugin interceptor="limeng32.mybatis.plugin.CachePlugin">

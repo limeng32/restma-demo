@@ -11,6 +11,7 @@ import java.util.Map;
 import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.ConditionType;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
@@ -345,9 +346,19 @@ public class SqlBuilder {
 			allFieldNull = false;
 			switch (conditionMapper.getConditionType()) {
 			case Equal:
+				dealConditionEqual(whereSql, conditionMapper, object, value);
 				break;
 			case Like:
-				dealConditionLike(whereSql, conditionMapper, object, value);
+				dealConditionLike(whereSql, conditionMapper, object, value,
+						ConditionType.Like);
+				break;
+			case HeadLike:
+				dealConditionLike(whereSql, conditionMapper, object, value,
+						ConditionType.HeadLike);
+				break;
+			case TailLike:
+				dealConditionLike(whereSql, conditionMapper, object, value,
+						ConditionType.TailLike);
 				break;
 			default:
 				break;
@@ -381,7 +392,8 @@ public class SqlBuilder {
 	}
 
 	private static void dealConditionLike(StringBuffer whereSql,
-			ConditionMapper conditionMapper, Object object, Object value) {
+			ConditionMapper conditionMapper, Object object, Object value,
+			ConditionType type) {
 		String fieldName = conditionMapper.getFieldName();
 		String dbFieldName = conditionMapper.getDbFieldName();
 		whereSql.append(dbFieldName).append(" like #{");
@@ -393,15 +405,38 @@ public class SqlBuilder {
 		}
 		whereSql.append(",").append("jdbcType=")
 				.append(conditionMapper.getJdbcType().toString())
-				.append(", typeHandler=limeng32.mybatis.plugin.mapper.handler.ConditionLikeHandler2} and ");
-		// value = SqlEscaper.escape(value);
-		try {
-			ReflectHelper.setValueByFieldName(object, fieldName, "%" + value
-					+ "%");
-		} catch (SecurityException | NoSuchFieldException
-				| IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
+				.append(",typeHandler=");
+		switch (type) {
+		case Like:
+			whereSql.append("ConditionLikeHandler");
+			break;
+		case HeadLike:
+			whereSql.append("ConditionHeadLikeHandler");
+			break;
+		case TailLike:
+			whereSql.append("ConditionTailLikeHandler");
+			break;
+		default:
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for an ambiguous condition!");
 		}
+		whereSql.append("} and ");
+	}
+
+	private static void dealConditionEqual(StringBuffer whereSql,
+			ConditionMapper conditionMapper, Object object, Object value) {
+		String fieldName = conditionMapper.getFieldName();
+		String dbFieldName = conditionMapper.getDbFieldName();
+		whereSql.append(dbFieldName).append(" = #{");
+		if (conditionMapper.isForeignKey()) {
+			whereSql.append(fieldName).append(".")
+					.append(conditionMapper.getForeignFieldName());
+		} else {
+			whereSql.append(fieldName);
+		}
+		whereSql.append(",").append("jdbcType=")
+				.append(conditionMapper.getJdbcType().toString())
+				.append("} and ");
 	}
 
 	/**
@@ -507,7 +542,8 @@ public class SqlBuilder {
 				tableSql.append(fieldName);
 			}
 			tableSql.append(",").append("jdbcType=")
-					.append(fieldMapper.getJdbcType().toString()).append("},");
+					.append(fieldMapper.getJdbcType().toString());
+			tableSql.append("},");
 		}
 		if (allFieldNull) {
 			throw new RuntimeException("Are you joking? Object "

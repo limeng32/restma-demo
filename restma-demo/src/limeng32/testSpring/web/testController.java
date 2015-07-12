@@ -344,8 +344,8 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/showArticleMix")
-	public String showArticleMix(ModelMap mm, @RequestParam("id") int id) {
-		User user = userService.select(id);
+	public String showArticleMix(ModelMap mm, @RequestParam("id") String id) {
+		User user = userService.select(Integer.valueOf(id));
 		ArticleCondition articleCon = new ArticleCondition();
 		articleCon.setLimiter(new PageParam(1, 2));
 		articleCon.setSorter(new SortParam(new Order(ArticleCondition.Field.id,
@@ -489,15 +489,17 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
+	@RequestMapping(value = "/showArticle91Mix")
 	public String showArticle9Mix(ModelMap mm) {
 		ArticleCondition a = new ArticleCondition();
 		// Article a1 = articleService.select(268);
 		// Article a = new Article();
 		// a.setTitle("naa");
 		// int j = articleService.count(a);
-		// a.setTitle("''");
-		a.setTitleLike("'");
+		// a.setTitle("%");
+		a.setTitleLike("1");
+		// a.setTitleHeadLike("1");
+		// a.setTitleTailLike("1");
 		// a.setUser(new User());
 		// a.getUser().setId(1);
 		int i = articleService.count(a);
@@ -505,10 +507,10 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle91Mix")
+	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle91Mix(ModelMap mm) {
 		Article a = articleService.select(265);
-		a.setTitle("ss_ss");
+		a.setTitle("ss%ss");
 		articleService.update(a);
 
 		mm.addAttribute("_content", a);

@@ -81,8 +81,11 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_title, conditionType = ConditionType.Like)
 	private String titleLike;
 
-	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_userid, conditionType = ConditionType.HeadLike)
-	private Integer userLike;
+	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_title, conditionType = ConditionType.HeadLike)
+	private String titleHeadLike;
+
+	@ConditionMapperAnnotation(dbFieldName = ArticleCondition.field_title, conditionType = ConditionType.TailLike)
+	private String titleTailLike;
 
 	public String getTitleLike() {
 		return titleLike;
@@ -92,12 +95,20 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 		this.titleLike = titleLike;
 	}
 
-	public Integer getUserLike() {
-		return userLike;
+	public String getTitleHeadLike() {
+		return titleHeadLike;
 	}
 
-	public void setUserLike(Integer userLike) {
-		this.userLike = userLike;
+	public void setTitleHeadLike(String titleHeadLike) {
+		this.titleHeadLike = titleHeadLike;
+	}
+
+	public String getTitleTailLike() {
+		return titleTailLike;
+	}
+
+	public void setTitleTailLike(String titleTailLike) {
+		this.titleTailLike = titleTailLike;
 	}
 
 }

@@ -12,7 +12,7 @@ import org.apache.ibatis.type.MappedTypes;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * 解决sql查询语句中like条件的处理器
+ * 解决sql查询语句中like '%xxx%'条件的处理器
  * 
  * @author limeng32
  * 
@@ -29,7 +29,13 @@ public class ConditionLikeHandler extends BaseTypeHandler<String> implements
 			ps.setString(i, null);
 			return;
 		}
-		ps.setString(i, "qwe");
+		if (parameter.indexOf("%") > -1) {
+			parameter = parameter.replaceAll("%", "\\\\%");
+		}
+		if (parameter.indexOf("_") > -1) {
+			parameter = parameter.replaceAll("_", "\\\\_");
+		}
+		ps.setString(i, "%" + parameter + "%");
 	}
 
 	@Override
