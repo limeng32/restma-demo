@@ -14,6 +14,7 @@ import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionType;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.Mapperable;
 import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.QueryMapper;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapper;
@@ -323,16 +324,7 @@ public class SqlBuilder {
 				continue;
 			}
 			allFieldNull = false;
-			whereSql.append(dbFieldName).append("=#{");
-			if (fieldMapper.isForeignKey()) {
-				whereSql.append(fieldName).append(".")
-						.append(fieldMapper.getForeignFieldName());
-			} else {
-				whereSql.append(fieldName);
-			}
-			whereSql.append(",").append("jdbcType=")
-					.append(fieldMapper.getJdbcType().toString())
-					.append("} and ");
+			dealConditionEqual(whereSql, fieldMapper, object, value);
 		}
 
 		// 处理queryMapper中的条件
@@ -424,19 +416,16 @@ public class SqlBuilder {
 	}
 
 	private static void dealConditionEqual(StringBuffer whereSql,
-			ConditionMapper conditionMapper, Object object, Object value) {
-		String fieldName = conditionMapper.getFieldName();
-		String dbFieldName = conditionMapper.getDbFieldName();
-		whereSql.append(dbFieldName).append(" = #{");
-		if (conditionMapper.isForeignKey()) {
-			whereSql.append(fieldName).append(".")
-					.append(conditionMapper.getForeignFieldName());
+			Mapperable mapper, Object object, Object value) {
+		whereSql.append(mapper.getDbFieldName()).append(" = #{");
+		if (mapper.isForeignKey()) {
+			whereSql.append(mapper.getFieldName()).append(".")
+					.append(mapper.getForeignFieldName());
 		} else {
-			whereSql.append(fieldName);
+			whereSql.append(mapper.getFieldName());
 		}
 		whereSql.append(",").append("jdbcType=")
-				.append(conditionMapper.getJdbcType().toString())
-				.append("} and ");
+				.append(mapper.getJdbcType().toString()).append("} and ");
 	}
 
 	/**

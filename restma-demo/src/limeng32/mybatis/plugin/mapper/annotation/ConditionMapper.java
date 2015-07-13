@@ -8,7 +8,7 @@ import org.apache.ibatis.type.JdbcType;
  * @author limeng32
  * 
  */
-public class ConditionMapper {
+public class ConditionMapper implements Mapperable {
 
 	/**
 	 * Java对象字段名
@@ -45,6 +45,7 @@ public class ConditionMapper {
 	 */
 	private String ForeignFieldName;
 
+	@Override
 	public String getFieldName() {
 		return fieldName;
 	}
@@ -53,6 +54,7 @@ public class ConditionMapper {
 		this.fieldName = fieldName;
 	}
 
+	@Override
 	public String getDbFieldName() {
 		return dbFieldName;
 	}
@@ -61,6 +63,7 @@ public class ConditionMapper {
 		this.dbFieldName = dbFieldName;
 	}
 
+	@Override
 	public JdbcType getJdbcType() {
 		return jdbcType;
 	}
@@ -69,6 +72,7 @@ public class ConditionMapper {
 		this.jdbcType = jdbcType;
 	}
 
+	@Override
 	public String getDbAssociationUniqueKey() {
 		return dbAssociationUniqueKey;
 	}
@@ -77,6 +81,7 @@ public class ConditionMapper {
 		this.dbAssociationUniqueKey = dbAssociationUniqueKey;
 	}
 
+	@Override
 	public boolean isForeignKey() {
 		return isForeignKey;
 	}
@@ -85,6 +90,7 @@ public class ConditionMapper {
 		this.isForeignKey = isForeignKey;
 	}
 
+	@Override
 	public String getForeignFieldName() {
 		return ForeignFieldName;
 	}

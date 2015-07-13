@@ -8,7 +8,7 @@ import org.apache.ibatis.type.JdbcType;
  * @author david
  * 
  */
-public class FieldMapper {
+public class FieldMapper implements Mapperable {
 	/**
 	 * Java对象字段名
 	 */
@@ -48,6 +48,7 @@ public class FieldMapper {
 	 * 数据库表字段名
 	 */
 
+	@Override
 	public String getDbFieldName() {
 		return dbFieldName;
 	}
@@ -56,6 +57,7 @@ public class FieldMapper {
 		this.dbFieldName = dbFieldName;
 	}
 
+	@Override
 	public String getFieldName() {
 		return fieldName;
 	}
@@ -64,6 +66,7 @@ public class FieldMapper {
 		this.fieldName = fieldName;
 	}
 
+	@Override
 	public JdbcType getJdbcType() {
 		return jdbcType;
 	}
@@ -72,6 +75,7 @@ public class FieldMapper {
 		this.jdbcType = jdbcType;
 	}
 
+	@Override
 	public String getDbAssociationUniqueKey() {
 		return dbAssociationUniqueKey;
 	}
@@ -88,6 +92,7 @@ public class FieldMapper {
 		this.isUniqueKey = isUniqueKey;
 	}
 
+	@Override
 	public boolean isForeignKey() {
 		return isForeignKey;
 	}
@@ -96,6 +101,7 @@ public class FieldMapper {
 		this.isForeignKey = isForeignKey;
 	}
 
+	@Override
 	public String getForeignFieldName() {
 		return ForeignFieldName;
 	}
