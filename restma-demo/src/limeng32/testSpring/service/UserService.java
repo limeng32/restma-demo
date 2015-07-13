@@ -5,7 +5,6 @@ import java.util.List;
 import limeng32.testSpring.mapper.UserMapper;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
-import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,14 +39,9 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 		user.setArticle(articleService.selectAll(articleCondition));
 	}
 
-	// @Override
-	// public int count(Conditionable conditionable) {
-	// return supportCount(mapper, conditionable);
-	// }
-
 	@Override
-	public List<User> selectAll(Conditionable condition) {
-		return supportSelectAll(mapper, condition);
+	public List<User> selectAll(User t) {
+		return supportSelectAll(mapper, t);
 	}
 
 	@Override

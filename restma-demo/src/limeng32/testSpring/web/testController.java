@@ -491,19 +491,16 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle9Mix(ModelMap mm) {
-		ArticleCondition a = new ArticleCondition();
-		// Article a1 = articleService.select(268);
-		// Article a = new Article();
-		// a.setTitle("naa");
-		// int j = articleService.count(a);
-		a.setTitle("%");
-		// a.setTitleLike("1");
-		// a.setTitleHeadLike("1");
-		// a.setTitleTailLike("1");
-		// a.setUser(new User());
-		// a.getUser().setId(1);
-		int i = articleService.count(a);
-		mm.addAttribute("_content", i);
+		// Book book = bookService.select(1);
+		// Writer writer = writerService.select(2);
+		// BookWriter bw = bookWriterService.select(5);
+		BookWriter bwc = new BookWriter();
+		bwc.setBook(new Book());
+		bwc.getBook().setTitle("4的诗歌");
+		bwc.setWriter(new Writer());
+		bwc.getWriter().setName("张三");
+		List<BookWriter> bwList = bookWriterService.selectAll(bwc);
+		mm.addAttribute("_content", bwList);
 		return "showArticleMix";
 	}
 
@@ -542,6 +539,24 @@ public class testController {
 		// a.setUser(userService.select(2));
 		// articleService.insert(a);
 		mm.addAttribute("_content", a);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle94Mix")
+	public String showArticle94Mix(ModelMap mm) {
+		ArticleCondition a = new ArticleCondition();
+		// Article a1 = articleService.select(268);
+		// Article a = new Article();
+		// a.setTitle("naa");
+		// int j = articleService.count(a);
+		a.setTitle("%");
+		// a.setTitleLike("1");
+		// a.setTitleHeadLike("1");
+		// a.setTitleTailLike("1");
+		// a.setUser(new User());
+		// a.getUser().setId(1);
+		int i = articleService.count(a);
+		mm.addAttribute("_content", i);
 		return "showArticleMix";
 	}
 

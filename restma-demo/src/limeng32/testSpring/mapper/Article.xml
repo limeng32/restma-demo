@@ -16,7 +16,7 @@
 		</where>
 	</sql>
 
-	<select id="select" resultMap="result"></select>
+	<select id="select" resultMap="result" />
 
 	<select id="selectAll" resultMap="result">
 		select
@@ -27,12 +27,6 @@
 	</select>
 
 	<select id="count" resultType="int" />
-
-	<select id="count1" resultType="int">
-		select count(id) from
-		<include refid="tableName" />
-		<include refid="conditions" />
-	</select>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 

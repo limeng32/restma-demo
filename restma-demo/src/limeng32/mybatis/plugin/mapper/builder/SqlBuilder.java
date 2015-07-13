@@ -365,6 +365,7 @@ public class SqlBuilder {
 
 		whereSql.delete(whereSql.lastIndexOf("and"),
 				whereSql.lastIndexOf("and") + 3);
+		// 迭代型条件等开发完selectAll后再回来进行开发
 
 		// for (int i = 0; i < uniqueKeyNames.length; i++) {
 		// whereSql.append(uniqueKeyNames[i]);
@@ -724,5 +725,16 @@ public class SqlBuilder {
 		whereSql.delete(whereSql.lastIndexOf("and"),
 				whereSql.lastIndexOf("and") + 3);
 		return selectSql.append(whereSql).toString();
+	}
+
+	/**
+	 * 由传入的对象生成query sql语句
+	 * 
+	 * @param clazz
+	 * @return sql
+	 * @throws Exception
+	 */
+	public static String buildSelectAllSql(Class<?> clazz) throws Exception {
+		return "";
 	}
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.testSpring.mapper.MapperFace;
 import limeng32.testSpring.pojo.PojoSupport;
-import limeng32.testSpring.pojo.condition.Conditionable;
 
 public abstract class ServiceSupport<T extends PojoSupport<T>> implements
 		ServiceFace<T> {
@@ -15,9 +14,8 @@ public abstract class ServiceSupport<T extends PojoSupport<T>> implements
 		return mapper.select(id);
 	}
 
-	protected List<T> supportSelectAll(MapperFace<T> mapper,
-			Conditionable conditionable) {
-		return mapper.selectAll(conditionable);
+	protected List<T> supportSelectAll(MapperFace<T> mapper, T t) {
+		return mapper.selectAll(t);
 	}
 
 	protected void supportInsert(MapperFace<T> mapper, T t) {

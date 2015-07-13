@@ -4,7 +4,6 @@ import java.util.List;
 
 import limeng32.testSpring.mapper.BookWriterMapper;
 import limeng32.testSpring.pojo.BookWriter;
-import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,14 +31,9 @@ public class BookWriterService extends ServiceSupport<BookWriter> implements
 	}
 
 	@Override
-	public List<BookWriter> selectAll(Conditionable conditionable) {
-		return mapper.selectAll(conditionable);
+	public List<BookWriter> selectAll(BookWriter t) {
+		return supportSelectAll(mapper, t);
 	}
-
-	// @Override
-	// public int count(Conditionable conditionable) {
-	// return mapper.count(conditionable);
-	// }
 
 	@Override
 	public void updatePersistent(BookWriter t) {

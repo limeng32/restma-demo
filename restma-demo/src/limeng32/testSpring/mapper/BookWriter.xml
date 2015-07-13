@@ -53,9 +53,11 @@
 		</where>
 	</sql>
 
-	<select id="select" resultMap="result"></select>
+	<select id="select" resultMap="result" />
 
-	<select id="selectAll" resultMap="result">
+	<select id="selectAll" resultMap="result" />
+
+	<select id="selectAll1" resultMap="result">
 		select
 		<include refid="columns" />
 		from
@@ -71,31 +73,15 @@
 		<include refid="conditions" />
 	</select>
 
-	<select id="count" resultType="int">
-		select count(id) from
-		<include refid="tableName" />
-		<include refid="conditions" />
-	</select>
+	<select id="count" resultType="int" />
 
-	<insert id="insert" parameterType="BookWriter" useGeneratedKeys="true"
-		keyProperty="id">
-		insert into
-		<include refid="tableName" />
-		(bookid, writerid
-		, isable) values(#{book.id},#{writer.id}
-		,'1')
-	</insert>
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 
-	<update id="update" parameterType="BookWriter">
-		update
-		<include refid="tableName" />
-		<set>
-			<if test="id != null">id=#{id},</if>
-			<if test="book != null and book.id != 0">bookid=#{book.id},</if>
-			<if test="writer != null and writer.id != 0">writerid=#{writer.id},</if>
-		</set>
-		where id=#{id}
-	</update>
+	<update id="update" />
+
+	<update id="updatePersistent" />
+
+	<delete id="delete" />
 
 	<update id="disable" parameterType="BookWriter">
 		update

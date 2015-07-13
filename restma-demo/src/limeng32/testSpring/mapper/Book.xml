@@ -13,7 +13,7 @@
 		</where>
 	</sql>
 
-	<select id="select" resultMap="result"></select>
+	<select id="select" resultMap="result" />
 
 	<select id="selectAll" resultMap="result">
 		select
@@ -23,30 +23,15 @@
 		<include refid="conditions" />
 	</select>
 
-	<select id="count" resultType="int">
-		select count(id) from
-		<include refid="tableName" />
-		<include refid="conditions" />
-	</select>
+	<select id="count" resultType="int" />
 
-	<insert id="insert" parameterType="Book" useGeneratedKeys="true"
-		keyProperty="id">
-		insert into
-		<include refid="tableName" />
-		(title
-		,isable) values(#{title}
-		,'1')
-	</insert>
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 
-	<update id="update" parameterType="Book">
-		update
-		<include refid="tableName" />
-		<set>
-			<if test="id != null">id=#{id},</if>
-			<if test="title != null">title=#{title},</if>
-		</set>
-		where id=#{id}
-	</update>
+	<update id="update" />
+
+	<update id="updatePersistent" />
+
+	<delete id="delete" />
 
 	<update id="disable" parameterType="Book">
 		update

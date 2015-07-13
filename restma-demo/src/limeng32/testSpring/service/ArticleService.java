@@ -4,7 +4,6 @@ import java.util.List;
 
 import limeng32.testSpring.mapper.ArticleMapper;
 import limeng32.testSpring.pojo.Article;
-import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,14 +31,9 @@ public class ArticleService extends ServiceSupport<Article> implements
 	}
 
 	@Override
-	public List<Article> selectAll(Conditionable conditionable) {
-		return mapper.selectAll(conditionable);
+	public List<Article> selectAll(Article t) {
+		return supportSelectAll(mapper, t);
 	}
-
-//	@Override
-//	public int count(Conditionable conditionable) {
-//		return mapper.count(conditionable);
-//	}
 
 	@Override
 	public void updatePersistent(Article t) {
