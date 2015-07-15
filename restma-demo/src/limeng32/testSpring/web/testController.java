@@ -495,6 +495,7 @@ public class testController {
 		// Writer writer = writerService.select(2);
 		// BookWriter bw = bookWriterService.select(5);
 		BookWriter bwc = new BookWriter();
+		bwc.setId(5);
 		bwc.setBook(new Book());
 		bwc.getBook().setTitle("4的诗歌");
 		bwc.setWriter(new Writer());
