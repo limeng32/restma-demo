@@ -17,10 +17,10 @@ public class BookWriter extends PojoSupport<BookWriter> implements Serializable 
 	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
 	private Integer id;
 
-	@FieldMapperAnnotation(dbFieldName = "bookid", jdbcType = JdbcType.INTEGER)
+	@FieldMapperAnnotation(dbFieldName = "bookid", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "id")
 	private Book book;
 
-	@FieldMapperAnnotation(dbFieldName = "writerid", jdbcType = JdbcType.INTEGER)
+	@FieldMapperAnnotation(dbFieldName = "writerid", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "id")
 	private Writer writer;
 
 	public Book getBook() {

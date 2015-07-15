@@ -734,7 +734,30 @@ public class SqlBuilder {
 	 * @return sql
 	 * @throws Exception
 	 */
-	public static String buildSelectAllSql(Class<?> clazz) throws Exception {
+	public static String buildSelectAllSql(Object object) throws Exception {
+		if (null == object) {
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for a null object!");
+		}
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation();
+		dealTableMapperAnnotationIteration(object, tma);
 		return "";
+	}
+
+	/**
+	 * 对object的TableMapperAnnotation进行迭代处理
+	 * 
+	 * @param object
+	 *            , tma
+	 * @return
+	 * @throws Exception
+	 */
+	private static void dealTableMapperAnnotationIteration(Object object,
+			TableMapperAnnotation tma) {
+
 	}
 }
