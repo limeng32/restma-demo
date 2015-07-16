@@ -495,11 +495,10 @@ public class testController {
 		// Writer writer = writerService.select(2);
 		// BookWriter bw = bookWriterService.select(5);
 		BookWriter bwc = new BookWriter();
-		bwc.setId(5);
 		bwc.setBook(new Book());
 		bwc.getBook().setTitle("4的诗歌");
 		bwc.setWriter(new Writer());
-		bwc.getWriter().setName("张三");
+		bwc.getWriter().setName("李四");
 		List<BookWriter> bwList = bookWriterService.selectAll(bwc);
 		mm.addAttribute("_content", bwList);
 		return "showArticleMix";

@@ -378,9 +378,7 @@ public class SqlBuilder {
 		// }
 		// whereSql.delete(whereSql.lastIndexOf("and"),
 		// whereSql.lastIndexOf("and") + 3);
-		String ret = selectSql.append(whereSql).toString();
-		System.out.println("----------------------" + ret);
-		return ret;
+		return selectSql.append(whereSql).toString();
 	}
 
 	private static void dealConditionLike(StringBuffer whereSql,
@@ -431,12 +429,15 @@ public class SqlBuilder {
 	}
 
 	private static void dealConditionEqual(StringBuffer whereSql,
-			Mapperable mapper, String tableName) {
+			Mapperable mapper, String tableName, String fieldNamePrefix) {
 		if (whereSql.length() == 0) {
 			whereSql.append(" where ");
 		}
 		whereSql.append(tableName).append(".").append(mapper.getDbFieldName())
 				.append(" = #{");
+		if (fieldNamePrefix != null) {
+			whereSql.append(fieldNamePrefix).append(".");
+		}
 		if (mapper.isForeignKey()) {
 			whereSql.append(mapper.getFieldName()).append(".")
 					.append(mapper.getForeignFieldName());
@@ -763,7 +764,6 @@ public class SqlBuilder {
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
 		StringBuffer selectSql = new StringBuffer("select ");
 		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
 		StringBuffer whereSql = new StringBuffer();
@@ -787,16 +787,14 @@ public class SqlBuilder {
 				dealMapperAnnotationIteration(tableName, fieldMapper, value,
 						selectSql, fromSql, whereSql);
 			} else {
-				dealConditionEqual(whereSql, fieldMapper, tableName);
+				dealConditionEqual(whereSql, fieldMapper, tableName, null);
 			}
 		}
 		if (whereSql.indexOf("and") > -1) {
 			whereSql.delete(whereSql.lastIndexOf("and"),
 					whereSql.lastIndexOf("and") + 3);
 		}
-		String ret = selectSql.append(fromSql).append(whereSql).toString();
-		System.out.println("----------------------" + ret);
-		return ret;
+		return selectSql.append(fromSql).append(whereSql).toString();
 	}
 
 	private static boolean hasTableMapperAnnotation(Object object) {
@@ -818,16 +816,30 @@ public class SqlBuilder {
 	 * @throws Exception
 	 */
 	private static void dealMapperAnnotationIteration(String leftTableName,
-			FieldMapper fieldMapper, Object object, StringBuffer selectSql,
+			FieldMapper leftFieldMapper, Object object, StringBuffer selectSql,
 			StringBuffer fromSql, StringBuffer whereSql) throws Exception {
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		String rightTableName = ((TableMapperAnnotation) (buildTableMapper(getTableMappedClass(object
-				.getClass()))).getTableMapperAnnotation()).tableName();
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		String rightTableName = ((TableMapperAnnotation) (tableMapper)
+				.getTableMapperAnnotation()).tableName();
 		fromSql.append(" left join ").append(rightTableName).append(" on ")
 				.append(leftTableName).append(".")
-				.append(fieldMapper.getDbFieldName()).append(" = ")
+				.append(leftFieldMapper.getDbFieldName()).append(" = ")
 				.append(rightTableName).append(".")
-				.append(fieldMapper.getDbAssociationUniqueKey());
-	}
+				.append(leftFieldMapper.getDbAssociationUniqueKey());
 
+		// 处理tableMapper中的条件
+		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
+			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
+					dbFieldName);
+			String fieldName = fieldMapper.getFieldName();
+			Object value = dtoFieldMap.get(fieldName);
+			if (value == null) {
+				continue;
+			}
+			dealConditionEqual(whereSql, fieldMapper, rightTableName,
+					leftFieldMapper.getFieldName());
+		}
+	}
 }
