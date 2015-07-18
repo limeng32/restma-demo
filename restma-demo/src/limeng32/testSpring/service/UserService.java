@@ -3,8 +3,8 @@ package limeng32.testSpring.service;
 import java.util.List;
 
 import limeng32.testSpring.mapper.UserMapper;
+import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.User;
-import limeng32.testSpring.pojo.condition.ArticleCondition;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,9 +34,9 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 	}
 
 	@Override
-	public void loadArticle(User user, ArticleCondition articleCondition) {
-		articleCondition.setUser(user);
-		user.setArticle(articleService.selectAll(articleCondition));
+	public void loadArticle(User user, Article article) {
+		article.setUser(user);
+		user.setArticle(articleService.selectAll(article));
 	}
 
 	@Override

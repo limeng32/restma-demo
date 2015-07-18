@@ -1,9 +1,9 @@
 package limeng32.testSpring.mapper;
 
+import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.User;
-import limeng32.testSpring.pojo.condition.ArticleCondition;
 
 public interface UserMapper extends MapperFace<User> {
 
-	public void loadArticle(User user, ArticleCondition articleCondition);
+	public void loadArticle(User user, Article article);
 }

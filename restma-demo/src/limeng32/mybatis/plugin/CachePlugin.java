@@ -160,6 +160,9 @@ public class CachePlugin implements Interceptor {
 					newSql = SqlBuilder.buildSelectSql(ms.getResultMaps()
 							.get(0).getType());
 					break;
+				case "selectAll":
+					newSql = SqlBuilder.buildSelectAllSql(parameterObject);
+					break;
 				}
 				SqlSource sqlSource = buildSqlSource(configuration, newSql,
 						parameterObject.getClass());

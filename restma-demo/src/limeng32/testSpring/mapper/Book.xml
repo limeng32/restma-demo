@@ -15,13 +15,7 @@
 
 	<select id="select" resultMap="result" />
 
-	<select id="selectAll" resultMap="result">
-		select
-		<include refid="columns" />
-		from
-		<include refid="tableName" />
-		<include refid="conditions" />
-	</select>
+	<select id="selectAll" resultMap="result" />
 
 	<select id="count" resultType="int" />
 

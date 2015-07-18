@@ -12,11 +12,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@")
 @TableMapperAnnotation(tableName = ArticleCondition.field_tableName)
 public class Article extends PojoSupport<Article> implements Serializable {
 
@@ -35,7 +31,6 @@ public class Article extends PojoSupport<Article> implements Serializable {
 	private String content;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	@JSONField(serialize = false)
 	private Date updateTime = new Date();
 

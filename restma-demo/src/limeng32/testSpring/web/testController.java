@@ -491,16 +491,41 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle9Mix(ModelMap mm) {
-		// Book book = bookService.select(1);
-		// Writer writer = writerService.select(2);
-		// BookWriter bw = bookWriterService.select(5);
+//		Article ac = new Article();
+//		ac.setTitle("%标题%");
+//		List<Article> list = articleService.selectAll(ac);
+//		User u1 = list.get(0).getUser();
+//		User u2 = list.get(1).getUser();
+		Article a = articleService.select(3);
+		mm.addAttribute("_content", a);
+		return "showArticleMix";
+	}
+	
+	@RequestMapping(value = "/showArticle96Mix")
+	public String showArticle96Mix(ModelMap mm) {
 		BookWriter bwc = new BookWriter();
 		bwc.setBook(new Book());
 		bwc.getBook().setTitle("4的诗歌");
-		bwc.setWriter(new Writer());
-		bwc.getWriter().setName("李四");
 		List<BookWriter> bwList = bookWriterService.selectAll(bwc);
 		mm.addAttribute("_content", bwList);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle95Mix")
+	public String showArticle95Mix(ModelMap mm) {
+		// Book book = bookService.select(1);
+		Writer writer = writerService.select(1);
+
+		BookWriterCondition bwc = new BookWriterCondition();
+		bwc.setBook(new Book());
+		bwc.getBook().setTitle("4的诗歌");
+		bwc.setSorter(new SortParam(new Order(BookWriterCondition.Field.id,
+				Conditionable.Sequence.asc)));
+		// bwc.setWriter(new Writer());
+		// bwc.getWriter().setName("张三");
+		writerService.loadBookWriter(writer, bwc);
+		// List<BookWriter> bwList = bookWriterService.selectAll(bwc);
+		mm.addAttribute("_content", writer);
 		return "showArticleMix";
 	}
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import limeng32.testSpring.mapper.BookMapper;
 import limeng32.testSpring.pojo.Book;
-import limeng32.testSpring.pojo.condition.BookWriterCondition;
+import limeng32.testSpring.pojo.BookWriter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,10 +39,9 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 	}
 
 	@Override
-	public void loadBookWriter(Book book,
-			BookWriterCondition bookWriterCondition) {
-		bookWriterCondition.setBook(book);
-		book.setBookWriter(bookWriterService.selectAll(bookWriterCondition));
+	public void loadBookWriter(Book book, BookWriter bookWriter) {
+		bookWriter.setBook(book);
+		book.setBookWriter(bookWriterService.selectAll(bookWriter));
 	}
 
 	@Override

@@ -17,12 +17,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@")
 @TableMapperAnnotation(tableName = "user")
 public class User extends PojoSupport<User> implements Serializable {
 
@@ -52,7 +47,6 @@ public class User extends PojoSupport<User> implements Serializable {
 
 	@Past
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	private Date birthday;
 
 	private java.util.Collection<Article> article;
@@ -88,6 +82,7 @@ public class User extends PojoSupport<User> implements Serializable {
 	}
 
 	public void addArticle(Article newArticle) {
+		System.out.println("--------------------"+newArticle.getId());
 		if (newArticle == null)
 			return;
 		if (this.article == null)
@@ -101,7 +96,6 @@ public class User extends PojoSupport<User> implements Serializable {
 		}
 	}
 
-	@JsonIgnore
 	@JSONField(serialize = false)
 	public java.util.Iterator<Article> getIteratorArticle() {
 		if (article == null)

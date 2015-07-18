@@ -3,8 +3,8 @@ package limeng32.testSpring.service;
 import java.util.List;
 
 import limeng32.testSpring.mapper.WriterMapper;
+import limeng32.testSpring.pojo.BookWriter;
 import limeng32.testSpring.pojo.Writer;
-import limeng32.testSpring.pojo.condition.BookWriterCondition;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,10 +40,9 @@ public class WriterService extends ServiceSupport<Writer> implements
 	}
 
 	@Override
-	public void loadBookWriter(Writer writer,
-			BookWriterCondition bookWriterCondition) {
-		bookWriterCondition.setWriter(writer);
-		writer.setBookWriter(bookWriterService.selectAll(bookWriterCondition));
+	public void loadBookWriter(Writer writer, BookWriter bookWriter) {
+		bookWriter.setWriter(writer);
+		writer.setBookWriter(bookWriterService.selectAll(bookWriter));
 	}
 
 	@Override

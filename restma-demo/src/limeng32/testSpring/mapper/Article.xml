@@ -7,7 +7,7 @@
 
 	<sql id="conditions">
 		<where>
-			<if test="id != 0">and id = #{id}</if>
+			<if test="id != null">and id = #{id}</if>
 			<if test="user != null and user.id != 0">
 				and userid = #{user.id}
 			</if>
@@ -20,10 +20,12 @@
 
 	<select id="selectAll" resultMap="result">
 		select
-		<include refid="columns" />
+		article.id,
+		article.title, article.content, user.id, user.name, user.address,
+		user.nickname
 		from
-		<include refid="tableName" />
-		<include refid="conditions" />
+		article left join user on article.userid = user.id
+		where article.title like #{title}
 	</select>
 
 	<select id="count" resultType="int" />
@@ -51,6 +53,6 @@
 	<resultMap id="result" type="Article" autoMapping="true">
 		<id property="id" column="id" />
 		<association property="user" javaType="User"
-			select="limeng32.testSpring.mapper.UserMapper.select" column="userid" />
+			resultMap="limeng32.testSpring.mapper.UserMapper.result" />
 	</resultMap>
 </mapper>

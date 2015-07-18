@@ -1,11 +1,10 @@
 package limeng32.testSpring.mapper;
 
 import limeng32.testSpring.pojo.Book;
-import limeng32.testSpring.pojo.condition.BookWriterCondition;
+import limeng32.testSpring.pojo.BookWriter;
 
 public interface BookMapper extends MapperFace<Book> {
 
-	public void loadBookWriter(Book book,
-			BookWriterCondition bookWriterCondition);
+	public void loadBookWriter(Book book, BookWriter bookWriter);
 
 }
