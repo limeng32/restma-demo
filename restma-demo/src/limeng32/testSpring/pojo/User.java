@@ -82,7 +82,6 @@ public class User extends PojoSupport<User> implements Serializable {
 	}
 
 	public void addArticle(Article newArticle) {
-		System.out.println("--------------------"+newArticle.getId());
 		if (newArticle == null)
 			return;
 		if (this.article == null)
