@@ -771,8 +771,18 @@ public class SqlBuilder {
 			selectSql.append(tableName).append(".").append(dbFieldName)
 					.append(",");
 		}
-		selectSql.delete(selectSql.lastIndexOf(","),
-				selectSql.lastIndexOf(",") + 1);
+		// 处理内嵌对象中的变量
+		Field[] fields = getTableMappedClass(object.getClass())
+				.getDeclaredFields();
+		for (Field field : fields) {
+			if (hasTableMapperAnnotation(field.getType())) {
+				FieldMapperAnnotation fma = getFieldMapperAnnotation(field);
+				dealSelectSqlAndFromSql(tableName, fma.dbFieldName(),
+						fma.dbAssociationUniqueKey(), field.getType(),
+						selectSql, fromSql, "");
+			}
+		}
+
 		// 处理tableMapper中的条件
 		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
 			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
@@ -785,16 +795,27 @@ public class SqlBuilder {
 			/* 此处当value拥有TableMapper标注时，开始进行迭代 */
 			if (hasTableMapperAnnotation(value)) {
 				dealMapperAnnotationIteration(tableName, fieldMapper, value,
-						selectSql, fromSql, whereSql);
+						fromSql, whereSql);
 			} else {
 				dealConditionEqual(whereSql, fieldMapper, tableName, null);
 			}
 		}
+		selectSql.delete(selectSql.lastIndexOf(","),
+				selectSql.lastIndexOf(",") + 1);
 		if (whereSql.indexOf("and") > -1) {
 			whereSql.delete(whereSql.lastIndexOf("and"),
 					whereSql.lastIndexOf("and") + 3);
 		}
 		return selectSql.append(fromSql).append(whereSql).toString();
+	}
+
+	private static FieldMapperAnnotation getFieldMapperAnnotation(Field field) {
+		for (Annotation an : field.getDeclaredAnnotations()) {
+			if (an instanceof FieldMapperAnnotation) {
+				return (FieldMapperAnnotation) an;
+			}
+		}
+		return null;
 	}
 
 	private static boolean hasTableMapperAnnotation(Object object) {
@@ -808,6 +829,56 @@ public class SqlBuilder {
 		return false;
 	}
 
+	private static boolean hasTableMapperAnnotation(Class<?> clazz) {
+		Annotation[] classAnnotations = clazz.getDeclaredAnnotations();
+		for (Annotation an : classAnnotations) {
+			if (an instanceof TableMapperAnnotation) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean hasFieldMapperAnnotation(Field field) {
+		Annotation[] fieldAnnotations = field.getDeclaredAnnotations();
+		for (Annotation an : fieldAnnotations) {
+			if (an instanceof FieldMapperAnnotation) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static void dealSelectSqlAndFromSql(String leftTableName,
+			String leftDbFieldName, String leftDbAssociationUniqueKey,
+			Class<?> clazz, StringBuffer selectSql, StringBuffer fromSql,
+			String columnPrefix) {
+		/* 在这里加上对selectSql和fromSql的处理 */
+		TableMapper tableMapper = buildTableMapper(clazz);
+		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation();
+		String tableName = tma.tableName();
+		fromSql.append(" left join ").append(tableName).append(" on ")
+				.append(leftTableName).append(".").append(leftDbFieldName)
+				.append(" = ").append(tableName).append(".")
+				.append(leftDbAssociationUniqueKey);
+		Field[] fields = clazz.getDeclaredFields();
+		for (Field field : fields) {
+			if (hasFieldMapperAnnotation(field)) {
+				FieldMapperAnnotation fma = getFieldMapperAnnotation(field);
+				selectSql.append(tableName).append(".")
+						.append(fma.dbFieldName()).append(" as ")
+						.append(columnPrefix).append(tableName).append("_")
+						.append(fma.dbFieldName()).append(",");
+				if (!"".equals(fma.dbAssociationUniqueKey())) {
+					dealSelectSqlAndFromSql(tableName, fma.dbFieldName(),
+							fma.dbAssociationUniqueKey(), field.getType(),
+							selectSql, fromSql, tableName + "_");
+				}
+			}
+		}
+	}
+
 	/**
 	 * 对object的MapperAnnotation进行处理
 	 * 
@@ -816,18 +887,13 @@ public class SqlBuilder {
 	 * @throws Exception
 	 */
 	private static void dealMapperAnnotationIteration(String leftTableName,
-			FieldMapper leftFieldMapper, Object object, StringBuffer selectSql,
-			StringBuffer fromSql, StringBuffer whereSql) throws Exception {
+			FieldMapper leftFieldMapper, Object object, StringBuffer fromSql,
+			StringBuffer whereSql) throws Exception {
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
 				.getClass()));
 		String rightTableName = ((TableMapperAnnotation) (tableMapper)
 				.getTableMapperAnnotation()).tableName();
-		fromSql.append(" left join ").append(rightTableName).append(" on ")
-				.append(leftTableName).append(".")
-				.append(leftFieldMapper.getDbFieldName()).append(" = ")
-				.append(rightTableName).append(".")
-				.append(leftFieldMapper.getDbAssociationUniqueKey());
 
 		// 处理tableMapper中的条件
 		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {

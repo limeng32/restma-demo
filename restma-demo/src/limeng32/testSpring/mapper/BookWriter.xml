@@ -55,23 +55,7 @@
 
 	<select id="select" resultMap="result" />
 
-	<select id="selectAll" resultMap="result" />
-
-	<select id="selectAll1" resultMap="result">
-		select
-		<include refid="columns" />
-		from
-		<include refid="tableName" />
-		<if test="book != null">
-			,
-			<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
-		</if>
-		<if test="writer != null">
-			,
-			<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
-		</if>
-		<include refid="conditions" />
-	</select>
+	<select id="selectAll" resultMap="selectAllResult" />
 
 	<select id="count" resultType="int" />
 
@@ -101,5 +85,16 @@
 			select="limeng32.testSpring.mapper.BookMapper.select" column="bookid" />
 		<association property="writer" javaType="Writer"
 			select="limeng32.testSpring.mapper.WriterMapper.select" column="writerid" />
+	</resultMap>
+
+	<resultMap id="selectAllResult" type="BookWriter"
+		autoMapping="true">
+		<id property="id" column="id" />
+		<association property="book" javaType="Book"
+			resultMap="limeng32.testSpring.mapper.BookMapper.selectAllResult"
+			columnPrefix="Book_" />
+		<association property="writer" javaType="Writer"
+			resultMap="limeng32.testSpring.mapper.WriterMapper.selectAllResult"
+			columnPrefix="Writer_" />
 	</resultMap>
 </mapper>

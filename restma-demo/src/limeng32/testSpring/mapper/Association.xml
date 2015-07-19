@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="limeng32.testSpring.mapper.AssociationMapper">
+	<cache />
+	<sql id="tableName">Writer</sql>
+	<sql id="columns">id,name</sql>
+
+	<sql id="conditions">
+		<where>
+			<if test="id != 0">and id = #{id}</if>
+			<if test="name != null">and name like #{name}</if>
+			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
+		</where>
+	</sql>
+
+	<select id="select" resultMap="result" />
+
+	<select id="selectAll" resultMap="selectAllResult" />
+
+	<select id="count" resultType="int" />
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
+
+	<update id="update" />
+
+	<update id="updatePersistent" />
+
+	<delete id="delete" />
+
+	<update id="disable" parameterType="Writer">
+		update
+		<include refid="tableName" />
+		<include refid="limeng32.testSpring.mapper.PojoMapper.disable" />
+	</update>
+
+	<update id="enable" parameterType="Writer">
+		update
+		<include refid="tableName" />
+		<include refid="limeng32.testSpring.mapper.PojoMapper.enable" />
+	</update>
+
+	<resultMap id="result" type="Association" autoMapping="true">
+		<id property="id" column="id" />
+		<collection property="writer" ofType="Writer" />
+	</resultMap>
+
+	<resultMap id="selectAllResult" type="Association"
+		autoMapping="true">
+		<id property="id" column="id" />
+	</resultMap>
+</mapper>

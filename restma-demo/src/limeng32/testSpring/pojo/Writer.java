@@ -3,6 +3,7 @@ package limeng32.testSpring.pojo;
 import java.io.Serializable;
 
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
 
 import org.apache.ibatis.type.JdbcType;
@@ -114,5 +115,8 @@ public class Writer extends PojoSupport<Writer> implements Serializable {
 	public void setName(java.lang.String name) {
 		this.name = name;
 	}
+
+	@PersistentFlagAnnotation
+	private String _persistent;
 
 }

@@ -2,10 +2,13 @@ package limeng32.testSpring.pojo;
 
 import java.io.Serializable;
 
+import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
+
 import org.apache.ibatis.type.JdbcType;
 
-import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
-import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
+import com.alibaba.fastjson.annotation.JSONField;
 
 @TableMapperAnnotation(tableName = "Association")
 public class Association extends PojoSupport<Association> implements
@@ -45,6 +48,7 @@ public class Association extends PojoSupport<Association> implements
 		return writer;
 	}
 
+	@JSONField(serialize = false)
 	public java.util.Iterator<Writer> getIteratorWriter() {
 		if (writer == null)
 			writer = new java.util.HashSet<Writer>();
@@ -93,4 +97,8 @@ public class Association extends PojoSupport<Association> implements
 			}
 		}
 	}
+
+	@PersistentFlagAnnotation
+	private String _persistent;
+
 }

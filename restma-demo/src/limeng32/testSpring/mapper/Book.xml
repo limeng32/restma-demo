@@ -15,7 +15,7 @@
 
 	<select id="select" resultMap="result" />
 
-	<select id="selectAll" resultMap="result" />
+	<select id="selectAll" resultMap="selectAllResult" />
 
 	<select id="count" resultType="int" />
 
@@ -42,5 +42,9 @@
 	<resultMap id="result" type="Book" autoMapping="true">
 		<id property="id" column="id" />
 		<collection property="bookWriter" ofType="BookWriter" />
+	</resultMap>
+
+	<resultMap id="selectAllResult" type="Book" autoMapping="true">
+		<id property="id" column="id" />
 	</resultMap>
 </mapper>

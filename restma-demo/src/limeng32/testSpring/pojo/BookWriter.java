@@ -3,6 +3,7 @@ package limeng32.testSpring.pojo;
 import java.io.Serializable;
 
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
+import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
 
 import org.apache.ibatis.type.JdbcType;
@@ -68,5 +69,8 @@ public class BookWriter extends PojoSupport<BookWriter> implements Serializable 
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@PersistentFlagAnnotation
+	private String _persistent;
 
 }
