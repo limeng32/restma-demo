@@ -489,8 +489,8 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle95Mix")
-	public String showArticle9Mix(ModelMap mm) {
+	@RequestMapping(value = "/showArticle93Mix")
+	public String showArticle93Mix(ModelMap mm) {
 		Article ac = new Article();
 		ac.setTitle("%标题%");
 		List<Article> list = articleService.selectAll(ac);
@@ -511,7 +511,7 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
+	@RequestMapping(value = "/showArticle95Mix")
 	public String showArticle95Mix(ModelMap mm) {
 		// Book book = bookService.select(1);
 		// Writer writer = writerService.select(1);
@@ -553,17 +553,10 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle93Mix")
-	public String showArticle93Mix(ModelMap mm) {
-		Article a = articleService.select(270);
-		if (a != null) {
-			articleService.delete(a);
-		}
-		// Article a = new Article();
-		// a.setTitle("new");
-		// a.setUser(userService.select(2));
-		// articleService.insert(a);
-		mm.addAttribute("_content", a);
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testSelect93(ModelMap mm) {
+		BookWriter bw = bookWriterService.select(6);
+		mm.addAttribute("_content", bw);
 		return "showArticleMix";
 	}
 

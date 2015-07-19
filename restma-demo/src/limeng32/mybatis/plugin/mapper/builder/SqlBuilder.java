@@ -46,7 +46,7 @@ public class SqlBuilder {
 	 */
 	private static TableMapper buildTableMapper(Class<?> dtoClass) {
 
-		Map<String, FieldMapper> fieldMapperCache = null;
+		Map<String, FieldMapper> fieldMapperCache, newFieldMapperCache = null;
 		List<FieldMapper> fieldMapperList = null;
 		Field[] fields = null;
 
@@ -67,6 +67,7 @@ public class SqlBuilder {
 			}
 			fields = dtoClass.getDeclaredFields();
 			fieldMapperCache = new HashMap<String, FieldMapper>();
+			newFieldMapperCache = new HashMap<String, FieldMapper>();
 			fieldMapperList = new ArrayList<FieldMapper>();
 			Annotation[] fieldAnnotations = null;
 			for (Field field : fields) {
@@ -99,9 +100,9 @@ public class SqlBuilder {
 							}
 							TableMapper tm = tableMapperCache.get(field
 									.getType());
-							String foreignFieldName = tm
-									.getFieldMapperCache()
-									.get(fieldMapperAnnotation
+							String foreignFieldName = getFieldMapperByDbFieldName(
+									tm.getNewFieldMapperCache(),
+									fieldMapperAnnotation
 											.dbAssociationUniqueKey())
 									.getFieldName();
 							fieldMapper.setForeignFieldName(foreignFieldName);
@@ -109,6 +110,7 @@ public class SqlBuilder {
 						fieldMapperCache.put(
 								fieldMapperAnnotation.dbFieldName(),
 								fieldMapper);
+						newFieldMapperCache.put(field.getName(), fieldMapper);
 						fieldMapperList.add(fieldMapper);
 					} else if (an instanceof PersistentFlagAnnotation) {
 						tableMapper.getPersistentFlags().add(field.getName());
@@ -116,10 +118,22 @@ public class SqlBuilder {
 				}
 			}
 			tableMapper.setFieldMapperCache(fieldMapperCache);
+			tableMapper.setNewFieldMapperCache(newFieldMapperCache);
 			tableMapper.setFieldMapperList(fieldMapperList);
 			tableMapperCache.put(dtoClass, tableMapper);
 			return tableMapper;
 		}
+	}
+
+	/* 从newFieldMapperCache中获取已知dbFieldName的FieldMapper */
+	private static FieldMapper getFieldMapperByDbFieldName(
+			Map<String, FieldMapper> newFieldMapperCache, String dbFieldName) {
+		for (FieldMapper fieldMapper : newFieldMapperCache.values()) {
+			if (dbFieldName.equals(fieldMapper.getDbFieldName())) {
+				return fieldMapper;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -720,8 +734,9 @@ public class SqlBuilder {
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("select ");
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			selectSql.append(dbFieldName).append(",");
+		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+				.values()) {
+			selectSql.append(fieldMapper.getDbFieldName()).append(",");
 		}
 		for (String persistentFlag : persistentFlags) {
 			selectSql.append("true as ").append(persistentFlag).append(",");
@@ -733,8 +748,8 @@ public class SqlBuilder {
 		StringBuffer whereSql = new StringBuffer(" where ");
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			whereSql.append(uniqueKeyNames[i]);
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					uniqueKeyNames[i]);
+			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
+					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
 			String fieldName = fieldMapper.getFieldName();
 			whereSql.append("=#{").append(fieldName).append(",")
 					.append("jdbcType=")

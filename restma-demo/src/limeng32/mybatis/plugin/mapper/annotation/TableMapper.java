@@ -18,6 +18,9 @@ public class TableMapper {
 
 	private Map<String, FieldMapper> fieldMapperCache;
 
+	/* 基于FieldName的新cache */
+	private Map<String, FieldMapper> newFieldMapperCache;
+
 	private List<FieldMapper> fieldMapperList;
 
 	private Collection<String> persistentFlags;
@@ -54,6 +57,15 @@ public class TableMapper {
 
 	public void setPersistentFlags(Collection<String> persistentFlags) {
 		this.persistentFlags = persistentFlags;
+	}
+
+	public Map<String, FieldMapper> getNewFieldMapperCache() {
+		return newFieldMapperCache;
+	}
+
+	public void setNewFieldMapperCache(
+			Map<String, FieldMapper> newFieldMapperCache) {
+		this.newFieldMapperCache = newFieldMapperCache;
 	}
 
 }
