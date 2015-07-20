@@ -53,9 +53,9 @@
 		</where>
 	</sql>
 
-	<select id="select" resultMap="result" />
+	<select id="select" resultMap="result">#{id}</select>
 
-	<select id="selectAll" resultMap="selectAllResult" />
+	<select id="selectAll" resultMap="result" />
 
 	<select id="count" resultType="int" />
 
@@ -85,16 +85,5 @@
 			select="limeng32.testSpring.mapper.BookMapper.select" column="bookid" />
 		<association property="writer" javaType="Writer"
 			select="limeng32.testSpring.mapper.WriterMapper.select" column="writerid" />
-	</resultMap>
-
-	<resultMap id="selectAllResult" type="BookWriter"
-		autoMapping="true">
-		<id property="id" column="id" />
-		<association property="book" javaType="Book"
-			resultMap="limeng32.testSpring.mapper.BookMapper.selectAllResult"
-			columnPrefix="Book_" />
-		<association property="writer" javaType="Writer"
-			resultMap="limeng32.testSpring.mapper.WriterMapper.selectAllResult"
-			columnPrefix="Writer_" />
 	</resultMap>
 </mapper>

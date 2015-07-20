@@ -786,17 +786,6 @@ public class SqlBuilder {
 			selectSql.append(tableName).append(".").append(dbFieldName)
 					.append(",");
 		}
-		// 处理内嵌对象中的变量
-		Field[] fields = getTableMappedClass(object.getClass())
-				.getDeclaredFields();
-		for (Field field : fields) {
-			if (hasTableMapperAnnotation(field.getType())) {
-				FieldMapperAnnotation fma = getFieldMapperAnnotation(field);
-				dealSelectSqlAndFromSql(tableName, fma.dbFieldName(),
-						fma.dbAssociationUniqueKey(), field.getType(),
-						selectSql, fromSql, "");
-			}
-		}
 
 		// 处理tableMapper中的条件
 		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
@@ -824,15 +813,6 @@ public class SqlBuilder {
 		return selectSql.append(fromSql).append(whereSql).toString();
 	}
 
-	private static FieldMapperAnnotation getFieldMapperAnnotation(Field field) {
-		for (Annotation an : field.getDeclaredAnnotations()) {
-			if (an instanceof FieldMapperAnnotation) {
-				return (FieldMapperAnnotation) an;
-			}
-		}
-		return null;
-	}
-
 	private static boolean hasTableMapperAnnotation(Object object) {
 		Annotation[] classAnnotations = object.getClass()
 				.getDeclaredAnnotations();
@@ -842,56 +822,6 @@ public class SqlBuilder {
 			}
 		}
 		return false;
-	}
-
-	private static boolean hasTableMapperAnnotation(Class<?> clazz) {
-		Annotation[] classAnnotations = clazz.getDeclaredAnnotations();
-		for (Annotation an : classAnnotations) {
-			if (an instanceof TableMapperAnnotation) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static boolean hasFieldMapperAnnotation(Field field) {
-		Annotation[] fieldAnnotations = field.getDeclaredAnnotations();
-		for (Annotation an : fieldAnnotations) {
-			if (an instanceof FieldMapperAnnotation) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static void dealSelectSqlAndFromSql(String leftTableName,
-			String leftDbFieldName, String leftDbAssociationUniqueKey,
-			Class<?> clazz, StringBuffer selectSql, StringBuffer fromSql,
-			String columnPrefix) {
-		/* 在这里加上对selectSql和fromSql的处理 */
-		TableMapper tableMapper = buildTableMapper(clazz);
-		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
-				.getTableMapperAnnotation();
-		String tableName = tma.tableName();
-		fromSql.append(" left join ").append(tableName).append(" on ")
-				.append(leftTableName).append(".").append(leftDbFieldName)
-				.append(" = ").append(tableName).append(".")
-				.append(leftDbAssociationUniqueKey);
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field field : fields) {
-			if (hasFieldMapperAnnotation(field)) {
-				FieldMapperAnnotation fma = getFieldMapperAnnotation(field);
-				selectSql.append(tableName).append(".")
-						.append(fma.dbFieldName()).append(" as ")
-						.append(columnPrefix).append(tableName).append("_")
-						.append(fma.dbFieldName()).append(",");
-				if (!"".equals(fma.dbAssociationUniqueKey())) {
-					dealSelectSqlAndFromSql(tableName, fma.dbFieldName(),
-							fma.dbAssociationUniqueKey(), field.getType(),
-							selectSql, fromSql, tableName + "_");
-				}
-			}
-		}
 	}
 
 	/**
@@ -909,7 +839,12 @@ public class SqlBuilder {
 				.getClass()));
 		String rightTableName = ((TableMapperAnnotation) (tableMapper)
 				.getTableMapperAnnotation()).tableName();
-
+		// 处理fromSql
+		fromSql.append(" left join ").append(rightTableName).append(" on ")
+				.append(leftTableName).append(".")
+				.append(leftFieldMapper.getDbFieldName()).append(" = ")
+				.append(rightTableName).append(".")
+				.append(leftFieldMapper.getDbAssociationUniqueKey());
 		// 处理tableMapper中的条件
 		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
 			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(

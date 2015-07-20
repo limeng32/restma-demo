@@ -13,9 +13,9 @@
 		</where>
 	</sql>
 
-	<select id="select" resultMap="result" />
+	<select id="select" resultMap="result">#{id}</select>
 
-	<select id="selectAll" resultMap="selectAllResult" />
+	<select id="selectAll" resultMap="result" />
 
 	<select id="count" resultType="int" />
 
@@ -42,10 +42,5 @@
 	<resultMap id="result" type="Association" autoMapping="true">
 		<id property="id" column="id" />
 		<collection property="writer" ofType="Writer" />
-	</resultMap>
-
-	<resultMap id="selectAllResult" type="Association"
-		autoMapping="true">
-		<id property="id" column="id" />
 	</resultMap>
 </mapper>

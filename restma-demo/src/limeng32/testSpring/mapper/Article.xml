@@ -16,9 +16,11 @@
 		</where>
 	</sql>
 
-	<select id="select" resultMap="result" />
+	<select id="select" resultMap="result">#{id}</select>
 
-	<select id="selectAll" resultMap="result">
+	<select id="selectAll" resultMap="result" />
+
+	<select id="selectAll1" resultMap="result">
 		select
 		article.id,
 		article.title, article.content, user.id, user.name, user.address,
@@ -52,7 +54,7 @@
 
 	<resultMap id="result" type="Article" autoMapping="true">
 		<id property="id" column="id" />
-		<association property="user" javaType="User"
-			resultMap="limeng32.testSpring.mapper.UserMapper.result" />
+		<association property="user" javaType="User" column="userid"
+			select="limeng32.testSpring.mapper.UserMapper.select" />
 	</resultMap>
 </mapper>

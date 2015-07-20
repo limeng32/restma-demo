@@ -7,7 +7,9 @@ import limeng32.testSpring.pojo.Association;
 import limeng32.testSpring.pojo.Writer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AssociationService extends ServiceSupport<Association> implements
 		AssociationMapper {
 
