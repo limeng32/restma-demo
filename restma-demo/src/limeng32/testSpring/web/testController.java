@@ -489,25 +489,22 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle93Mix")
-	public String showArticle93Mix(ModelMap mm) {
-		Article ac = new Article();
-		ac.setTitle("%标题%");
-		List<Article> list = articleService.selectAll(ac);
-		// User u1 = list.get(0).getUser();
-		// User u2 = list.get(1).getUser();
-		// Article a = articleService.select(3);
-		mm.addAttribute("_content", list);
-		return "showArticleMix";
-	}
-
-	@RequestMapping(value = "/showArticle96Mix")
-	public String showArticle96Mix(ModelMap mm) {
+	public String testSelectAll96(ModelMap mm) {
 		BookWriter bwc = new BookWriter();
 		bwc.setBook(new Book());
 		bwc.getBook().setTitle("4的诗歌");
 		List<BookWriter> bwList = bookWriterService.selectAll(bwc);
 		mm.addAttribute("_content", bwList);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testMybatis(ModelMap mm) {
+		User u = userService.select(3);
+		Article ac = new Article();
+		ac.setTitle("%标题%");
+		List<Article> ret = articleService.selectAll(ac);
+		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 
@@ -553,7 +550,6 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelect93(ModelMap mm) {
 		BookWriter bw = bookWriterService.select(6);
 		mm.addAttribute("_content", bw);

@@ -65,7 +65,8 @@ public class AutoMapperInterceptor implements Interceptor {
 		Object parameterObject = metaStatementHandler
 				.getValue("delegate.boundSql.parameterObject");
 
-		if (null == originalSql || "".equals(originalSql)) {
+		if (null == originalSql || "".equals(originalSql)
+				|| "?".equals(originalSql)) {
 			String newSql = "";
 			MappedStatement mappedStatement = (MappedStatement) metaStatementHandler
 					.getValue("delegate.mappedStatement");
