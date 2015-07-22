@@ -209,7 +209,7 @@ public class SqlBuilder {
 										TableMapper tm = tableMapperCache
 												.get(pojoField.getType());
 										String foreignFieldName = tm
-												.getFieldMapperCache()
+												.getNewFieldMapperCache()
 												.get(fieldMapperAnnotation
 														.dbAssociationUniqueKey())
 												.getFieldName();
@@ -329,11 +329,9 @@ public class SqlBuilder {
 		boolean allFieldNull = true;
 
 		// 处理tableMapper中的条件
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					dbFieldName);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+				.values()) {
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				continue;
 			}
@@ -487,22 +485,20 @@ public class SqlBuilder {
 		valueSql.append("values(");
 
 		boolean allFieldNull = true;
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					dbFieldName);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+				.values()) {
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				continue;
 			}
 			allFieldNull = false;
-			tableSql.append(dbFieldName).append(",");
+			tableSql.append(fieldMapper.getDbFieldName()).append(",");
 			valueSql.append("#{");
 			if (fieldMapper.isForeignKey()) {
-				valueSql.append(fieldName).append(".")
+				valueSql.append(fieldMapper.getFieldName()).append(".")
 						.append(fieldMapper.getForeignFieldName());
 			} else {
-				valueSql.append(fieldName);
+				valueSql.append(fieldMapper.getFieldName());
 			}
 			valueSql.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString()).append("},");
@@ -548,21 +544,19 @@ public class SqlBuilder {
 
 		boolean allFieldNull = true;
 
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					dbFieldName);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+				.values()) {
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				continue;
 			}
 			allFieldNull = false;
-			tableSql.append(dbFieldName).append("=#{");
+			tableSql.append(fieldMapper.getDbFieldName()).append("=#{");
 			if (fieldMapper.isForeignKey()) {
-				tableSql.append(fieldName).append(".")
+				tableSql.append(fieldMapper.getFieldName()).append(".")
 						.append(fieldMapper.getForeignFieldName());
 			} else {
-				tableSql.append(fieldName);
+				tableSql.append(fieldMapper.getFieldName());
 			}
 			tableSql.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString());
@@ -578,16 +572,15 @@ public class SqlBuilder {
 				tableSql.lastIndexOf(",") + 1);
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			whereSql.append(uniqueKeyNames[i]);
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					uniqueKeyNames[i]);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
+					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
 						+ "' can't be null, build update sql failed!");
 			}
-			whereSql.append("=#{").append(fieldName).append(",")
-					.append("jdbcType=")
+			whereSql.append("=#{").append(fieldMapper.getFieldName())
+					.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString())
 					.append("} and ");
 		}
@@ -633,17 +626,15 @@ public class SqlBuilder {
 
 		boolean allFieldNull = true;
 
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					dbFieldName);
-			String fieldName = fieldMapper.getFieldName();
+		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+				.values()) {
 			allFieldNull = false;
-			tableSql.append(dbFieldName).append("=#{");
+			tableSql.append(fieldMapper.getDbFieldName()).append("=#{");
 			if (fieldMapper.isForeignKey()) {
-				tableSql.append(fieldName).append(".")
+				tableSql.append(fieldMapper.getFieldName()).append(".")
 						.append(fieldMapper.getForeignFieldName());
 			} else {
-				tableSql.append(fieldName);
+				tableSql.append(fieldMapper.getFieldName());
 			}
 			tableSql.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString()).append("},");
@@ -658,16 +649,15 @@ public class SqlBuilder {
 				tableSql.lastIndexOf(",") + 1);
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			whereSql.append(uniqueKeyNames[i]);
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					uniqueKeyNames[i]);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
+					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
 						+ "' can't be null, build update sql failed!");
 			}
-			whereSql.append("=#{").append(fieldName).append(",")
-					.append("jdbcType=")
+			whereSql.append("=#{").append(fieldMapper.getFieldName())
+					.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString())
 					.append("} and ");
 		}
@@ -701,15 +691,15 @@ public class SqlBuilder {
 		sql.append("delete from ").append(tableName).append(" where ");
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			sql.append(uniqueKeyNames[i]);
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					uniqueKeyNames[i]);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
+					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
 						+ "' can't be null, build update sql failed!");
 			}
-			sql.append("=#{").append(fieldName).append(",").append("jdbcType=")
+			sql.append("=#{").append(fieldMapper.getFieldName()).append(",")
+					.append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString())
 					.append("} and ");
 		}
@@ -749,10 +739,9 @@ public class SqlBuilder {
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			whereSql.append(uniqueKeyNames[i]);
 			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
-					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
-			String fieldName = fieldMapper.getFieldName();
-			whereSql.append("=#{").append(fieldName).append(",")
-					.append("jdbcType=")
+					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+			whereSql.append("=#{").append(fieldMapper.getFieldName())
+					.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString())
 					.append("} and ");
 		}
@@ -782,17 +771,16 @@ public class SqlBuilder {
 		StringBuffer selectSql = new StringBuffer("select ");
 		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
 		StringBuffer whereSql = new StringBuffer();
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			selectSql.append(tableName).append(".").append(dbFieldName)
-					.append(",");
-		}
 
-		// 处理tableMapper中的条件
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					dbFieldName);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+				.values()) {
+
+			// 处理selectSql
+			selectSql.append(tableName).append(".")
+					.append(fieldMapper.getDbFieldName()).append(",");
+
+			// 处理tableMapper中的条件
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				continue;
 			}
@@ -846,11 +834,9 @@ public class SqlBuilder {
 				.append(rightTableName).append(".")
 				.append(leftFieldMapper.getDbAssociationUniqueKey());
 		// 处理tableMapper中的条件
-		for (String dbFieldName : tableMapper.getFieldMapperCache().keySet()) {
-			FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-					dbFieldName);
-			String fieldName = fieldMapper.getFieldName();
-			Object value = dtoFieldMap.get(fieldName);
+		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+				.values()) {
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				continue;
 			}

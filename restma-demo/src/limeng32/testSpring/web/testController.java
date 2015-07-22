@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -494,7 +495,7 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/showArticle9Mix")
-	public String testSelectAll96(ModelMap mm) {
+	public String testSelectAll(ModelMap mm) {
 		// Writer writer = writerService.select(2);
 		// writerService.update(writer);
 		BookWriter bwc = new BookWriter();
@@ -517,30 +518,33 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	public String showArticle95Mix(ModelMap mm) {
-		// Book book = bookService.select(1);
-		// Writer writer = writerService.select(1);
-
-		BookWriterCondition bwc = new BookWriterCondition();
-		bwc.setBook(new Book());
-		bwc.getBook().setTitle("4的诗歌");
-		// bwc.setWriter(new Writer());
-		// bwc.getWriter().setName("张三");
-		// bwc.setSorter(new SortParam(new Order(BookWriterCondition.Field.id,
-		// Conditionable.Sequence.asc)));
-		List<BookWriter> ret = bookWriterService.selectAll(bwc);
-		// BookWriter ret = bookWriterService.select(4);
+	public String testUpdate(ModelMap mm) {
+		Article ret = articleService.select(268);
+		ret.setTitle("ddd");
+		ret.setUser(userService.select(1));
+		articleService.update(ret);
+		ret = articleService.select(268);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle91Mix")
-	public String showArticle91Mix(ModelMap mm) {
-		Article a = articleService.select(265);
-		a.setTitle("ss%ss");
-		articleService.update(a);
+	public String testUpdatePersistent(ModelMap mm) {
+		Article ret = articleService.select(268);
+		ret.setUser(null);
+		articleService.updatePersistent(ret);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
 
-		mm.addAttribute("_content", a);
+	public String testDelete(ModelMap mm) {
+		Article ret = articleService.select(264);
+		articleService.delete(ret);
+		return "showArticleMix";
+	}
+
+	public String testSelect(ModelMap mm) {
+		Article ret = articleService.select(265);
+		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 
@@ -561,6 +565,21 @@ public class testController {
 	public String testSelect93(ModelMap mm) {
 		BookWriter bw = bookWriterService.select(6);
 		mm.addAttribute("_content", bw);
+		return "showArticleMix";
+	}
+
+	public String testInsert(ModelMap mm) {
+		Article ret = new Article();
+		ret.setTitle(new Date().toString());
+		articleService.insert(ret);
+		return "showArticleMix";
+	}
+
+	public String testCount(ModelMap mm) {
+		ArticleCondition ac = new ArticleCondition();
+		ac.setTitleLike("标");
+		int ret = articleService.count(ac);
+		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 
