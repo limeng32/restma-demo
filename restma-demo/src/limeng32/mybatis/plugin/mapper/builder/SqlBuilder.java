@@ -46,7 +46,7 @@ public class SqlBuilder {
 	 */
 	private static TableMapper buildTableMapper(Class<?> dtoClass) {
 
-		Map<String, FieldMapper> fieldMapperCache, newFieldMapperCache = null;
+		Map<String, FieldMapper> fieldMapperCache = null;
 		List<FieldMapper> fieldMapperList = null;
 		Field[] fields = null;
 
@@ -67,7 +67,6 @@ public class SqlBuilder {
 			}
 			fields = dtoClass.getDeclaredFields();
 			fieldMapperCache = new HashMap<String, FieldMapper>();
-			newFieldMapperCache = new HashMap<String, FieldMapper>();
 			fieldMapperList = new ArrayList<FieldMapper>();
 			Annotation[] fieldAnnotations = null;
 			for (Field field : fields) {
@@ -101,16 +100,13 @@ public class SqlBuilder {
 							TableMapper tm = tableMapperCache.get(field
 									.getType());
 							String foreignFieldName = getFieldMapperByDbFieldName(
-									tm.getNewFieldMapperCache(),
+									tm.getFieldMapperCache(),
 									fieldMapperAnnotation
 											.dbAssociationUniqueKey())
 									.getFieldName();
 							fieldMapper.setForeignFieldName(foreignFieldName);
 						}
-						fieldMapperCache.put(
-								fieldMapperAnnotation.dbFieldName(),
-								fieldMapper);
-						newFieldMapperCache.put(field.getName(), fieldMapper);
+						fieldMapperCache.put(field.getName(), fieldMapper);
 						fieldMapperList.add(fieldMapper);
 					} else if (an instanceof PersistentFlagAnnotation) {
 						tableMapper.getPersistentFlags().add(field.getName());
@@ -118,7 +114,6 @@ public class SqlBuilder {
 				}
 			}
 			tableMapper.setFieldMapperCache(fieldMapperCache);
-			tableMapper.setNewFieldMapperCache(newFieldMapperCache);
 			tableMapper.setFieldMapperList(fieldMapperList);
 			tableMapperCache.put(dtoClass, tableMapper);
 			return tableMapper;
@@ -209,7 +204,7 @@ public class SqlBuilder {
 										TableMapper tm = tableMapperCache
 												.get(pojoField.getType());
 										String foreignFieldName = tm
-												.getNewFieldMapperCache()
+												.getFieldMapperCache()
 												.get(fieldMapperAnnotation
 														.dbAssociationUniqueKey())
 												.getFieldName();
@@ -329,7 +324,7 @@ public class SqlBuilder {
 		boolean allFieldNull = true;
 
 		// 处理tableMapper中的条件
-		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
@@ -485,7 +480,7 @@ public class SqlBuilder {
 		valueSql.append("values(");
 
 		boolean allFieldNull = true;
-		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
@@ -544,7 +539,7 @@ public class SqlBuilder {
 
 		boolean allFieldNull = true;
 
-		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
@@ -573,7 +568,7 @@ public class SqlBuilder {
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			whereSql.append(uniqueKeyNames[i]);
 			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
-					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
@@ -626,7 +621,7 @@ public class SqlBuilder {
 
 		boolean allFieldNull = true;
 
-		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			allFieldNull = false;
 			tableSql.append(fieldMapper.getDbFieldName()).append("=#{");
@@ -650,7 +645,7 @@ public class SqlBuilder {
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			whereSql.append(uniqueKeyNames[i]);
 			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
-					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
@@ -692,7 +687,7 @@ public class SqlBuilder {
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			sql.append(uniqueKeyNames[i]);
 			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
-					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
@@ -724,7 +719,7 @@ public class SqlBuilder {
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("select ");
-		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			selectSql.append(fieldMapper.getDbFieldName()).append(",");
 		}
@@ -739,7 +734,7 @@ public class SqlBuilder {
 		for (int i = 0; i < uniqueKeyNames.length; i++) {
 			whereSql.append(uniqueKeyNames[i]);
 			FieldMapper fieldMapper = getFieldMapperByDbFieldName(
-					tableMapper.getNewFieldMapperCache(), uniqueKeyNames[i]);
+					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
 			whereSql.append("=#{").append(fieldMapper.getFieldName())
 					.append(",").append("jdbcType=")
 					.append(fieldMapper.getJdbcType().toString())
@@ -772,7 +767,7 @@ public class SqlBuilder {
 		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
 		StringBuffer whereSql = new StringBuffer();
 
-		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 
 			// 处理selectSql
@@ -834,7 +829,7 @@ public class SqlBuilder {
 				.append(rightTableName).append(".")
 				.append(leftFieldMapper.getDbAssociationUniqueKey());
 		// 处理tableMapper中的条件
-		for (FieldMapper fieldMapper : tableMapper.getNewFieldMapperCache()
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
