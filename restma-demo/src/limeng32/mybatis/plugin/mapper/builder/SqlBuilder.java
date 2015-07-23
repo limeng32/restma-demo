@@ -442,7 +442,7 @@ public class SqlBuilder {
 		}
 		whereSql.append(tableName).append(".").append(mapper.getDbFieldName())
 				.append(" = #{");
-		if (fieldNamePrefix != null) {
+		if (!"".equals(fieldNamePrefix)) {
 			whereSql.append(fieldNamePrefix).append(".");
 		}
 		if (mapper.isForeignKey()) {
@@ -782,7 +782,7 @@ public class SqlBuilder {
 			/* 此处当value拥有TableMapper标注时，开始进行迭代 */
 			if (hasTableMapperAnnotation(value)) {
 				dealMapperAnnotationIteration(tableName, fieldMapper, value,
-						fromSql, whereSql);
+						fromSql, whereSql, "");
 			} else {
 				dealConditionEqual(whereSql, fieldMapper, tableName, null);
 			}
@@ -816,7 +816,7 @@ public class SqlBuilder {
 	 */
 	private static void dealMapperAnnotationIteration(String leftTableName,
 			FieldMapper leftFieldMapper, Object object, StringBuffer fromSql,
-			StringBuffer whereSql) throws Exception {
+			StringBuffer whereSql, String fieldPerfix) throws Exception {
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
 				.getClass()));
@@ -835,8 +835,16 @@ public class SqlBuilder {
 			if (value == null) {
 				continue;
 			}
-			dealConditionEqual(whereSql, fieldMapper, rightTableName,
-					leftFieldMapper.getFieldName());
+			String temp = leftFieldMapper.getFieldName();
+			if (!"".equals(fieldPerfix)) {
+				temp = fieldPerfix + "." + temp;
+			}
+			if (hasTableMapperAnnotation(value)) {
+				dealMapperAnnotationIteration(rightTableName, fieldMapper,
+						value, fromSql, whereSql, temp);
+			} else {
+				dealConditionEqual(whereSql, fieldMapper, rightTableName, temp);
+			}
 		}
 	}
 }

@@ -18,6 +18,7 @@ import limeng32.testSpring.enums.GENDER;
 import limeng32.testSpring.page.Page;
 import limeng32.testSpring.page.PageParam;
 import limeng32.testSpring.pojo.Article;
+import limeng32.testSpring.pojo.Association;
 import limeng32.testSpring.pojo.Book;
 import limeng32.testSpring.pojo.BookWriter;
 import limeng32.testSpring.pojo.User;
@@ -501,6 +502,9 @@ public class testController {
 		BookWriter bwc = new BookWriter();
 		bwc.setBook(new Book());
 		bwc.getBook().setTitle("4的诗歌");
+		// bwc.setWriter(new Writer());
+		// bwc.getWriter().setAssociation(new Association());
+		// bwc.getWriter().getAssociation().setName("推理协会");
 		List<BookWriter> bwList = bookWriterService.selectAll(bwc);
 		// writer.getAssociation().setName("新作协7");
 		// associationService.update(writer.getAssociation());
