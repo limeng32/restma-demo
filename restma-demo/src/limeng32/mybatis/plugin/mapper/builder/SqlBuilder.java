@@ -442,7 +442,7 @@ public class SqlBuilder {
 		}
 		whereSql.append(tableName).append(".").append(mapper.getDbFieldName())
 				.append(" = #{");
-		if (!"".equals(fieldNamePrefix)) {
+		if (fieldNamePrefix != null) {
 			whereSql.append(fieldNamePrefix).append(".");
 		}
 		if (mapper.isForeignKey()) {
@@ -782,7 +782,7 @@ public class SqlBuilder {
 			/* 此处当value拥有TableMapper标注时，开始进行迭代 */
 			if (hasTableMapperAnnotation(value)) {
 				dealMapperAnnotationIteration(tableName, fieldMapper, value,
-						fromSql, whereSql, "");
+						fromSql, whereSql, null);
 			} else {
 				dealConditionEqual(whereSql, fieldMapper, tableName, null);
 			}
@@ -836,7 +836,7 @@ public class SqlBuilder {
 				continue;
 			}
 			String temp = leftFieldMapper.getFieldName();
-			if (!"".equals(fieldPerfix)) {
+			if (fieldPerfix != null) {
 				temp = fieldPerfix + "." + temp;
 			}
 			if (hasTableMapperAnnotation(value)) {
