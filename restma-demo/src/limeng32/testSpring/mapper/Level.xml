@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="limeng32.testSpring.mapper.LevelMapper">
+	<cache />
+
+	<select id="select" resultMap="result">#{id}</select>
+
+	<select id="selectAll" resultMap="result" />
+
+	<select id="count" resultType="int" />
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
+
+	<update id="update" />
+
+	<update id="updatePersistent" />
+
+	<delete id="delete" />
+
+	<update id="disable" />
+
+	<update id="enable" />
+
+	<resultMap id="result" type="Level" autoMapping="true">
+		<id property="id" column="id" />
+		<collection property="writer" ofType="Writer" />
+	</resultMap>
+</mapper>

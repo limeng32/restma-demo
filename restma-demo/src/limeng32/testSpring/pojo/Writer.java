@@ -23,6 +23,9 @@ public class Writer extends PojoSupport<Writer> implements Serializable {
 	@FieldMapperAnnotation(dbFieldName = "assoId", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "id")
 	private Association association;
 
+	@FieldMapperAnnotation(dbFieldName = "levelId", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "id")
+	private Level level;
+
 	public java.util.Collection<BookWriter> getBookWriter() {
 		if (bookWriter == null)
 			bookWriter = new java.util.LinkedHashSet<BookWriter>();
@@ -94,6 +97,24 @@ public class Writer extends PojoSupport<Writer> implements Serializable {
 			if (newAssociation != null) {
 				this.association = newAssociation;
 				this.association.addWriter(this);
+			}
+		}
+	}
+
+	public Level getLevel() {
+		return level;
+	}
+
+	public void setLevel(Level newLevel) {
+		if (this.level == null || !this.level.equals(newLevel)) {
+			if (this.level != null) {
+				Level oldLevel = this.level;
+				this.level = null;
+				oldLevel.removeWriter(this);
+			}
+			if (newLevel != null) {
+				this.level = newLevel;
+				this.level.addWriter(this);
 			}
 		}
 	}

@@ -43,6 +43,8 @@
 		<id property="id" column="id" />
 		<association property="association" javaType="Association"
 			select="limeng32.testSpring.mapper.AssociationMapper.select" column="assoId" />
+		<association property="level" javaType="Level"
+			select="limeng32.testSpring.mapper.LevelMapper.select" column="levelId" />
 		<collection property="bookWriter" ofType="BookWriter" />
 	</resultMap>
 </mapper>
