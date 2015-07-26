@@ -331,32 +331,32 @@ public class SqlBuilder {
 				continue;
 			}
 			allFieldNull = false;
-			dealConditionEqual(whereSql, fieldMapper);
+			dealConditionEqual(whereSql, fieldMapper, null, null);
 		}
 
 		// 处理queryMapper中的条件
-		for (String fieldName : queryMapper.getConditionMapperCache().keySet()) {
-			ConditionMapper conditionMapper = queryMapper
-					.getConditionMapperCache().get(fieldName);
-			Object value = dtoFieldMap.get(fieldName);
+		for (ConditionMapper conditionMapper : queryMapper
+				.getConditionMapperCache().values()) {
+			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
 			if (value == null) {
 				continue;
 			}
 			allFieldNull = false;
 			switch (conditionMapper.getConditionType()) {
 			case Equal:
-				dealConditionEqual(whereSql, conditionMapper);
+				dealConditionEqual(whereSql, conditionMapper, null, null);
 				break;
 			case Like:
-				dealConditionLike(whereSql, conditionMapper, ConditionType.Like);
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.Like, tableName, null);
 				break;
 			case HeadLike:
 				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.HeadLike);
+						ConditionType.HeadLike, tableName, null);
 				break;
 			case TailLike:
 				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.TailLike);
+						ConditionType.TailLike, tableName, null);
 				break;
 			default:
 				break;
@@ -389,15 +389,23 @@ public class SqlBuilder {
 	}
 
 	private static void dealConditionLike(StringBuffer whereSql,
-			ConditionMapper conditionMapper, ConditionType type) {
-		String fieldName = conditionMapper.getFieldName();
-		String dbFieldName = conditionMapper.getDbFieldName();
-		whereSql.append(dbFieldName).append(" like #{");
+			ConditionMapper conditionMapper, ConditionType type,
+			String tableName, String fieldNamePrefix) {
+		if (whereSql.length() == 0) {
+			whereSql.append(" where ");
+		}
+		if (tableName != null) {
+			whereSql.append(tableName).append(".");
+		}
+		whereSql.append(conditionMapper.getDbFieldName()).append(" like #{");
+		if (fieldNamePrefix != null) {
+			whereSql.append(fieldNamePrefix).append(".");
+		}
 		if (conditionMapper.isForeignKey()) {
-			whereSql.append(fieldName).append(".")
+			whereSql.append(conditionMapper.getFieldName()).append(".")
 					.append(conditionMapper.getForeignFieldName());
 		} else {
-			whereSql.append(fieldName);
+			whereSql.append(conditionMapper.getFieldName());
 		}
 		whereSql.append(",").append("jdbcType=")
 				.append(conditionMapper.getJdbcType().toString())
@@ -420,28 +428,14 @@ public class SqlBuilder {
 	}
 
 	private static void dealConditionEqual(StringBuffer whereSql,
-			Mapperable mapper) {
-		if (whereSql.length() == 0) {
-			whereSql.append(" where ");
-		}
-		whereSql.append(mapper.getDbFieldName()).append(" = #{");
-		if (mapper.isForeignKey()) {
-			whereSql.append(mapper.getFieldName()).append(".")
-					.append(mapper.getForeignFieldName());
-		} else {
-			whereSql.append(mapper.getFieldName());
-		}
-		whereSql.append(",").append("jdbcType=")
-				.append(mapper.getJdbcType().toString()).append("} and ");
-	}
-
-	private static void dealConditionEqual(StringBuffer whereSql,
 			Mapperable mapper, String tableName, String fieldNamePrefix) {
 		if (whereSql.length() == 0) {
 			whereSql.append(" where ");
 		}
-		whereSql.append(tableName).append(".").append(mapper.getDbFieldName())
-				.append(" = #{");
+		if (tableName != null) {
+			whereSql.append(tableName).append(".");
+		}
+		whereSql.append(mapper.getDbFieldName()).append(" = #{");
 		if (fieldNamePrefix != null) {
 			whereSql.append(fieldNamePrefix).append(".");
 		}
@@ -760,6 +754,8 @@ public class SqlBuilder {
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
 				.getClass()));
+		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
+				getTableMappedClass(object.getClass()));
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
@@ -787,6 +783,35 @@ public class SqlBuilder {
 				dealConditionEqual(whereSql, fieldMapper, tableName, null);
 			}
 		}
+
+		// 处理queryMapper中的条件
+		for (ConditionMapper conditionMapper : queryMapper
+				.getConditionMapperCache().values()) {
+			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
+			if (value == null) {
+				continue;
+			}
+			switch (conditionMapper.getConditionType()) {
+			case Equal:
+				dealConditionEqual(whereSql, conditionMapper, null, null);
+				break;
+			case Like:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.Like, tableName, null);
+				break;
+			case HeadLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.HeadLike, tableName, null);
+				break;
+			case TailLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.TailLike, tableName, null);
+				break;
+			default:
+				break;
+			}
+		}
+
 		selectSql.delete(selectSql.lastIndexOf(","),
 				selectSql.lastIndexOf(",") + 1);
 		if (whereSql.indexOf("and") > -1) {
@@ -808,14 +833,14 @@ public class SqlBuilder {
 	}
 
 	/**
-	 * 对object的MapperAnnotation进行处理
+	 * 对object的MapperAnnotation进行处理，既包括FieldMapper也包括ConditionMapper
 	 * 
 	 * @param object
 	 * @return
 	 * @throws Exception
 	 */
 	private static void dealMapperAnnotationIteration(String leftTableName,
-			FieldMapper leftFieldMapper, Object object, StringBuffer fromSql,
+			Mapperable leftMapper, Object object, StringBuffer fromSql,
 			StringBuffer whereSql, String fieldPerfix) throws Exception {
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
@@ -825,9 +850,9 @@ public class SqlBuilder {
 		// 处理fromSql
 		fromSql.append(" left join ").append(rightTableName).append(" on ")
 				.append(leftTableName).append(".")
-				.append(leftFieldMapper.getDbFieldName()).append(" = ")
+				.append(leftMapper.getDbFieldName()).append(" = ")
 				.append(rightTableName).append(".")
-				.append(leftFieldMapper.getDbAssociationUniqueKey());
+				.append(leftMapper.getDbAssociationUniqueKey());
 		// 处理tableMapper中的条件
 		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
@@ -835,7 +860,7 @@ public class SqlBuilder {
 			if (value == null) {
 				continue;
 			}
-			String temp = leftFieldMapper.getFieldName();
+			String temp = leftMapper.getFieldName();
 			if (fieldPerfix != null) {
 				temp = fieldPerfix + "." + temp;
 			}
