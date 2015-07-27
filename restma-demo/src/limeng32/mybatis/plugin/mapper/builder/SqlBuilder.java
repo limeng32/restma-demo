@@ -17,6 +17,7 @@ import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.Mapperable;
 import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.QueryMapper;
+import limeng32.mybatis.plugin.mapper.annotation.QueryMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapper;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
 
@@ -775,8 +776,9 @@ public class SqlBuilder {
 			if (value == null) {
 				continue;
 			}
-			/* 此处当value拥有TableMapper标注时，开始进行迭代 */
-			if (hasTableMapperAnnotation(value)) {
+			/* 此处当value拥有TableMapper或QueryMapper标注时，开始进行迭代 */
+			if (hasTableMapperAnnotation(value.getClass())
+					|| hasQueryMapperAnnotation(value.getClass())) {
 				dealMapperAnnotationIteration(tableName, fieldMapper, value,
 						fromSql, whereSql, null);
 			} else {
@@ -821,11 +823,20 @@ public class SqlBuilder {
 		return selectSql.append(fromSql).append(whereSql).toString();
 	}
 
-	private static boolean hasTableMapperAnnotation(Object object) {
-		Annotation[] classAnnotations = object.getClass()
-				.getDeclaredAnnotations();
+	private static boolean hasTableMapperAnnotation(Class<?> clazz) {
+		Annotation[] classAnnotations = clazz.getDeclaredAnnotations();
 		for (Annotation an : classAnnotations) {
 			if (an instanceof TableMapperAnnotation) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean hasQueryMapperAnnotation(Class<?> clazz) {
+		Annotation[] classAnnotations = clazz.getDeclaredAnnotations();
+		for (Annotation an : classAnnotations) {
+			if (an instanceof QueryMapperAnnotation) {
 				return true;
 			}
 		}
@@ -845,6 +856,8 @@ public class SqlBuilder {
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
 		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
 				.getClass()));
+		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
+				getTableMappedClass(object.getClass()));
 		String rightTableName = ((TableMapperAnnotation) (tableMapper)
 				.getTableMapperAnnotation()).tableName();
 		// 处理fromSql
@@ -864,11 +877,44 @@ public class SqlBuilder {
 			if (fieldPerfix != null) {
 				temp = fieldPerfix + "." + temp;
 			}
-			if (hasTableMapperAnnotation(value)) {
+			if (hasTableMapperAnnotation(value.getClass())
+					|| hasQueryMapperAnnotation(value.getClass())) {
 				dealMapperAnnotationIteration(rightTableName, fieldMapper,
 						value, fromSql, whereSql, temp);
 			} else {
 				dealConditionEqual(whereSql, fieldMapper, rightTableName, temp);
+			}
+		}
+		// 处理queryMapper中的条件
+		for (ConditionMapper conditionMapper : queryMapper
+				.getConditionMapperCache().values()) {
+			Object _value = dtoFieldMap.get(conditionMapper.getFieldName());
+			if (_value == null) {
+				continue;
+			}
+			String temp = leftMapper.getFieldName();
+			if (fieldPerfix != null) {
+				temp = fieldPerfix + "." + temp;
+			}
+			switch (conditionMapper.getConditionType()) {
+			case Equal:
+				dealConditionEqual(whereSql, conditionMapper, rightTableName,
+						temp);
+				break;
+			case Like:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.Like, rightTableName, temp);
+				break;
+			case HeadLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.HeadLike, rightTableName, temp);
+				break;
+			case TailLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.TailLike, rightTableName, temp);
+				break;
+			default:
+				break;
 			}
 		}
 	}

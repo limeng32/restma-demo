@@ -2,8 +2,10 @@ package limeng32.testSpring.pojo.condition;
 
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionType;
+import limeng32.mybatis.plugin.mapper.annotation.QueryMapperAnnotation;
 import limeng32.testSpring.pojo.Book;
 
+@QueryMapperAnnotation(tableName = "Book")
 public class BookCondition extends Book {
 
 	private static final long serialVersionUID = 1L;

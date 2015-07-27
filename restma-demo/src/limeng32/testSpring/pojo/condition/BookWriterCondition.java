@@ -2,9 +2,11 @@ package limeng32.testSpring.pojo.condition;
 
 import limeng32.mybatis.plugin.Limitable;
 import limeng32.mybatis.plugin.Sortable;
+import limeng32.mybatis.plugin.mapper.annotation.QueryMapperAnnotation;
 import limeng32.testSpring.pojo.BookWriter;
 import limeng32.testSpring.pojo.Queryable;
 
+@QueryMapperAnnotation(tableName = "BookWriter")
 public class BookWriterCondition extends BookWriter implements Conditionable,
 		Isable {
 

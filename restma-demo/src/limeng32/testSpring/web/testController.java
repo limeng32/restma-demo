@@ -25,8 +25,10 @@ import limeng32.testSpring.pojo.Level;
 import limeng32.testSpring.pojo.User;
 import limeng32.testSpring.pojo.Writer;
 import limeng32.testSpring.pojo.condition.ArticleCondition;
+import limeng32.testSpring.pojo.condition.AssociationCondition;
 import limeng32.testSpring.pojo.condition.BookWriterCondition;
 import limeng32.testSpring.pojo.condition.Conditionable;
+import limeng32.testSpring.pojo.condition.LevelCondition;
 import limeng32.testSpring.pojo.condition.WriterCondition;
 import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.AssociationService;
@@ -518,11 +520,17 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelectAllUseCondition(ModelMap mm) {
-		WriterCondition wc = new WriterCondition();
+		BookWriter bwc = new BookWriter();
+		bwc.setWriter(new WriterCondition());
+		WriterCondition wc = (WriterCondition) bwc.getWriter();
 		wc.setNameLike("李");
-//		wc.setAssociation(new Association());
-//		wc.getAssociation().setName("推理协会");
-		List<Writer> ret = writerService.selectAll(wc);
+		wc.setAssociation(new AssociationCondition());
+		wc.setLevel(new LevelCondition());
+		((AssociationCondition) wc.getAssociation()).setNameLike("7");
+		((LevelCondition) wc.getLevel()).setNameLike("级别");
+		bwc.setBook(new Book());
+		bwc.getBook().setTitle("3的故事");
+		List<BookWriter> ret = bookWriterService.selectAll(bwc);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
@@ -596,6 +604,7 @@ public class testController {
 	public String testCount(ModelMap mm) {
 		ArticleCondition ac = new ArticleCondition();
 		ac.setTitleHeadLike("标");
+		ac.setContent("test_content_3");
 		int ret = articleService.count(ac);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";

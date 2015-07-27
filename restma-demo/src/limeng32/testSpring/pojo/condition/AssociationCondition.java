@@ -3,10 +3,10 @@ package limeng32.testSpring.pojo.condition;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionType;
 import limeng32.mybatis.plugin.mapper.annotation.QueryMapperAnnotation;
-import limeng32.testSpring.pojo.Writer;
+import limeng32.testSpring.pojo.Association;
 
-@QueryMapperAnnotation(tableName = "Writer")
-public class WriterCondition extends Writer {
+@QueryMapperAnnotation(tableName = "Association")
+public class AssociationCondition extends Association {
 
 	private static final long serialVersionUID = 1L;
 
