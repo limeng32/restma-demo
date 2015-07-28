@@ -518,7 +518,6 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelectAllUseCondition(ModelMap mm) {
 		BookWriter bwc = new BookWriter();
 		bwc.setWriter(new WriterCondition());
@@ -606,6 +605,23 @@ public class testController {
 		ac.setTitleHeadLike("标");
 		ac.setContent("test_content_3");
 		int ret = articleService.count(ac);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testCountUseCondition(ModelMap mm) {
+		BookWriter bwc = new BookWriter();
+		bwc.setWriter(new WriterCondition());
+		WriterCondition wc = (WriterCondition) bwc.getWriter();
+		wc.setNameLike("李");
+		wc.setAssociation(new AssociationCondition());
+		wc.setLevel(new LevelCondition());
+		((AssociationCondition) wc.getAssociation()).setNameLike("推理");
+		((LevelCondition) wc.getLevel()).setNameLike("级别");
+		bwc.setBook(new Book());
+		bwc.getBook().setTitle("4的诗歌");
+		int ret = bookWriterService.count(bwc);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}

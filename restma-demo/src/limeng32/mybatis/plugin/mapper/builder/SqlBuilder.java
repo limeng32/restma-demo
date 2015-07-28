@@ -285,110 +285,6 @@ public class SqlBuilder {
 		return uniqueKeyNames;
 	}
 
-	/**
-	 * 由传入的对象生成count sql语句
-	 * 
-	 * @param object
-	 * @return sql
-	 * @throws Exception
-	 */
-	public static String buildCountSql(Object object) throws Exception {
-		if (null == object) {
-			throw new RuntimeException(
-					"Sorry,I refuse to build sql for a null object!");
-		}
-		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
-				getTableMappedClass(object.getClass()));
-		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
-				.getClass()));
-		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
-				.getTableMapperAnnotation();
-		String tableName = tma.tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
-
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("select count(");
-		/*
-		 * 如果有且只有一个主键，采用select count("主键")的方式；如果无主键或有多个主键（联合主键），采用select
-		 * count(*)的方式。
-		 */
-		if (uniqueKeyNames.length == 1) {
-			selectSql.append(uniqueKeyNames[0]);
-		} else {
-			selectSql.append("*");
-		}
-		selectSql.append(") from ").append(tableName);
-
-		StringBuffer whereSql = new StringBuffer(" where ");
-
-		boolean allFieldNull = true;
-
-		// 处理tableMapper中的条件
-		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
-				.values()) {
-			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			allFieldNull = false;
-			dealConditionEqual(whereSql, fieldMapper, null, null);
-		}
-
-		// 处理queryMapper中的条件
-		for (ConditionMapper conditionMapper : queryMapper
-				.getConditionMapperCache().values()) {
-			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			allFieldNull = false;
-			switch (conditionMapper.getConditionType()) {
-			case Equal:
-				dealConditionEqual(whereSql, conditionMapper, null, null);
-				break;
-			case Like:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.Like, tableName, null);
-				break;
-			case HeadLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.HeadLike, tableName, null);
-				break;
-			case TailLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.TailLike, tableName, null);
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (allFieldNull) {
-			throw new RuntimeException("Are you joking? Object "
-					+ object.getClass().getName()
-					+ "'s all fields are null, how can i build sql for it?!");
-		}
-
-		whereSql.delete(whereSql.lastIndexOf("and"),
-				whereSql.lastIndexOf("and") + 3);
-		// 迭代型条件等开发完selectAll后再回来进行开发
-
-		// for (int i = 0; i < uniqueKeyNames.length; i++) {
-		// whereSql.append(uniqueKeyNames[i]);
-		// FieldMapper fieldMapper = tableMapper.getFieldMapperCache().get(
-		// uniqueKeyNames[i]);
-		// String fieldName = fieldMapper.getFieldName();
-		// whereSql.append("=#{").append(fieldName).append(",")
-		// .append("jdbcType=")
-		// .append(fieldMapper.getJdbcType().toString())
-		// .append("} and ");
-		// }
-		// whereSql.delete(whereSql.lastIndexOf("and"),
-		// whereSql.lastIndexOf("and") + 3);
-		return selectSql.append(whereSql).toString();
-	}
-
 	private static void dealConditionLike(StringBuffer whereSql,
 			ConditionMapper conditionMapper, ConditionType type,
 			String tableName, String fieldNamePrefix) {
@@ -757,9 +653,8 @@ public class SqlBuilder {
 				.getClass()));
 		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
 				getTableMappedClass(object.getClass()));
-		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
-				.getTableMapperAnnotation();
-		String tableName = tma.tableName();
+		String tableName = ((TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation()).tableName();
 		StringBuffer selectSql = new StringBuffer("select ");
 		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
 		StringBuffer whereSql = new StringBuffer();
@@ -814,13 +709,107 @@ public class SqlBuilder {
 			}
 		}
 
-		selectSql.delete(selectSql.lastIndexOf(","),
-				selectSql.lastIndexOf(",") + 1);
+		if (selectSql.indexOf(",") > -1) {
+			selectSql.delete(selectSql.lastIndexOf(","),
+					selectSql.lastIndexOf(",") + 1);
+		}
 		if (whereSql.indexOf("and") > -1) {
 			whereSql.delete(whereSql.lastIndexOf("and"),
 					whereSql.lastIndexOf("and") + 3);
 		}
 		return selectSql.append(fromSql).append(whereSql).toString();
+	}
+
+	/**
+	 * 由传入的对象生成count sql语句
+	 * 
+	 * @param object
+	 * @return sql
+	 * @throws Exception
+	 */
+	public static String buildCountSql(Object object) throws Exception {
+		if (null == object) {
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for a null object!");
+		}
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
+				getTableMappedClass(object.getClass()));
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		String tableName = ((TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation()).tableName();
+		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("select count(").append(tableName).append(".");
+		/*
+		 * 如果有且只有一个主键，采用select count("主键")的方式；如果无主键或有多个主键（联合主键），采用select
+		 * count(*)的方式。
+		 */
+		if (uniqueKeyNames.length == 1) {
+			selectSql.append(uniqueKeyNames[0]);
+		} else {
+			selectSql.append("*");
+		}
+		selectSql.append(")");
+
+		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
+		StringBuffer whereSql = new StringBuffer();
+
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
+				.values()) {
+
+			// 处理tableMapper中的条件
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
+			if (value == null) {
+				continue;
+			}
+			/* 此处当value拥有TableMapper或QueryMapper标注时，开始进行迭代 */
+			if (hasTableMapperAnnotation(value.getClass())
+					|| hasQueryMapperAnnotation(value.getClass())) {
+				dealMapperAnnotationIteration(tableName, fieldMapper, value,
+						fromSql, whereSql, null);
+			} else {
+				dealConditionEqual(whereSql, fieldMapper, tableName, null);
+			}
+		}
+
+		// 处理queryMapper中的条件
+		for (ConditionMapper conditionMapper : queryMapper
+				.getConditionMapperCache().values()) {
+			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
+			if (value == null) {
+				continue;
+			}
+			switch (conditionMapper.getConditionType()) {
+			case Equal:
+				dealConditionEqual(whereSql, conditionMapper, null, null);
+				break;
+			case Like:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.Like, tableName, null);
+				break;
+			case HeadLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.HeadLike, tableName, null);
+				break;
+			case TailLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.TailLike, tableName, null);
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (whereSql.indexOf("and") > -1) {
+			whereSql.delete(whereSql.lastIndexOf("and"),
+					whereSql.lastIndexOf("and") + 3);
+		}
+
+		String ret = selectSql.append(fromSql).append(whereSql).toString();
+		return ret;
 	}
 
 	private static boolean hasTableMapperAnnotation(Class<?> clazz) {
@@ -846,7 +835,12 @@ public class SqlBuilder {
 	/**
 	 * 对object的MapperAnnotation进行处理，既包括FieldMapper也包括ConditionMapper
 	 * 
+	 * @param leftTableName
+	 * @param leftMapper
 	 * @param object
+	 * @param fromSql
+	 * @param whereSql
+	 * @param fieldPerfix
 	 * @return
 	 * @throws Exception
 	 */
