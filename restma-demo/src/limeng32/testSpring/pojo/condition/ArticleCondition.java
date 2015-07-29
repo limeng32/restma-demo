@@ -9,7 +9,7 @@ import limeng32.testSpring.pojo.Article;
 import limeng32.testSpring.pojo.Queryable;
 
 @QueryMapperAnnotation(tableName = "Article")
-public class ArticleCondition extends Article implements Conditionable, Isable {
+public class ArticleCondition extends Article implements Conditionable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,8 +48,6 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 
 	private Sortable sorter;
 
-	private String isable;
-
 	@Override
 	public Limitable getLimiter() {
 		return limiter;
@@ -58,16 +56,6 @@ public class ArticleCondition extends Article implements Conditionable, Isable {
 	@Override
 	public void setLimiter(Limitable limiter) {
 		this.limiter = limiter;
-	}
-
-	@Override
-	public String getIsable() {
-		return isable;
-	}
-
-	@Override
-	public void setIsable(String isable) {
-		this.isable = isable;
 	}
 
 	@Override

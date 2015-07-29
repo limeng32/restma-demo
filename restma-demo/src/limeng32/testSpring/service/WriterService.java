@@ -69,4 +69,14 @@ public class WriterService extends ServiceSupport<Writer> implements
 	public int count(Writer t) {
 		return supportCount(mapper, t);
 	}
+
+	@Override
+	public void disable(Writer t) {
+		mapper.disable(t);
+	}
+
+	@Override
+	public void enable(Writer t) {
+		mapper.enable(t);
+	}
 }

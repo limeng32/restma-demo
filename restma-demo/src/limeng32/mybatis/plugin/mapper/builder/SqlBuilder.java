@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import limeng32.mybatis.plugin.ReflectHelper;
+import limeng32.mybatis.plugin.mapper.able.PojoAble;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionType;
@@ -656,8 +657,13 @@ public class SqlBuilder {
 		String tableName = ((TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation()).tableName();
 		StringBuffer selectSql = new StringBuffer("select ");
+		StringBuffer selectSqlAddition = new StringBuffer();
 		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
 		StringBuffer whereSql = new StringBuffer();
+
+		if (object instanceof PojoAble) {
+			handleAbleAddition(tableName, selectSqlAddition);
+		}
 
 		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
@@ -708,6 +714,8 @@ public class SqlBuilder {
 				break;
 			}
 		}
+
+		selectSql.append(selectSqlAddition);
 
 		if (selectSql.indexOf(",") > -1) {
 			selectSql.delete(selectSql.lastIndexOf(","),
@@ -911,5 +919,11 @@ public class SqlBuilder {
 				break;
 			}
 		}
+	}
+
+	private static void handleAbleAddition(String tableName,
+			StringBuffer selectSqlAddition) {
+		selectSqlAddition.append(tableName).append(".").append("isable")
+				.append(",");
 	}
 }

@@ -518,18 +518,19 @@ public class testController {
 		return "showArticleMix";
 	}
 
+	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelectAllUseCondition(ModelMap mm) {
-		BookWriter bwc = new BookWriter();
-		bwc.setWriter(new WriterCondition());
-		WriterCondition wc = (WriterCondition) bwc.getWriter();
+		// BookWriter bwc = new BookWriter();
+		// bwc.setWriter(new WriterCondition());
+		WriterCondition wc = new WriterCondition();
 		wc.setNameLike("李");
 		wc.setAssociation(new AssociationCondition());
 		wc.setLevel(new LevelCondition());
 		((AssociationCondition) wc.getAssociation()).setNameLike("7");
 		((LevelCondition) wc.getLevel()).setNameLike("级别");
-		bwc.setBook(new Book());
-		bwc.getBook().setTitle("3的故事");
-		List<BookWriter> ret = bookWriterService.selectAll(bwc);
+		// bwc.setBook(new Book());
+		// bwc.getBook().setTitle("3的故事");
+		List<Writer> ret = writerService.selectAll(wc);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
@@ -609,7 +610,6 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testCountUseCondition(ModelMap mm) {
 		BookWriter bwc = new BookWriter();
 		bwc.setWriter(new WriterCondition());
