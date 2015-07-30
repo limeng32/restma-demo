@@ -520,9 +520,9 @@ public class testController {
 
 	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelectAllUseCondition(ModelMap mm) {
-		// BookWriter bwc = new BookWriter();
-		// bwc.setWriter(new WriterCondition());
-		WriterCondition wc = new WriterCondition();
+		BookWriter bwc = new BookWriter();
+		bwc.setWriter(new WriterCondition());
+		WriterCondition wc = (WriterCondition) bwc.getWriter();
 		wc.setNameLike("李");
 		wc.setAssociation(new AssociationCondition());
 		wc.setLevel(new LevelCondition());
@@ -530,7 +530,7 @@ public class testController {
 		((LevelCondition) wc.getLevel()).setNameLike("级别");
 		// bwc.setBook(new Book());
 		// bwc.getBook().setTitle("3的故事");
-		List<Writer> ret = writerService.selectAll(wc);
+		List<BookWriter> ret = bookWriterService.selectAll(bwc);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}

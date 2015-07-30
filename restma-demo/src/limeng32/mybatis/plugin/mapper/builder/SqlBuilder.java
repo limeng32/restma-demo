@@ -609,8 +609,9 @@ public class SqlBuilder {
 		String tableName = tma.tableName();
 		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
 
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("select ");
+		StringBuffer selectSql = new StringBuffer("select ");
+		StringBuffer selectSqlAddition = new StringBuffer();
+
 		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			selectSql.append(fieldMapper.getDbFieldName()).append(",");
@@ -618,8 +619,17 @@ public class SqlBuilder {
 		for (String persistentFlag : persistentFlags) {
 			selectSql.append("true as ").append(persistentFlag).append(",");
 		}
-		selectSql.delete(selectSql.lastIndexOf(","),
-				selectSql.lastIndexOf(",") + 1);
+
+		if (PojoAble.class.isAssignableFrom(clazz)) {
+			handleAbleAddition(tableName, selectSqlAddition);
+		}
+		selectSql.append(selectSqlAddition);
+
+		if (selectSql.indexOf(",") > -1) {
+			selectSql.delete(selectSql.lastIndexOf(","),
+					selectSql.lastIndexOf(",") + 1);
+		}
+
 		selectSql.append(" from ").append(tableName);
 
 		StringBuffer whereSql = new StringBuffer(" where ");
@@ -649,71 +659,13 @@ public class SqlBuilder {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
-		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
-				.getClass()));
-		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
-				getTableMappedClass(object.getClass()));
-		String tableName = ((TableMapperAnnotation) tableMapper
-				.getTableMapperAnnotation()).tableName();
 		StringBuffer selectSql = new StringBuffer("select ");
 		StringBuffer selectSqlAddition = new StringBuffer();
-		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
+		StringBuffer fromSql = new StringBuffer(" from ");
 		StringBuffer whereSql = new StringBuffer();
 
-		if (object instanceof PojoAble) {
-			handleAbleAddition(tableName, selectSqlAddition);
-		}
-
-		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
-				.values()) {
-
-			// 处理selectSql
-			selectSql.append(tableName).append(".")
-					.append(fieldMapper.getDbFieldName()).append(",");
-
-			// 处理tableMapper中的条件
-			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			/* 此处当value拥有TableMapper或QueryMapper标注时，开始进行迭代 */
-			if (hasTableMapperAnnotation(value.getClass())
-					|| hasQueryMapperAnnotation(value.getClass())) {
-				dealMapperAnnotationIteration(tableName, fieldMapper, value,
-						fromSql, whereSql, null);
-			} else {
-				dealConditionEqual(whereSql, fieldMapper, tableName, null);
-			}
-		}
-
-		// 处理queryMapper中的条件
-		for (ConditionMapper conditionMapper : queryMapper
-				.getConditionMapperCache().values()) {
-			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			switch (conditionMapper.getConditionType()) {
-			case Equal:
-				dealConditionEqual(whereSql, conditionMapper, null, null);
-				break;
-			case Like:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.Like, tableName, null);
-				break;
-			case HeadLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.HeadLike, tableName, null);
-				break;
-			case TailLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.TailLike, tableName, null);
-				break;
-			default:
-				break;
-			}
-		}
+		dealMapperAnnotationIterationForSelectAll(object, selectSql,
+				selectSqlAddition, fromSql, whereSql, null, null, null);
 
 		selectSql.append(selectSqlAddition);
 
@@ -914,6 +866,100 @@ public class SqlBuilder {
 			case TailLike:
 				dealConditionLike(whereSql, conditionMapper,
 						ConditionType.TailLike, rightTableName, temp);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	private static void dealMapperAnnotationIterationForSelectAll(
+			Object object, StringBuffer selectSql,
+			StringBuffer selectSqlAddition, StringBuffer fromSql,
+			StringBuffer whereSql, String originTableName,
+			Mapperable originFieldMapper, String fieldPerfix) throws Exception {
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
+				getTableMappedClass(object.getClass()));
+		String tableName = ((TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation()).tableName();
+
+		/*
+		 * 在第一次遍历中，处理好selectSql和selectSqlAddition和fromSql。
+		 * 如果originFieldMapper为null则可认为是第一次遍历
+		 */
+		if (originFieldMapper == null) {
+			fromSql.append(tableName);
+			for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
+					.values()) {
+				selectSql.append(tableName).append(".")
+						.append(fieldMapper.getDbFieldName()).append(",");
+			}
+			if (object instanceof PojoAble) {
+				handleAbleAddition(tableName, selectSqlAddition);
+			}
+		}
+		/*
+		 * 在非第一次遍历中，处理fieldPerfix和fromSql。
+		 * 如果originFieldMapper和originTableName均不为null则可认为是非第一次遍历
+		 */
+		String temp = null;
+		if (originFieldMapper != null && originTableName != null) {
+			/* 处理fieldPerfix */
+			temp = originFieldMapper.getFieldName();
+			if (fieldPerfix != null) {
+				temp = fieldPerfix + "." + temp;
+			}
+			/* 处理fromSql */
+			fromSql.append(" left join ").append(tableName).append(" on ")
+					.append(originTableName).append(".")
+					.append(originFieldMapper.getDbFieldName()).append(" = ")
+					.append(tableName).append(".")
+					.append(originFieldMapper.getDbAssociationUniqueKey());
+		}
+
+		/* 处理fieldMapper中的条件 */
+		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
+				.values()) {
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
+			if (value == null) {
+				continue;
+			}
+			/* 此处当value拥有TableMapper或QueryMapper标注时，开始进行迭代 */
+			if (hasTableMapperAnnotation(value.getClass())
+					|| hasQueryMapperAnnotation(value.getClass())) {
+				dealMapperAnnotationIterationForSelectAll(value, selectSql,
+						selectSqlAddition, fromSql, whereSql, tableName,
+						fieldMapper, temp);
+			} else {
+				dealConditionEqual(whereSql, fieldMapper, tableName, temp);
+			}
+		}
+
+		/* 处理queryMapper中的条件 */
+		for (ConditionMapper conditionMapper : queryMapper
+				.getConditionMapperCache().values()) {
+			Object _value = dtoFieldMap.get(conditionMapper.getFieldName());
+			if (_value == null) {
+				continue;
+			}
+			switch (conditionMapper.getConditionType()) {
+			case Equal:
+				dealConditionEqual(whereSql, conditionMapper, tableName, temp);
+				break;
+			case Like:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.Like, tableName, temp);
+				break;
+			case HeadLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.HeadLike, tableName, temp);
+				break;
+			case TailLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.TailLike, tableName, temp);
 				break;
 			default:
 				break;
