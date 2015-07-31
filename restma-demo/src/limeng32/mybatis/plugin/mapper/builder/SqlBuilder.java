@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import limeng32.mybatis.plugin.ReflectHelper;
+import limeng32.mybatis.plugin.mapper.able.AbleConditionFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.able.PojoAble;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
@@ -112,6 +113,12 @@ public class SqlBuilder {
 						fieldMapperList.add(fieldMapper);
 					} else if (an instanceof PersistentFlagAnnotation) {
 						tableMapper.getPersistentFlags().add(field.getName());
+					} else if (an instanceof AbleConditionFlagAnnotation) {
+						fieldMapper = new FieldMapper();
+						fieldMapper.setFieldName(field.getName());
+						fieldMapper.setDbFieldName("isable");
+						fieldMapper.setAbleCondition(true);
+						fieldMapperCache.put(field.getName(), fieldMapper);
 					}
 				}
 			}
@@ -345,6 +352,22 @@ public class SqlBuilder {
 		}
 		whereSql.append(",").append("jdbcType=")
 				.append(mapper.getJdbcType().toString()).append("} and ");
+	}
+
+	private static void dealAbleCondition(StringBuffer whereSql,
+			Mapperable mapper, String tableName, String fieldNamePrefix) {
+		if (whereSql.length() == 0) {
+			whereSql.append(" where ");
+		}
+		if (tableName != null) {
+			whereSql.append(tableName).append(".");
+		}
+		whereSql.append(mapper.getDbFieldName()).append(" = #{");
+		if (fieldNamePrefix != null) {
+			whereSql.append(fieldNamePrefix).append(".");
+		}
+		whereSql.append(mapper.getFieldName());
+		whereSql.append("} and ");
 	}
 
 	/**
@@ -934,7 +957,11 @@ public class SqlBuilder {
 						selectSqlAddition, fromSql, whereSql, tableName,
 						fieldMapper, temp);
 			} else {
-				dealConditionEqual(whereSql, fieldMapper, tableName, temp);
+				if (fieldMapper.isAbleCondition()) {
+					dealAbleCondition(whereSql, fieldMapper, tableName, temp);
+				} else {
+					dealConditionEqual(whereSql, fieldMapper, tableName, temp);
+				}
 			}
 		}
 

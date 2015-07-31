@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import limeng32.mybatis.plugin.Order;
 import limeng32.mybatis.plugin.SortParam;
+import limeng32.mybatis.plugin.mapper.able.AbleConditionType;
 import limeng32.testSpring.enums.GENDER;
 import limeng32.testSpring.page.Page;
 import limeng32.testSpring.page.PageParam;
@@ -523,6 +524,7 @@ public class testController {
 		BookWriter bwc = new BookWriter();
 		bwc.setWriter(new WriterCondition());
 		WriterCondition wc = (WriterCondition) bwc.getWriter();
+		wc.setAbleCondition(AbleConditionType.Able);
 		wc.setNameLike("李");
 		wc.setAssociation(new AssociationCondition());
 		wc.setLevel(new LevelCondition());

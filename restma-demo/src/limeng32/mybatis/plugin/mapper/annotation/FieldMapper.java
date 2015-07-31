@@ -45,8 +45,9 @@ public class FieldMapper implements Mapperable {
 	private String ForeignFieldName;
 
 	/**
-	 * 数据库表字段名
+	 * 是否是AbleCondition。默认为否。
 	 */
+	private boolean isAbleCondition;
 
 	@Override
 	public String getDbFieldName() {
@@ -108,6 +109,14 @@ public class FieldMapper implements Mapperable {
 
 	public void setForeignFieldName(String foreignFieldName) {
 		ForeignFieldName = foreignFieldName;
+	}
+
+	public boolean isAbleCondition() {
+		return isAbleCondition;
+	}
+
+	public void setAbleCondition(boolean isAbleCondition) {
+		this.isAbleCondition = isAbleCondition;
 	}
 
 }
