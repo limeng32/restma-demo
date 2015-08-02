@@ -146,12 +146,12 @@ public class Writer extends PojoSupport<Writer> implements Serializable,
 	private String _persistent;
 
 	@Override
-	public String isable() {
+	public boolean isable() {
 		return isable;
 	}
 
 	@AbleFlagAnnotation
-	private String isable;
+	private boolean isable;
 
 	@Override
 	public void setAbleCondition(AbleConditionType ableCondition) {

@@ -10,7 +10,7 @@ public interface PojoAble {
 
 	String isableIgnore = "-1";
 
-	public String isable();
+	public boolean isable();
 
 	public void setAbleCondition(AbleConditionType ableCondition);
 

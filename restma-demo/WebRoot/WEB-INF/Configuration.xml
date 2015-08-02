@@ -19,6 +19,8 @@
 		<typeHandler handler="ConditionLikeHandler" />
 		<typeHandler handler="ConditionHeadLikeHandler" />
 		<typeHandler handler="ConditionTailLikeHandler" />
+		<typeHandler handler="AbleConditionHandler" />
+		<typeHandler handler="BooleanHandler" />
 		<typeHandler handler="AdvancedStringTypeHandler" />
 	</typeHandlers>
 	<plugins>

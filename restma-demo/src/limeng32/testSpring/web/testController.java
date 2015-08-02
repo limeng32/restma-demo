@@ -519,7 +519,6 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelectAllUseCondition(ModelMap mm) {
 		BookWriter bwc = new BookWriter();
 		bwc.setWriter(new WriterCondition());
@@ -533,6 +532,21 @@ public class testController {
 		// bwc.setBook(new Book());
 		// bwc.getBook().setTitle("3的故事");
 		List<BookWriter> ret = bookWriterService.selectAll(bwc);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testAbleInSelectAll(ModelMap mm) {
+		Writer wc = new Writer();
+		wc.setAbleCondition(AbleConditionType.Unable);
+		List<Writer> ret = writerService.selectAll(wc);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	public String testAbleInSelect(ModelMap mm) {
+		Writer ret = writerService.select(1);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
