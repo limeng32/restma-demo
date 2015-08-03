@@ -1,6 +1,5 @@
 package limeng32.mybatis.plugin.mapper.annotation;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,17 +10,7 @@ import java.util.Map;
  */
 public class QueryMapper {
 
-	private List<ConditionMapper> conditionMapperList;
-
 	private Map<String, ConditionMapper> conditionMapperCache;
-
-	public List<ConditionMapper> getConditionMapperList() {
-		return conditionMapperList;
-	}
-
-	public void setConditionMapperList(List<ConditionMapper> conditionMapperList) {
-		this.conditionMapperList = conditionMapperList;
-	}
 
 	public Map<String, ConditionMapper> getConditionMapperCache() {
 		return conditionMapperCache;

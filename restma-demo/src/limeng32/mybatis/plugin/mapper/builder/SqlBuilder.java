@@ -10,7 +10,6 @@ import java.util.Map;
 
 import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.mapper.able.AbleConditionFlagAnnotation;
-import limeng32.mybatis.plugin.mapper.able.PojoAble;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionType;
@@ -50,7 +49,6 @@ public class SqlBuilder {
 	private static TableMapper buildTableMapper(Class<?> dtoClass) {
 
 		Map<String, FieldMapper> fieldMapperCache = null;
-		List<FieldMapper> fieldMapperList = null;
 		Field[] fields = null;
 
 		FieldMapperAnnotation fieldMapperAnnotation = null;
@@ -70,7 +68,6 @@ public class SqlBuilder {
 			}
 			fields = dtoClass.getDeclaredFields();
 			fieldMapperCache = new HashMap<String, FieldMapper>();
-			fieldMapperList = new ArrayList<FieldMapper>();
 			Annotation[] fieldAnnotations = null;
 			for (Field field : fields) {
 				fieldAnnotations = field.getDeclaredAnnotations();
@@ -110,7 +107,6 @@ public class SqlBuilder {
 							fieldMapper.setForeignFieldName(foreignFieldName);
 						}
 						fieldMapperCache.put(field.getName(), fieldMapper);
-						fieldMapperList.add(fieldMapper);
 					} else if (an instanceof PersistentFlagAnnotation) {
 						tableMapper.getPersistentFlags().add(field.getName());
 					} else if (an instanceof AbleConditionFlagAnnotation) {
@@ -123,7 +119,6 @@ public class SqlBuilder {
 				}
 			}
 			tableMapper.setFieldMapperCache(fieldMapperCache);
-			tableMapper.setFieldMapperList(fieldMapperList);
 			tableMapperCache.put(dtoClass, tableMapper);
 			return tableMapper;
 		}
@@ -150,7 +145,6 @@ public class SqlBuilder {
 	private static QueryMapper buildQueryMapper(Class<?> dtoClass,
 			Class<?> pojoClass) {
 		Map<String, ConditionMapper> conditionMapperCache = null;
-		List<ConditionMapper> conditionMapperList = null;
 		Field[] fields = null;
 
 		ConditionMapperAnnotation conditionMapperAnnotation = null;
@@ -164,7 +158,6 @@ public class SqlBuilder {
 			queryMapper = new QueryMapper();
 			fields = dtoClass.getDeclaredFields();
 			conditionMapperCache = new HashMap<>();
-			conditionMapperList = new ArrayList<>();
 			Annotation[] conditionAnnotations = null;
 
 			for (Field field : fields) {
@@ -225,12 +218,10 @@ public class SqlBuilder {
 						}
 						conditionMapperCache.put(field.getName(),
 								conditionMapper);
-						conditionMapperList.add(conditionMapper);
 					}
 				}
 			}
 			queryMapper.setConditionMapperCache(conditionMapperCache);
-			queryMapper.setConditionMapperList(conditionMapperList);
 			queryMapperCache.put(dtoClass, queryMapper);
 			return queryMapper;
 		}
@@ -283,7 +274,7 @@ public class SqlBuilder {
 	 */
 	private static String[] buildUniqueKey(TableMapper tableMapper) {
 		List<String> l = new ArrayList<String>();
-		for (FieldMapper fm : tableMapper.getFieldMapperList()) {
+		for (FieldMapper fm : tableMapper.getFieldMapperCache().values()) {
 			if (fm.isUniqueKey()) {
 				l.add(fm.getDbFieldName());
 			}
@@ -633,7 +624,6 @@ public class SqlBuilder {
 		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
 
 		StringBuffer selectSql = new StringBuffer("select ");
-		StringBuffer selectSqlAddition = new StringBuffer();
 
 		for (FieldMapper fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
@@ -642,11 +632,6 @@ public class SqlBuilder {
 		for (String persistentFlag : persistentFlags) {
 			selectSql.append("true as ").append(persistentFlag).append(",");
 		}
-
-		if (PojoAble.class.isAssignableFrom(clazz)) {
-			handleAbleAddition(tableName, selectSqlAddition);
-		}
-		selectSql.append(selectSqlAddition);
 
 		if (selectSql.indexOf(",") > -1) {
 			selectSql.delete(selectSql.lastIndexOf(","),
@@ -683,14 +668,11 @@ public class SqlBuilder {
 					"Sorry,I refuse to build sql for a null object!");
 		}
 		StringBuffer selectSql = new StringBuffer("select ");
-		StringBuffer selectSqlAddition = new StringBuffer();
 		StringBuffer fromSql = new StringBuffer(" from ");
 		StringBuffer whereSql = new StringBuffer();
 
-		dealMapperAnnotationIterationForSelectAll(object, selectSql,
-				selectSqlAddition, fromSql, whereSql, null, null, null);
-
-		selectSql.append(selectSqlAddition);
+		dealMapperAnnotationIterationForSelectAll(object, selectSql, fromSql,
+				whereSql, null, null, null);
 
 		if (selectSql.indexOf(",") > -1) {
 			selectSql.delete(selectSql.lastIndexOf(","),
@@ -897,8 +879,7 @@ public class SqlBuilder {
 	}
 
 	private static void dealMapperAnnotationIterationForSelectAll(
-			Object object, StringBuffer selectSql,
-			StringBuffer selectSqlAddition, StringBuffer fromSql,
+			Object object, StringBuffer selectSql, StringBuffer fromSql,
 			StringBuffer whereSql, String originTableName,
 			Mapperable originFieldMapper, String fieldPerfix) throws Exception {
 		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
@@ -919,9 +900,6 @@ public class SqlBuilder {
 					.values()) {
 				selectSql.append(tableName).append(".")
 						.append(fieldMapper.getDbFieldName()).append(",");
-			}
-			if (object instanceof PojoAble) {
-				handleAbleAddition(tableName, selectSqlAddition);
 			}
 		}
 		/*
@@ -954,8 +932,7 @@ public class SqlBuilder {
 			if (hasTableMapperAnnotation(value.getClass())
 					|| hasQueryMapperAnnotation(value.getClass())) {
 				dealMapperAnnotationIterationForSelectAll(value, selectSql,
-						selectSqlAddition, fromSql, whereSql, tableName,
-						fieldMapper, temp);
+						fromSql, whereSql, tableName, fieldMapper, temp);
 			} else {
 				if (fieldMapper.isAbleCondition()) {
 					dealAbleCondition(whereSql, fieldMapper, tableName, temp);
@@ -992,11 +969,5 @@ public class SqlBuilder {
 				break;
 			}
 		}
-	}
-
-	private static void handleAbleAddition(String tableName,
-			StringBuffer selectSqlAddition) {
-		selectSqlAddition.append(tableName).append(".").append("isable")
-				.append(",");
 	}
 }
