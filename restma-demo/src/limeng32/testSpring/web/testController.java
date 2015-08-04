@@ -524,7 +524,7 @@ public class testController {
 		BookWriter bwc = new BookWriter();
 		bwc.setWriter(new WriterCondition());
 		WriterCondition wc = (WriterCondition) bwc.getWriter();
-		wc.setAbleCondition(AbleConditionType.Able);
+		wc.setAbleCondition(AbleConditionType.Ignore);
 		wc.setNameLike("李");
 		wc.setAssociation(new AssociationCondition());
 		wc.setLevel(new LevelCondition());

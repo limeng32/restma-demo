@@ -10,6 +10,7 @@ import java.util.Map;
 
 import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.mapper.able.AbleConditionFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.able.AbleConditionType;
 import limeng32.mybatis.plugin.mapper.able.AbleFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.AbleFieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapper;
@@ -368,10 +369,13 @@ public class SqlBuilder {
 				.append(mapper.getJdbcType().toString()).append("} and ");
 	}
 
-	private static void dealAbleCondition(StringBuffer whereSql,
+	private static void dealAbleCondition(Object object, StringBuffer whereSql,
 			Mapperable mapper, String tableName, String fieldNamePrefix) {
 		if (whereSql.length() == 0) {
 			whereSql.append(" where ");
+		}
+		if (object == AbleConditionType.Ignore) {
+			return;
 		}
 		if (tableName != null) {
 			whereSql.append(tableName).append(".");
@@ -958,7 +962,8 @@ public class SqlBuilder {
 						fromSql, whereSql, tableName, fieldMapper, temp);
 			} else {
 				if (fieldMapper instanceof AbleFieldMapper) {
-					dealAbleCondition(whereSql, fieldMapper, tableName, temp);
+					dealAbleCondition(value, whereSql, fieldMapper, tableName,
+							temp);
 				} else {
 					dealConditionEqual(whereSql, fieldMapper, tableName, temp);
 				}
