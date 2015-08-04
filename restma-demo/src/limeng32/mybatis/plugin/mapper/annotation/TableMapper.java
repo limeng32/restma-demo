@@ -15,7 +15,7 @@ public class TableMapper {
 
 	private Annotation tableMapperAnnotation;
 
-	private Map<String, FieldMapper> fieldMapperCache;
+	private Map<String, Mapperable> fieldMapperCache;
 
 	private Collection<String> persistentFlags;
 
@@ -27,11 +27,11 @@ public class TableMapper {
 		this.tableMapperAnnotation = tableMapperAnnotation;
 	}
 
-	public Map<String, FieldMapper> getFieldMapperCache() {
+	public Map<String, Mapperable> getFieldMapperCache() {
 		return fieldMapperCache;
 	}
 
-	public void setFieldMapperCache(Map<String, FieldMapper> fieldMapperCache) {
+	public void setFieldMapperCache(Map<String, Mapperable> fieldMapperCache) {
 		this.fieldMapperCache = fieldMapperCache;
 	}
 

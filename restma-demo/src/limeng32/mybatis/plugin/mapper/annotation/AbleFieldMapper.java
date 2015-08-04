@@ -8,7 +8,7 @@ import org.apache.ibatis.type.JdbcType;
  * @author david
  * 
  */
-public class FieldMapper implements Mapperable {
+public class AbleFieldMapper implements Mapperable {
 	/**
 	 * Java对象字段名
 	 */

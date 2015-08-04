@@ -528,7 +528,7 @@ public class testController {
 		wc.setNameLike("李");
 		wc.setAssociation(new AssociationCondition());
 		wc.setLevel(new LevelCondition());
-		((AssociationCondition) wc.getAssociation()).setNameLike("7");
+//		((AssociationCondition) wc.getAssociation()).setNameLike("7");
 		((LevelCondition) wc.getLevel()).setNameLike("级别");
 		// bwc.setBook(new Book());
 		// bwc.getBook().setTitle("3的故事");

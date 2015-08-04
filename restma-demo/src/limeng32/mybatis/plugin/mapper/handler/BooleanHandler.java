@@ -23,39 +23,30 @@ public class BooleanHandler extends BaseTypeHandler<Boolean> implements
 	@Override
 	public Boolean getNullableResult(ResultSet arg0, String arg1)
 			throws SQLException {
-		switch (arg0.getString(arg1)) {
-		case "1":
+		if (arg0.getInt(arg1) > 0) {
 			return true;
-		case "0":
+		} else {
 			return false;
-		default:
-			return null;
 		}
 	}
 
 	@Override
 	public Boolean getNullableResult(ResultSet arg0, int arg1)
 			throws SQLException {
-		switch (arg0.getString(arg1)) {
-		case "1":
+		if (arg0.getInt(arg1) > 0) {
 			return true;
-		case "0":
+		} else {
 			return false;
-		default:
-			return null;
 		}
 	}
 
 	@Override
 	public Boolean getNullableResult(CallableStatement arg0, int arg1)
 			throws SQLException {
-		switch (arg0.getString(arg1)) {
-		case "1":
+		if (arg0.getInt(arg1) > 0) {
 			return true;
-		case "0":
+		} else {
 			return false;
-		default:
-			return null;
 		}
 	}
 
