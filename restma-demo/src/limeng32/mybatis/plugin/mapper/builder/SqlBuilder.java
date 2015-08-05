@@ -347,10 +347,16 @@ public class SqlBuilder {
 		whereSql.append("} and ");
 	}
 
-	private static void dealConditionEqual(StringBuffer whereSql,
-			Mapperable mapper, String tableName, String fieldNamePrefix) {
+	private static void dealConditionEqual(Object object,
+			StringBuffer whereSql, Mapperable mapper, String tableName,
+			String fieldNamePrefix) {
 		if (whereSql.length() == 0) {
 			whereSql.append(" where ");
+		}
+		if (mapper instanceof AbleFieldMapper) {
+			if (object == AbleConditionType.Ignore) {
+				return;
+			}
 		}
 		if (tableName != null) {
 			whereSql.append(tableName).append(".");
@@ -365,26 +371,10 @@ public class SqlBuilder {
 		} else {
 			whereSql.append(mapper.getFieldName());
 		}
-		whereSql.append(",").append("jdbcType=")
-				.append(mapper.getJdbcType().toString()).append("} and ");
-	}
-
-	private static void dealAbleCondition(Object object, StringBuffer whereSql,
-			Mapperable mapper, String tableName, String fieldNamePrefix) {
-		if (whereSql.length() == 0) {
-			whereSql.append(" where ");
+		if (mapper.getJdbcType() != null) {
+			whereSql.append(",").append("jdbcType=")
+					.append(mapper.getJdbcType().toString());
 		}
-		if (object == AbleConditionType.Ignore) {
-			return;
-		}
-		if (tableName != null) {
-			whereSql.append(tableName).append(".");
-		}
-		whereSql.append(mapper.getDbFieldName()).append(" = #{");
-		if (fieldNamePrefix != null) {
-			whereSql.append(fieldNamePrefix).append(".");
-		}
-		whereSql.append(mapper.getFieldName());
 		whereSql.append("} and ");
 	}
 
@@ -763,7 +753,8 @@ public class SqlBuilder {
 				dealMapperAnnotationIteration(tableName, fieldMapper, value,
 						fromSql, whereSql, null);
 			} else {
-				dealConditionEqual(whereSql, fieldMapper, tableName, null);
+				dealConditionEqual(value, whereSql, fieldMapper, tableName,
+						null);
 			}
 		}
 
@@ -776,7 +767,7 @@ public class SqlBuilder {
 			}
 			switch (conditionMapper.getConditionType()) {
 			case Equal:
-				dealConditionEqual(whereSql, conditionMapper, null, null);
+				dealConditionEqual(value, whereSql, conditionMapper, null, null);
 				break;
 			case Like:
 				dealConditionLike(whereSql, conditionMapper,
@@ -868,14 +859,15 @@ public class SqlBuilder {
 				dealMapperAnnotationIteration(rightTableName, fieldMapper,
 						value, fromSql, whereSql, temp);
 			} else {
-				dealConditionEqual(whereSql, fieldMapper, rightTableName, temp);
+				dealConditionEqual(value, whereSql, fieldMapper,
+						rightTableName, temp);
 			}
 		}
 		// 处理queryMapper中的条件
 		for (ConditionMapper conditionMapper : queryMapper
 				.getConditionMapperCache().values()) {
-			Object _value = dtoFieldMap.get(conditionMapper.getFieldName());
-			if (_value == null) {
+			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
+			if (value == null) {
 				continue;
 			}
 			String temp = leftMapper.getFieldName();
@@ -884,8 +876,8 @@ public class SqlBuilder {
 			}
 			switch (conditionMapper.getConditionType()) {
 			case Equal:
-				dealConditionEqual(whereSql, conditionMapper, rightTableName,
-						temp);
+				dealConditionEqual(value, whereSql, conditionMapper,
+						rightTableName, temp);
 				break;
 			case Like:
 				dealConditionLike(whereSql, conditionMapper,
@@ -961,25 +953,22 @@ public class SqlBuilder {
 				dealMapperAnnotationIterationForSelectAll(value, selectSql,
 						fromSql, whereSql, tableName, fieldMapper, temp);
 			} else {
-				if (fieldMapper instanceof AbleFieldMapper) {
-					dealAbleCondition(value, whereSql, fieldMapper, tableName,
-							temp);
-				} else {
-					dealConditionEqual(whereSql, fieldMapper, tableName, temp);
-				}
+				dealConditionEqual(value, whereSql, fieldMapper, tableName,
+						temp);
 			}
 		}
 
 		/* 处理queryMapper中的条件 */
 		for (ConditionMapper conditionMapper : queryMapper
 				.getConditionMapperCache().values()) {
-			Object _value = dtoFieldMap.get(conditionMapper.getFieldName());
-			if (_value == null) {
+			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
+			if (value == null) {
 				continue;
 			}
 			switch (conditionMapper.getConditionType()) {
 			case Equal:
-				dealConditionEqual(whereSql, conditionMapper, tableName, temp);
+				dealConditionEqual(value, whereSql, conditionMapper, tableName,
+						temp);
 				break;
 			case Like:
 				dealConditionLike(whereSql, conditionMapper,

@@ -524,11 +524,11 @@ public class testController {
 		BookWriter bwc = new BookWriter();
 		bwc.setWriter(new WriterCondition());
 		WriterCondition wc = (WriterCondition) bwc.getWriter();
-		wc.setAbleCondition(AbleConditionType.Ignore);
+		wc.setAbleCondition(AbleConditionType.Able);
 		wc.setNameLike("李");
 		wc.setAssociation(new AssociationCondition());
 		wc.setLevel(new LevelCondition());
-//		((AssociationCondition) wc.getAssociation()).setNameLike("7");
+		// ((AssociationCondition) wc.getAssociation()).setNameLike("7");
 		((LevelCondition) wc.getLevel()).setNameLike("级别");
 		// bwc.setBook(new Book());
 		// bwc.getBook().setTitle("3的故事");
@@ -539,7 +539,7 @@ public class testController {
 
 	public String testAbleInSelectAll(ModelMap mm) {
 		Writer wc = new Writer();
-//		wc.setAbleCondition(AbleConditionType.Able);
+		// wc.setAbleCondition(AbleConditionType.Able);
 		List<Writer> ret = writerService.selectAll(wc);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
