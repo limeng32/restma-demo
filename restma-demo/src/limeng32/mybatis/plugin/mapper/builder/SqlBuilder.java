@@ -572,7 +572,7 @@ public class SqlBuilder {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
-						+ "' can't be null, build update sql failed!");
+						+ "' can't be null, build updatePersistent sql failed!");
 			}
 			whereSql.append("=#{").append(fieldMapper.getFieldName())
 					.append(",").append("jdbcType=")
@@ -582,6 +582,36 @@ public class SqlBuilder {
 		whereSql.delete(whereSql.lastIndexOf("and"),
 				whereSql.lastIndexOf("and") + 3);
 		return tableSql.append(whereSql).toString();
+	}
+
+	/**
+	 * 由传入的对象生成enable sql语句
+	 * 
+	 * @param object
+	 * @return sql
+	 * @throws Exception
+	 */
+	public static String buildEnableSql(Object object) throws Exception {
+		if (null == object) {
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for a null object!");
+		}
+		return "enable";
+	}
+
+	/**
+	 * 由传入的对象生成disable sql语句
+	 * 
+	 * @param object
+	 * @return sql
+	 * @throws Exception
+	 */
+	public static String buildDisableSql(Object object) throws Exception {
+		if (null == object) {
+			throw new RuntimeException(
+					"Sorry,I refuse to build sql for a null object!");
+		}
+		return "disable";
 	}
 
 	/**
@@ -614,7 +644,7 @@ public class SqlBuilder {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
 			if (value == null) {
 				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
-						+ "' can't be null, build update sql failed!");
+						+ "' can't be null, build delete sql failed!");
 			}
 			sql.append("=#{").append(fieldMapper.getFieldName()).append(",")
 					.append("jdbcType=")

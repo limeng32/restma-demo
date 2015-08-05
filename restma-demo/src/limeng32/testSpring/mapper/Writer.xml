@@ -2,16 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="limeng32.testSpring.mapper.WriterMapper">
 	<cache />
-	<sql id="tableName">Writer</sql>
-	<sql id="columns">id,name</sql>
-
-	<sql id="conditions">
-		<where>
-			<if test="id != 0">and id = #{id}</if>
-			<if test="name != null">and name like #{name}</if>
-			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
-		</where>
-	</sql>
 
 	<select id="select" resultMap="result">#{id}</select>
 
@@ -27,17 +17,9 @@
 
 	<delete id="delete" />
 
-	<update id="disable" parameterType="Writer">
-		update
-		<include refid="tableName" />
-		<include refid="limeng32.testSpring.mapper.PojoMapper.disable" />
-	</update>
+	<update id="disable" />
 
-	<update id="enable" parameterType="Writer">
-		update
-		<include refid="tableName" />
-		<include refid="limeng32.testSpring.mapper.PojoMapper.enable" />
-	</update>
+	<update id="enable" />
 
 	<resultMap id="result" type="Writer" autoMapping="true">
 		<id property="id" column="id" />

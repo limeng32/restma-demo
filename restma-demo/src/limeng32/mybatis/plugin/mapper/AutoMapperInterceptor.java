@@ -79,6 +79,12 @@ public class AutoMapperInterceptor implements Interceptor {
 			case "delete":
 				newSql = SqlBuilder.buildDeleteSql(parameterObject);
 				break;
+			case "disable":
+				newSql = SqlBuilder.buildDisableSql(parameterObject);
+				break;
+			case "enable":
+				newSql = SqlBuilder.buildEnableSql(parameterObject);
+				break;
 			case "insert":
 				newSql = SqlBuilder.buildInsertSql(parameterObject);
 				break;
