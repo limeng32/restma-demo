@@ -17,7 +17,11 @@ public class TableMapper {
 
 	private Map<String, Mapperable> fieldMapperCache;
 
+	private String[] uniqueKeyNames;
+
 	private Collection<String> persistentFlags;
+
+	private String ableFlag;
 
 	public Annotation getTableMapperAnnotation() {
 		return tableMapperAnnotation;
@@ -35,6 +39,14 @@ public class TableMapper {
 		this.fieldMapperCache = fieldMapperCache;
 	}
 
+	public String[] getUniqueKeyNames() {
+		return uniqueKeyNames;
+	}
+
+	public void setUniqueKeyNames(String[] uniqueKeyNames) {
+		this.uniqueKeyNames = uniqueKeyNames;
+	}
+
 	public Collection<String> getPersistentFlags() {
 		if (persistentFlags == null)
 			persistentFlags = new HashSet<>();
@@ -43,6 +55,14 @@ public class TableMapper {
 
 	public void setPersistentFlags(Collection<String> persistentFlags) {
 		this.persistentFlags = persistentFlags;
+	}
+
+	public String getAbleFlag() {
+		return ableFlag;
+	}
+
+	public void setAbleFlag(String ableFlag) {
+		this.ableFlag = ableFlag;
 	}
 
 }

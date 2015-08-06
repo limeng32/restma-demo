@@ -1,19 +1,20 @@
 package limeng32.mybatis.plugin.mapper.able;
 
 public enum AbleConditionType {
-	Able("1"), Unable("0"), Ignore("-1");
-	private final String value;
+	Able(AbleMapperFace.ableToken), Unable(AbleMapperFace.unableToken), Ignore(
+			AbleMapperFace.ignoreToken);
+	private final int value;
 
-	private AbleConditionType(String value) {
+	private AbleConditionType(int value) {
 		this.value = value;
 	}
 
 	@Override
 	public String toString() {
-		return value;
+		return value + "";
 	}
 
-	public String value() {
+	public int value() {
 		return value;
 	}
 }

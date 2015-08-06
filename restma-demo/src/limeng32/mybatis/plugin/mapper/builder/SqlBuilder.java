@@ -12,6 +12,8 @@ import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.mapper.able.AbleConditionFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.able.AbleConditionType;
 import limeng32.mybatis.plugin.mapper.able.AbleFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.able.AbleMapperFace;
+import limeng32.mybatis.plugin.mapper.able.PojoAble;
 import limeng32.mybatis.plugin.mapper.annotation.AbleFieldMapper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapper;
 import limeng32.mybatis.plugin.mapper.annotation.ConditionMapperAnnotation;
@@ -63,6 +65,7 @@ public class SqlBuilder {
 				return tableMapper;
 			}
 			tableMapper = new TableMapper();
+			List<String> uniqueKeyList = new ArrayList<String>();
 			Annotation[] classAnnotations = dtoClass.getDeclaredAnnotations();
 			for (Annotation an : classAnnotations) {
 				if (an instanceof TableMapperAnnotation) {
@@ -88,6 +91,9 @@ public class SqlBuilder {
 								.jdbcType());
 						fieldMapper.setUniqueKey(fieldMapperAnnotation
 								.isUniqueKey());
+						if (fieldMapperAnnotation.isUniqueKey()) {
+							uniqueKeyList.add(fieldMapper.getDbFieldName());
+						}
 						if ("".equals(fieldMapperAnnotation
 								.dbAssociationUniqueKey())) {
 						} else {
@@ -123,10 +129,13 @@ public class SqlBuilder {
 						}
 						afm.setDbFieldName(ableFlagFields[0].getName());
 						fieldMapperCache.put(afm.getFieldName(), afm);
+						tableMapper.setAbleFlag(afm.getDbFieldName());
 					}
 				}
 			}
 			tableMapper.setFieldMapperCache(fieldMapperCache);
+			tableMapper.setUniqueKeyNames(uniqueKeyList
+					.toArray(new String[uniqueKeyList.size()]));
 			tableMapperCache.put(dtoClass, tableMapper);
 			return tableMapper;
 		}
@@ -290,30 +299,9 @@ public class SqlBuilder {
 		return false;
 	}
 
-	/**
-	 * 从注解里获取唯一键信息
-	 * 
-	 * @param tableMapper
-	 * @return
-	 */
-	private static String[] buildUniqueKey(TableMapper tableMapper) {
-		List<String> l = new ArrayList<String>();
-		for (Mapperable fm : tableMapper.getFieldMapperCache().values()) {
-			if (fm instanceof FieldMapper && ((FieldMapper) fm).isUniqueKey()) {
-				l.add(fm.getDbFieldName());
-			}
-		}
-		String[] uniqueKeyNames = new String[l.size()];
-		l.toArray(uniqueKeyNames);
-		return uniqueKeyNames;
-	}
-
 	private static void dealConditionLike(StringBuffer whereSql,
 			ConditionMapper conditionMapper, ConditionType type,
 			String tableName, String fieldNamePrefix) {
-		if (whereSql.length() == 0) {
-			whereSql.append(" where ");
-		}
 		if (tableName != null) {
 			whereSql.append(tableName).append(".");
 		}
@@ -350,9 +338,6 @@ public class SqlBuilder {
 	private static void dealConditionEqual(Object object,
 			StringBuffer whereSql, Mapperable mapper, String tableName,
 			String fieldNamePrefix) {
-		if (whereSql.length() == 0) {
-			whereSql.append(" where ");
-		}
 		if (mapper instanceof AbleFieldMapper) {
 			if (object == AbleConditionType.Ignore) {
 				return;
@@ -453,7 +438,7 @@ public class SqlBuilder {
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+		String[] uniqueKeyNames = tableMapper.getUniqueKeyNames();
 
 		StringBuffer tableSql = new StringBuffer();
 		StringBuffer whereSql = new StringBuffer(" where ");
@@ -535,7 +520,7 @@ public class SqlBuilder {
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+		String[] uniqueKeyNames = tableMapper.getUniqueKeyNames();
 
 		StringBuffer tableSql = new StringBuffer();
 		StringBuffer whereSql = new StringBuffer(" where ");
@@ -596,7 +581,34 @@ public class SqlBuilder {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
-		return "enable";
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		String tableName = ((TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation()).tableName();
+		String[] uniqueKeyNames = tableMapper.getUniqueKeyNames();
+		StringBuffer updateSql = new StringBuffer(), whereSql = new StringBuffer();
+		updateSql.append("update ").append(tableName).append(" set ")
+				.append(tableMapper.getAbleFlag()).append(" = ")
+				.append(AbleMapperFace.ableToken);
+		whereSql.append(" where ");
+		for (int i = 0; i < uniqueKeyNames.length; i++) {
+			whereSql.append(uniqueKeyNames[i]);
+			Mapperable fieldMapper = getFieldMapperByDbFieldName(
+					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
+			if (value == null) {
+				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
+						+ "' can't be null, build enable sql failed!");
+			}
+			whereSql.append("=#{").append(fieldMapper.getFieldName())
+					.append(",").append("jdbcType=")
+					.append(fieldMapper.getJdbcType().toString())
+					.append("} and ");
+		}
+		whereSql.delete(whereSql.lastIndexOf("and"),
+				whereSql.lastIndexOf("and") + 3);
+		return updateSql.append(whereSql).toString();
 	}
 
 	/**
@@ -611,7 +623,34 @@ public class SqlBuilder {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
-		return "disable";
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		String tableName = ((TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation()).tableName();
+		String[] uniqueKeyNames = tableMapper.getUniqueKeyNames();
+		StringBuffer updateSql = new StringBuffer(), whereSql = new StringBuffer();
+		updateSql.append("update ").append(tableName).append(" set ")
+				.append(tableMapper.getAbleFlag()).append(" = ")
+				.append(AbleMapperFace.unableToken);
+		whereSql.append(" where ");
+		for (int i = 0; i < uniqueKeyNames.length; i++) {
+			whereSql.append(uniqueKeyNames[i]);
+			Mapperable fieldMapper = getFieldMapperByDbFieldName(
+					tableMapper.getFieldMapperCache(), uniqueKeyNames[i]);
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
+			if (value == null) {
+				throw new RuntimeException("Unique key '" + uniqueKeyNames[i]
+						+ "' can't be null, build disable sql failed!");
+			}
+			whereSql.append("=#{").append(fieldMapper.getFieldName())
+					.append(",").append("jdbcType=")
+					.append(fieldMapper.getJdbcType().toString())
+					.append("} and ");
+		}
+		whereSql.delete(whereSql.lastIndexOf("and"),
+				whereSql.lastIndexOf("and") + 3);
+		return updateSql.append(whereSql).toString();
 	}
 
 	/**
@@ -632,7 +671,7 @@ public class SqlBuilder {
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+		String[] uniqueKeyNames = tableMapper.getUniqueKeyNames();
 
 		StringBuffer sql = new StringBuffer();
 
@@ -668,7 +707,7 @@ public class SqlBuilder {
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
 		String tableName = tma.tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+		String[] uniqueKeyNames = tableMapper.getUniqueKeyNames();
 
 		StringBuffer selectSql = new StringBuffer("select ");
 
@@ -716,7 +755,7 @@ public class SqlBuilder {
 		}
 		StringBuffer selectSql = new StringBuffer("select ");
 		StringBuffer fromSql = new StringBuffer(" from ");
-		StringBuffer whereSql = new StringBuffer();
+		StringBuffer whereSql = new StringBuffer(" where ");
 
 		dealMapperAnnotationIterationForSelectAll(object, selectSql, fromSql,
 				whereSql, null, null, null);
@@ -724,6 +763,9 @@ public class SqlBuilder {
 		if (selectSql.indexOf(",") > -1) {
 			selectSql.delete(selectSql.lastIndexOf(","),
 					selectSql.lastIndexOf(",") + 1);
+		}
+		if (" where ".equals(whereSql.toString())) {
+			whereSql = new StringBuffer();
 		}
 		if (whereSql.indexOf("and") > -1) {
 			whereSql.delete(whereSql.lastIndexOf("and"),
@@ -751,7 +793,7 @@ public class SqlBuilder {
 				.getClass()));
 		String tableName = ((TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation()).tableName();
-		String[] uniqueKeyNames = buildUniqueKey(tableMapper);
+		String[] uniqueKeyNames = tableMapper.getUniqueKeyNames();
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("select count(").append(tableName).append(".");
@@ -938,6 +980,12 @@ public class SqlBuilder {
 				getTableMappedClass(object.getClass()));
 		String tableName = ((TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation()).tableName();
+
+		/* 处理Able特性 */
+		if (tableMapper.getAbleFlag() != null
+				&& ((PojoAble) object).getAbleCondition() == null) {
+			((PojoAble) object).setAbleCondition(AbleConditionType.Able);
+		}
 
 		/*
 		 * 在第一次遍历中，处理好selectSql和selectSqlAddition和fromSql。

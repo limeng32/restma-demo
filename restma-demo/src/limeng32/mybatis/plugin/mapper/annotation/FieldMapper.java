@@ -42,7 +42,7 @@ public class FieldMapper implements Mapperable {
 	/**
 	 * 如果此变量对应数据库表的外键，ForeignFieldName表示相关表的主键的Java对象字段名。不是外键时为null。
 	 */
-	private String ForeignFieldName;
+	private String foreignFieldName;
 
 	@Override
 	public String getDbFieldName() {
@@ -99,11 +99,11 @@ public class FieldMapper implements Mapperable {
 
 	@Override
 	public String getForeignFieldName() {
-		return ForeignFieldName;
+		return foreignFieldName;
 	}
 
 	public void setForeignFieldName(String foreignFieldName) {
-		ForeignFieldName = foreignFieldName;
+		this.foreignFieldName = foreignFieldName;
 	}
 
 }

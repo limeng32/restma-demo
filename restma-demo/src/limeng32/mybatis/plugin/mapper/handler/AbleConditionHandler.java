@@ -46,7 +46,7 @@ public class AbleConditionHandler extends BaseTypeHandler<AbleConditionType>
 	@Override
 	public void setNonNullParameter(PreparedStatement arg0, int arg1,
 			AbleConditionType arg2, JdbcType arg3) throws SQLException {
-		arg0.setString(arg1, arg2.value());
+		arg0.setInt(arg1, arg2.value());
 	}
 
 }

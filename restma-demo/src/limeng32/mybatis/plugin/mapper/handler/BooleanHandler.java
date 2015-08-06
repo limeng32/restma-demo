@@ -54,9 +54,9 @@ public class BooleanHandler extends BaseTypeHandler<Boolean> implements
 	public void setNonNullParameter(PreparedStatement arg0, int arg1,
 			Boolean arg2, JdbcType arg3) throws SQLException {
 		if (arg2) {
-			arg0.setString(arg1, "1");
+			arg0.setInt(arg1, 1);
 		} else {
-			arg0.setString(arg1, "0");
+			arg0.setInt(arg1, 0);
 		}
 	}
 

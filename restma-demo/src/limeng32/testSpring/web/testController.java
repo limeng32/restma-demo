@@ -511,6 +511,7 @@ public class testController {
 		bwc.getWriter().getAssociation().setName("新作协7");
 		bwc.getWriter().setLevel(new Level());
 		bwc.getWriter().getLevel().setName("级别二");
+		bwc.getWriter().setAbleCondition(AbleConditionType.Ignore);
 		List<BookWriter> bwList = bookWriterService.selectAll(bwc);
 		// writer.getAssociation().setName("新作协7");
 		// associationService.update(writer.getAssociation());
@@ -536,16 +537,15 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testEnable(ModelMap mm) {
-		Writer ret = writerService.select(1);
+		Writer ret = writerService.select(2);
 		writerService.enable(ret);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 
 	public String testDisable(ModelMap mm) {
-		Writer ret = writerService.select(1);
+		Writer ret = writerService.select(2);
 		writerService.disable(ret);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
@@ -553,7 +553,7 @@ public class testController {
 
 	public String testAbleInSelectAll(ModelMap mm) {
 		Writer wc = new Writer();
-		// wc.setAbleCondition(AbleConditionType.Able);
+		wc.setAbleCondition(AbleConditionType.Ignore);
 		List<Writer> ret = writerService.selectAll(wc);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
@@ -598,8 +598,9 @@ public class testController {
 		return "showArticleMix";
 	}
 
+	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelect(ModelMap mm) {
-		Article ret = articleService.select(265);
+		BookWriter ret = bookWriterService.select(6);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}

@@ -73,10 +73,12 @@ public class WriterService extends ServiceSupport<Writer> implements
 	@Override
 	public void disable(Writer t) {
 		mapper.disable(t);
+		retrieve(t);
 	}
 
 	@Override
 	public void enable(Writer t) {
 		mapper.enable(t);
+		retrieve(t);
 	}
 }
