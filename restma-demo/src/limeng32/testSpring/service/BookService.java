@@ -68,4 +68,16 @@ public class BookService extends ServiceSupport<Book> implements BookMapper {
 	public int count(Book t) {
 		return supportCount(mapper, t);
 	}
+
+	@Override
+	public void disable(Book t) {
+		mapper.disable(t);
+		retrieve(t);
+	}
+
+	@Override
+	public void enable(Book t) {
+		mapper.enable(t);
+		retrieve(t);
+	}
 }

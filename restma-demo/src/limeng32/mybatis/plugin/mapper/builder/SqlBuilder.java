@@ -380,6 +380,13 @@ public class SqlBuilder {
 				.getClass()));
 		TableMapperAnnotation tma = (TableMapperAnnotation) tableMapper
 				.getTableMapperAnnotation();
+
+		/* 处理AbleFlag问题 */
+		if (tableMapper.getAbleFlag() != null) {
+			ReflectHelper.setValueByFieldName(object,
+					tableMapper.getAbleFlag(), true);
+		}
+
 		String tableName = tma.tableName();
 		StringBuffer tableSql = new StringBuffer();
 		StringBuffer valueSql = new StringBuffer();
@@ -411,6 +418,14 @@ public class SqlBuilder {
 					+ object.getClass().getName()
 					+ "'s all fields are null, how can i build sql for it?!");
 		}
+
+		/* 处理AbleFlag问题 */
+		if (tableMapper.getAbleFlag() != null) {
+			tableSql.append(tableMapper.getAbleFlag()).append(",");
+			valueSql.append("#{").append(tableMapper.getAbleFlag())
+					.append("},");
+		}
+
 		tableSql.delete(tableSql.lastIndexOf(","),
 				tableSql.lastIndexOf(",") + 1);
 		valueSql.delete(valueSql.lastIndexOf(","),
@@ -450,7 +465,7 @@ public class SqlBuilder {
 		for (Mapperable fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
-			if (value == null) {
+			if (value == null || fieldMapper instanceof AbleFieldMapper) {
 				continue;
 			}
 			allFieldNull = false;

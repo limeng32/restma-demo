@@ -2,6 +2,10 @@ package limeng32.testSpring.pojo;
 
 import java.io.Serializable;
 
+import limeng32.mybatis.plugin.mapper.able.AbleConditionFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.able.AbleConditionType;
+import limeng32.mybatis.plugin.mapper.able.AbleFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.able.PojoAble;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
@@ -11,7 +15,7 @@ import org.apache.ibatis.type.JdbcType;
 import com.alibaba.fastjson.annotation.JSONField;
 
 @TableMapperAnnotation(tableName = "Book")
-public class Book extends PojoSupport<Book> implements Serializable {
+public class Book extends PojoSupport<Book> implements Serializable, PojoAble {
 	private static final long serialVersionUID = 1L;
 	@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
 	private Integer id;
@@ -19,6 +23,9 @@ public class Book extends PojoSupport<Book> implements Serializable {
 	private java.lang.String title;
 
 	private java.util.Collection<BookWriter> bookWriter;
+
+	@FieldMapperAnnotation(dbFieldName = "alias", jdbcType = JdbcType.VARCHAR)
+	private String origin;
 
 	public java.util.Collection<BookWriter> getBookWriter() {
 		if (bookWriter == null)
@@ -94,7 +101,36 @@ public class Book extends PojoSupport<Book> implements Serializable {
 		this.title = title;
 	}
 
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
 	@PersistentFlagAnnotation
 	private String _persistent;
 
+	@Override
+	public boolean isable() {
+		return isable;
+	}
+
+	@AbleFlagAnnotation
+	private boolean isable;
+
+	@Override
+	public void setAbleCondition(AbleConditionType ableCondition) {
+		this.ableCondition = ableCondition;
+	}
+
+	@JSONField(serialize = false)
+	@Override
+	public AbleConditionType getAbleCondition() {
+		return ableCondition;
+	}
+
+	@AbleConditionFlagAnnotation
+	private AbleConditionType ableCondition;
 }

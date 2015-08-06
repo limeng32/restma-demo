@@ -565,6 +565,31 @@ public class testController {
 		return "showArticleMix";
 	}
 
+	public String testInsertWithAlias(ModelMap mm) {
+		Book ret = new Book();
+		ret.setTitle("新book");
+		ret.setOrigin("五");
+		bookService.insert(ret);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	public String testRetrieveWithAlias(ModelMap mm) {
+		Book ret = new Book();
+		ret.setId(5);
+		bookService.retrieve(ret);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	public String testUpdateWithAlias(ModelMap mm) {
+		Book ret = bookService.select(5);
+		ret.setOrigin("五十五");
+		bookService.update(ret);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
 	public String testMybatis(ModelMap mm) {
 		// User u = userService.select(3);
 		Article ac = new Article();
@@ -574,12 +599,12 @@ public class testController {
 		return "showArticleMix";
 	}
 
+	@RequestMapping(value = "/showArticle9Mix")
 	public String testUpdate(ModelMap mm) {
-		Article ret = articleService.select(268);
-		ret.setTitle("ddd");
-		ret.setUser(userService.select(1));
-		articleService.update(ret);
-		ret = articleService.select(268);
+		Book ret = bookService.select(8);
+		ret.setTitle("eee");
+		ret.setAbleCondition(AbleConditionType.Able);
+		bookService.update(ret);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
@@ -598,9 +623,8 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testSelect(ModelMap mm) {
-		BookWriter ret = bookWriterService.select(6);
+		Book ret = bookService.select(1);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
@@ -626,9 +650,10 @@ public class testController {
 	}
 
 	public String testInsert(ModelMap mm) {
-		Article ret = new Article();
+		Book ret = new Book();
 		ret.setTitle(new Date().toString());
-		articleService.insert(ret);
+		bookService.insert(ret);
+		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 
