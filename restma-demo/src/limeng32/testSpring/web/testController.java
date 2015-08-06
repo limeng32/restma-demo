@@ -599,12 +599,11 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testUpdate(ModelMap mm) {
 		Book ret = bookService.select(8);
-		ret.setTitle("eee");
+		ret.setTitle("fff");
 		ret.setAbleCondition(AbleConditionType.Able);
-		bookService.update(ret);
+		bookService.updatePersistent(ret);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
@@ -649,9 +648,11 @@ public class testController {
 		return "showArticleMix";
 	}
 
+	@RequestMapping(value = "/showArticle9Mix")
 	public String testInsert(ModelMap mm) {
 		Book ret = new Book();
 		ret.setTitle(new Date().toString());
+		ret.setAbleCondition(AbleConditionType.Able);
 		bookService.insert(ret);
 		mm.addAttribute("_content", ret);
 		return "showArticleMix";

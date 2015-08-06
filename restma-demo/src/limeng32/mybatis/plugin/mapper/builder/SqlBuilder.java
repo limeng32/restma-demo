@@ -398,7 +398,7 @@ public class SqlBuilder {
 		for (Mapperable fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
 			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
-			if (value == null) {
+			if (value == null || fieldMapper instanceof AbleFieldMapper) {
 				continue;
 			}
 			allFieldNull = false;
@@ -546,6 +546,9 @@ public class SqlBuilder {
 
 		for (Mapperable fieldMapper : tableMapper.getFieldMapperCache()
 				.values()) {
+			if (fieldMapper instanceof AbleFieldMapper) {
+				continue;
+			}
 			allFieldNull = false;
 			tableSql.append(fieldMapper.getDbFieldName()).append("=#{");
 			if (fieldMapper.isForeignKey()) {
