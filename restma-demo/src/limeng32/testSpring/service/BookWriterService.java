@@ -59,4 +59,16 @@ public class BookWriterService extends ServiceSupport<BookWriter> implements
 	public int count(BookWriter t) {
 		return supportCount(mapper, t);
 	}
+
+	@Override
+	public void disable(BookWriter t) {
+		mapper.disable(t);
+		retrieve(t);
+	}
+
+	@Override
+	public void enable(BookWriter t) {
+		mapper.enable(t);
+		retrieve(t);
+	}
 }

@@ -2,6 +2,10 @@ package limeng32.testSpring.pojo;
 
 import java.io.Serializable;
 
+import limeng32.mybatis.plugin.mapper.able.AbleConditionFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.able.AbleConditionType;
+import limeng32.mybatis.plugin.mapper.able.AbleFlagAnnotation;
+import limeng32.mybatis.plugin.mapper.able.PojoAble;
 import limeng32.mybatis.plugin.mapper.annotation.FieldMapperAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.PersistentFlagAnnotation;
 import limeng32.mybatis.plugin.mapper.annotation.TableMapperAnnotation;
@@ -11,7 +15,8 @@ import org.apache.ibatis.type.JdbcType;
 import com.alibaba.fastjson.annotation.JSONField;
 
 @TableMapperAnnotation(tableName = "BookWriter")
-public class BookWriter extends PojoSupport<BookWriter> implements Serializable {
+public class BookWriter extends PojoSupport<BookWriter> implements
+		Serializable, PojoAble {
 	private static final long serialVersionUID = 1L;
 
 	@JSONField(serialize = false)
@@ -73,4 +78,25 @@ public class BookWriter extends PojoSupport<BookWriter> implements Serializable 
 	@PersistentFlagAnnotation
 	private String _persistent;
 
+	@Override
+	public boolean isable() {
+		return isable;
+	}
+
+	@AbleFlagAnnotation
+	private boolean isable;
+
+	@Override
+	public void setAbleCondition(AbleConditionType ableCondition) {
+		this.ableCondition = ableCondition;
+	}
+
+	@JSONField(serialize = false)
+	@Override
+	public AbleConditionType getAbleCondition() {
+		return ableCondition;
+	}
+
+	@AbleConditionFlagAnnotation
+	private AbleConditionType ableCondition;
 }

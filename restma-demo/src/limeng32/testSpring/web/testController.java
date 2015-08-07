@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -648,13 +647,33 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testInsert(ModelMap mm) {
-		Book ret = new Book();
-		ret.setTitle(new Date().toString());
-		ret.setAbleCondition(AbleConditionType.Able);
-		bookService.insert(ret);
+		BookWriter ret = new BookWriter();
+		ret.setBook(bookService.select(1));
+		ret.setWriter(writerService.select(1));
+		bookWriterService.insert(ret);
 		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	public String testDifferentPojoWithSameId(ModelMap mm) {
+		BookWriter bwc = new BookWriter();
+		bwc.setAbleCondition(AbleConditionType.Ignore);
+		List<BookWriter> ret = bookWriterService.selectAll(bwc);
+		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testPage(ModelMap mm) {
+		BookWriterCondition bwc = new BookWriterCondition();
+		bwc.setAbleCondition(AbleConditionType.Ignore);
+		bwc.setLimiter(new PageParam(2, 2));
+		bwc.setSorter(new SortParam(
+				new Order("id", Conditionable.Sequence.desc)));
+		List<BookWriter> ret = bookWriterService.selectAll(bwc);
+		Page<BookWriter> page = new Page<>(ret, bwc.getLimiter());
+		mm.addAttribute("_content", page);
 		return "showArticleMix";
 	}
 
