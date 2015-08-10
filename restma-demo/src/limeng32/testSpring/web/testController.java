@@ -34,6 +34,7 @@ import limeng32.testSpring.service.ArticleService;
 import limeng32.testSpring.service.AssociationService;
 import limeng32.testSpring.service.BookService;
 import limeng32.testSpring.service.BookWriterService;
+import limeng32.testSpring.service.LevelService;
 import limeng32.testSpring.service.UserService;
 import limeng32.testSpring.service.WriterService;
 
@@ -69,6 +70,9 @@ public class testController {
 
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private LevelService levelService;
 
 	@Autowired
 	private BookService bookService;
@@ -664,7 +668,6 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testPage(ModelMap mm) {
 		BookWriterCondition bwc = new BookWriterCondition();
 		bwc.setAbleCondition(AbleConditionType.Ignore);
@@ -674,6 +677,17 @@ public class testController {
 		List<BookWriter> ret = bookWriterService.selectAll(bwc);
 		Page<BookWriter> page = new Page<>(ret, bwc.getLimiter());
 		mm.addAttribute("_content", page);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testCache(ModelMap mm) {
+		Writer w = writerService.select(2);
+		Level l = levelService.select(2);
+		l.setName("级别二");
+		levelService.update(l);
+		Writer w2 = writerService.select(2);
+		mm.addAttribute("_content", w2);
 		return "showArticleMix";
 	}
 

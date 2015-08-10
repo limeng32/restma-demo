@@ -47,7 +47,6 @@
 			//}, 'text')
 			IO.get('test/showArticle9Mix?_content=json', {
 			}, function(data) {
-				console.log('9-' + JSONX.decode(data).pageItems[0].writer.name);
 				console.log(data);
 			}, 'text')
 		})
