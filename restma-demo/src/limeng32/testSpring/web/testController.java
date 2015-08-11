@@ -681,13 +681,26 @@ public class testController {
 	}
 
 	@RequestMapping(value = "/showArticle9Mix")
-	public String testCache(ModelMap mm) {
+	public String testCacheUpdate(ModelMap mm) {
 		Writer w = writerService.select(2);
+		/* 做些事情以防止警告出现 */
+		w.setId(2);
 		Level l = levelService.select(2);
 		l.setName("级别二");
-		levelService.update(l);
+		levelService.updatePersistent(l);
 		Writer w2 = writerService.select(2);
 		mm.addAttribute("_content", w2);
+		return "showArticleMix";
+	}
+
+	public String testCacheInsert(ModelMap mm) {
+		Level l = levelService.select(2);
+		levelService.loadWriter(l, null);
+		Level ret = new Level();
+		ret.setName("级别三");
+		levelService.insert(ret);
+		levelService.loadWriter(ret, new Writer());
+		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 
