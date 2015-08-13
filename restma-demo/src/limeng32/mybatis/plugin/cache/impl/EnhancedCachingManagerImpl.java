@@ -1,9 +1,6 @@
 package limeng32.mybatis.plugin.cache.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -13,14 +10,11 @@ import limeng32.mybatis.plugin.cache.CacheKeysPool;
 import limeng32.mybatis.plugin.cache.EnhancedCachingManager;
 
 import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.parsing.XNode;
-import org.apache.ibatis.parsing.XPathParser;
 
 public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 
 	// 每一个statementId 更新依赖的statementId集合
-	private Map<String, Set<String>> observers = new ConcurrentHashMap<String, Set<String>>();
+	private static Map<String, Set<String>> observers = new ConcurrentHashMap<String, Set<String>>();
 
 	// 全局性的 statemntId与CacheKey集合
 	private CacheKeysPool sharedCacheKeysPool = new CacheKeysPool();
@@ -68,28 +62,28 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 	}
 
 	public void initialize(Properties properties) {
-		String dependency = properties.getProperty("dependency");
-		if (!("".equals(dependency) || dependency == null)) {
-			InputStream inputStream;
-			try {
-				inputStream = Resources.getResourceAsStream(dependency);
-				XPathParser parser = new XPathParser(inputStream);
-				List<XNode> statements = parser
-						.evalNodes("/dependencies/statements/statement");
-				for (XNode node : statements) {
-					Set<String> temp = new HashSet<String>();
-					List<XNode> obs = node.evalNodes("observer");
-					for (XNode observer : obs) {
-						temp.add(observer.getStringAttribute("id"));
-					}
-					this.observers.put(node.getStringAttribute("id"), temp);
-				}
-				initialized = true;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
+		// String dependency = properties.getProperty("dependency");
+		// if (!("".equals(dependency) || dependency == null)) {
+		// InputStream inputStream;
+		// try {
+		// inputStream = Resources.getResourceAsStream(dependency);
+		// XPathParser parser = new XPathParser(inputStream);
+		// List<XNode> statements = parser
+		// .evalNodes("/dependencies/statements/statement");
+		// for (XNode node : statements) {
+		// Set<String> temp = new HashSet<String>();
+		// List<XNode> obs = node.evalNodes("observer");
+		// for (XNode observer : obs) {
+		// temp.add(observer.getStringAttribute("id"));
+		// }
+		// observers.put(node.getStringAttribute("id"), temp);
+		// }
+		// initialized = true;
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		initialized = true;
 		// cacheEnabled
 		String cacheEnabled = properties.getProperty("cacheEnabled", "true");
 		if ("true".equals(cacheEnabled)) {
@@ -106,5 +100,11 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 
 	public boolean isCacheEnabled() {
 		return cacheEnabled;
+	}
+
+	public static void buildObservers(String id) {
+		Set<String> temp = new HashSet<String>();
+		temp.add("limeng32.testSpring.mapper.WriterMapper.select");
+		observers.put(id, temp);
 	}
 }

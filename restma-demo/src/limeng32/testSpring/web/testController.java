@@ -687,7 +687,7 @@ public class testController {
 		w.setId(2);
 		Level l = levelService.select(2);
 		l.setName("级别二");
-		levelService.updatePersistent(l);
+		levelService.update(l);
 		Writer w2 = writerService.select(2);
 		mm.addAttribute("_content", w2);
 		return "showArticleMix";

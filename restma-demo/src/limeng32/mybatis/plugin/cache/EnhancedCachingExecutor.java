@@ -26,24 +26,53 @@ import org.apache.ibatis.session.RowBounds;
 		@Signature(args = { boolean.class }, method = "rollback", type = Executor.class),
 		@Signature(args = { boolean.class }, method = "close", type = Executor.class) })
 public class EnhancedCachingExecutor implements Interceptor {
-	private CacheKeysPool queryCacheOnCommit = new CacheKeysPool();
-	private Set<String> updateStatementOnCommit = new HashSet<String>();
+	private static CacheKeysPool queryCacheOnCommit = new CacheKeysPool();
+	private static Set<String> updateStatementOnCommit = new HashSet<String>();
 	EnhancedCachingManager cachingManager = EnhancedCachingManagerImpl
 			.getInstance();
 
+	// private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new
+	// DefaultObjectFactory();
+	// private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY
+	// = new DefaultObjectWrapperFactory();
+
 	public Object intercept(Invocation invocation) throws Throwable {
+		// Executor executorProxy = (Executor) invocation.getTarget();
+		// MetaObject metaExecutor = MetaObject.forObject(executorProxy,
+		// DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
+		// // 分离代理对象链
+		// while (metaExecutor.hasGetter("h")) {
+		// Object object = metaExecutor.getValue("h");
+		// metaExecutor = MetaObject.forObject(object, DEFAULT_OBJECT_FACTORY,
+		// DEFAULT_OBJECT_WRAPPER_FACTORY);
+		// }
+		// // 分离最后一个代理对象的目标类
+		// while (metaExecutor.hasGetter("target")) {
+		// Object object = metaExecutor.getValue("target");
+		// metaExecutor = MetaObject.forObject(object, DEFAULT_OBJECT_FACTORY,
+		// DEFAULT_OBJECT_WRAPPER_FACTORY);
+		// }
 		String name = invocation.getMethod().getName();
 		Object result = null;
-		if ("query".equals(name)) {
-			result = this.processQuery(invocation);
-		} else if ("update".equals(name)) {
-			result = this.processUpdate(invocation);
-		} else if ("commit".equals(name)) {
+		switch (name) {
+		case "commit":
 			result = this.processCommit(invocation);
-		} else if ("rollback".equals(name)) {
-			result = this.processRollback(invocation);
-		} else if ("close".equals(name)) {
+			break;
+		case "close":
 			result = this.processClose(invocation);
+			break;
+		case "query":
+			result = this.processQuery(invocation);
+			break;
+		case "rollback":
+			result = this.processRollback(invocation);
+			break;
+		case "update":
+
+			result = this.processUpdate(invocation);
+			break;
+		default:
+			break;
 		}
 		return result;
 	}
@@ -98,6 +127,8 @@ public class EnhancedCachingExecutor implements Interceptor {
 		Object result = invocation.proceed();
 		MappedStatement mappedStatement = (MappedStatement) invocation
 				.getArgs()[0];
+		// 在这里将没加入到observers的mappedStatement加入到observers中
+		EnhancedCachingManagerImpl.buildObservers(mappedStatement.getId());
 		updateStatementOnCommit.add(mappedStatement.getId());
 		return result;
 	}
