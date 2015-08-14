@@ -105,6 +105,7 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 	public static void buildObservers(String id) {
 		Set<String> temp = new HashSet<String>();
 		temp.add("limeng32.testSpring.mapper.WriterMapper.select");
+		temp.add("limeng32.testSpring.mapper.WriterMapper.selectAll");
 		observers.put(id, temp);
 	}
 }

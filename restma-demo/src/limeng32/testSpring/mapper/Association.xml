@@ -15,7 +15,7 @@
 
 	<select id="select" resultMap="result">#{id}</select>
 
-	<select id="selectAll" resultMap="result" />
+	<select id="selectAll" resultMap="result">#{hash}</select>
 
 	<select id="count" resultType="int" />
 

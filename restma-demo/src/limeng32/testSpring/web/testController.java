@@ -680,8 +680,7 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
-	public String testCacheUpdate(ModelMap mm) {
+	public String testEnhancedCacheInSelect(ModelMap mm) {
 		Writer w = writerService.select(2);
 		/* 做些事情以防止警告出现 */
 		w.setId(2);
@@ -690,6 +689,31 @@ public class testController {
 		levelService.update(l);
 		Writer w2 = writerService.select(2);
 		mm.addAttribute("_content", w2);
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testEnhancedCacheInSelectAll(ModelMap mm) {
+		Writer wc = new Writer();
+		wc.setLevel(new Level());
+		wc.getLevel().setId(2);
+		System.out.println("1:" + wc.getHash());
+		List<Writer> temp = writerService.selectAll(wc);
+
+		// Writer wc3 = new Writer();
+		// wc3.setLevel(new Level());
+		// wc3.getLevel().setId(3);
+		// wc.getLevel().setId(3);
+		// System.out.println("2:" + wc.getHash());
+		// List<Writer> temp2 = writerService.selectAll(wc);
+		Level l = levelService.select(2);
+		l.setName("级别二");
+		levelService.update(l);
+		Writer wc2 = new Writer();
+		wc2.setLevel(new Level());
+		wc2.getLevel().setId(2);
+		List<Writer> ret = writerService.selectAll(wc2);
+		mm.addAttribute("_content", ret);
 		return "showArticleMix";
 	}
 

@@ -7,8 +7,6 @@ import java.util.Properties;
 
 import javax.xml.bind.PropertyException;
 
-import limeng32.mybatis.plugin.mapper.builder.SqlBuilder;
-
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
@@ -147,31 +145,31 @@ public class CachePlugin implements Interceptor {
 		List<ParameterMapping> parameterMappings = boundSql
 				.getParameterMappings();
 		/* 解决自动生成SQL，SQL语句为空导致key生成错误的bug，此问题在执行count、selectAll操作时会出现。 */
-		if (null == boundSql.getSql() || "".equals(boundSql.getSql())) {
-			String id = ms.getId();
-			id = id.substring(id.lastIndexOf(".") + 1);
-			String newSql = null;
-			try {
-				switch (id) {
-				case "count":
-					newSql = SqlBuilder.buildCountSql(parameterObject);
-					break;
-				case "selectAll":
-					newSql = SqlBuilder.buildSelectAllSql(parameterObject);
-					break;
-				}
-				SqlSource sqlSource = buildSqlSource(configuration, newSql,
-						parameterObject.getClass());
-				parameterMappings = sqlSource.getBoundSql(parameterObject)
-						.getParameterMappings();
-				cacheKey.update(newSql);
-			} catch (Exception e) {
-				// logger.error("Update cacheKey error.", e);
-			}
-		} else {
-			cacheKey.update(boundSql.getSql());
-		}
-
+		// if (null == boundSql.getSql() || "".equals(boundSql.getSql())) {
+		// String id = ms.getId();
+		// id = id.substring(id.lastIndexOf(".") + 1);
+		// String newSql = null;
+		// try {
+		// switch (id) {
+		// case "count":
+		// newSql = SqlBuilder.buildCountSql(parameterObject);
+		// break;
+		// case "selectAll":
+		// newSql = SqlBuilder.buildSelectAllSql(parameterObject);
+		// break;
+		// }
+		// SqlSource sqlSource = buildSqlSource(configuration, newSql,
+		// parameterObject.getClass());
+		// parameterMappings = sqlSource.getBoundSql(parameterObject)
+		// .getParameterMappings();
+		// cacheKey.update(newSql);
+		// } catch (Exception e) {
+		// // logger.error("Update cacheKey error.", e);
+		// }
+		// } else {
+		// cacheKey.update(boundSql.getSql());
+		// }
+		cacheKey.update(boundSql.getSql());
 		MetaObject metaObject = MetaObject.forObject(parameterObject,
 				DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
 

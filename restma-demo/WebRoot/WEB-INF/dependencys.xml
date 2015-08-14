@@ -2,10 +2,10 @@
 <dependencies>
 	<statements>
 		<statement id="limeng32.testSpring.mapper.LevelMapper.update">
-			<observer id="limeng32.testSpring.mapper.WriterMapper.select" />
+			<observer id="limeng32.testSpring.mapper.LevelMapper.select" />
 		</statement>
 		<statement id="limeng32.testSpring.mapper.LevelMapper.updatePersistent">
-			<observer id="limeng32.testSpring.mapper.WriterMapper.select" />
+			<observer id="limeng32.testSpring.mapper.LevelMapper.select" />
 		</statement>
 	</statements>
 </dependencies>

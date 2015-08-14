@@ -2,6 +2,9 @@ package limeng32.testSpring.pojo;
 
 import java.util.Collection;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+
 public abstract class PojoSupport<T extends PojoSupport<T>> implements
 		PojoFace<T> {
 
@@ -34,5 +37,10 @@ public abstract class PojoSupport<T extends PojoSupport<T>> implements
 			}
 		}
 		return null;
+	}
+
+	@JSONField(serialize = false)
+	public String getHash() {
+		return JSON.toJSONString(this);
 	}
 }

@@ -12,4 +12,7 @@ public interface PojoFace<T> {
 
 	/* 从c中获取和自身id相同的对象并返回 */
 	T getById(Collection<T> c);
+
+	/* 获取哈希值 */
+	String getHash();
 }
