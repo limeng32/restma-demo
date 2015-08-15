@@ -2,6 +2,8 @@ package limeng32.testSpring.pojo;
 
 import java.util.Collection;
 
+import limeng32.testSpring.util.MD5;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 
@@ -41,6 +43,6 @@ public abstract class PojoSupport<T extends PojoSupport<T>> implements
 
 	@JSONField(serialize = false)
 	public String getHash() {
-		return JSON.toJSONString(this);
+		return MD5.MD5Purity(JSON.toJSONString(this));
 	}
 }

@@ -703,8 +703,8 @@ public class testController {
 		// Writer wc3 = new Writer();
 		// wc3.setLevel(new Level());
 		// wc3.getLevel().setId(3);
-		// wc.getLevel().setId(3);
-		// System.out.println("2:" + wc.getHash());
+		wc.getLevel().setId(3);
+		System.out.println("2:" + wc.getHash());
 		// List<Writer> temp2 = writerService.selectAll(wc);
 		Level l = levelService.select(2);
 		l.setName("级别二");
