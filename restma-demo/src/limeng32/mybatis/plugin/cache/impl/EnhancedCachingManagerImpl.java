@@ -1,5 +1,6 @@
 package limeng32.mybatis.plugin.cache.impl;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -8,6 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import limeng32.mybatis.plugin.cache.CacheKeysPool;
 import limeng32.mybatis.plugin.cache.EnhancedCachingManager;
+import limeng32.mybatis.plugin.cache.annotation.CacheAnnotation;
+import limeng32.mybatis.plugin.cache.annotation.CacheRoleType;
+import limeng32.testSpring.mapper.WriterMapper;
+import limeng32.testSpring.service.WriterService;
 
 import org.apache.ibatis.cache.Cache;
 
@@ -104,8 +109,15 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 
 	public static void buildObservers(String id) {
 		Set<String> temp = new HashSet<String>();
-		temp.add("limeng32.testSpring.mapper.WriterMapper.select");
-		temp.add("limeng32.testSpring.mapper.WriterMapper.selectAll");
+		/* 在这里使用注解的方式获取对应的方法 */
+		// temp.add("limeng32.testSpring.mapper.WriterMapper.select");
+		// temp.add("limeng32.testSpring.mapper.WriterMapper.selectAll");
+		for (Method m : WriterService.class.getDeclaredMethods()) {
+			CacheAnnotation an = m.getAnnotation(CacheAnnotation.class);
+			if (an != null && CacheRoleType.Observer.equals(an.role())) {
+				temp.add(WriterMapper.class.getName() + "." + m.getName());
+			}
+		}
 		observers.put(id, temp);
 	}
 }

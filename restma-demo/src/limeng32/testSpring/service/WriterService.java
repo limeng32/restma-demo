@@ -2,8 +2,12 @@ package limeng32.testSpring.service;
 
 import java.util.List;
 
+import limeng32.mybatis.plugin.cache.annotation.CacheAnnotation;
+import limeng32.mybatis.plugin.cache.annotation.CacheRoleType;
 import limeng32.testSpring.mapper.WriterMapper;
+import limeng32.testSpring.pojo.Association;
 import limeng32.testSpring.pojo.BookWriter;
+import limeng32.testSpring.pojo.Level;
 import limeng32.testSpring.pojo.Writer;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,7 @@ public class WriterService extends ServiceSupport<Writer> implements
 	private BookWriterService bookWriterService;
 
 	@Override
+	@CacheAnnotation(MappedClass = { Association.class, Level.class }, role = CacheRoleType.Observer)
 	public Writer select(int id) {
 		return supportSelect(mapper, id);
 	}
@@ -35,6 +40,7 @@ public class WriterService extends ServiceSupport<Writer> implements
 	}
 
 	@Override
+	@CacheAnnotation(MappedClass = { Association.class, Level.class }, role = CacheRoleType.Observer)
 	public List<Writer> selectAll(Writer t) {
 		return supportSelectAll(mapper, t);
 	}
