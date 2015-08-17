@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.cache.CacheKeysPool;
 import limeng32.mybatis.plugin.cache.EnhancedCachingManager;
 import limeng32.mybatis.plugin.cache.annotation.CacheAnnotation;
@@ -93,6 +94,25 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 		String cacheEnabled = properties.getProperty("cacheEnabled", "true");
 		if ("true".equals(cacheEnabled)) {
 			this.cacheEnabled = true;
+		}
+
+		String annotationPackageName = properties
+				.getProperty("annotationPackage");
+		Package annotationPackage = Package.getPackage(annotationPackageName);
+		if (annotationPackage != null) {
+			Set<Class<?>> classes = ReflectHelper
+					.getClasses(annotationPackageName);
+			for (Class<?> clazz : classes) {
+				for (Method method : clazz.getDeclaredMethods()) {
+					CacheAnnotation cacheAnnotation = method
+							.getAnnotation(CacheAnnotation.class);
+					if (cacheAnnotation != null) {
+						System.out.println("---------------" + cacheAnnotation);
+					}
+				}
+			}
+
+			System.out.println("---------------" + classes);
 		}
 	}
 
