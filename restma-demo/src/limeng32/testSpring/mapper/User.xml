@@ -2,29 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="limeng32.testSpring.mapper.UserMapper">
 	<cache />
-	<sql id="tableName">user</sql>
-	<sql id="columns">id,name,address,nickname</sql>
-	<sql id="conditions">
-		<where>
-			<if test="id != 0">and id = #{id}</if>
-			<if test="name != null">and name like #{name}</if>
-			<if test="address != null">and address like #{address}</if>
-			<if test="nickname != null">
-				and nickname like #{nickname}
-			</if>
-			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
-		</where>
-	</sql>
 
 	<select id="select" resultMap="result">#{id}</select>
 
-	<select id="selectAll" resultMap="result" />
+	<select id="selectAll" resultMap="result">#{hash}</select>
 
-	<select id="count" resultType="int">
-		select count(id) from
-		<include refid="tableName" />
-		<include refid="conditions" />
-	</select>
+	<select id="count" resultType="int" />
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 

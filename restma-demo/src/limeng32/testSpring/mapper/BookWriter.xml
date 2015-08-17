@@ -2,60 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="limeng32.testSpring.mapper.BookWriterMapper">
 	<cache />
-	<sql id="tableName">BookWriter</sql>
-	<sql id="columns">
-		<include refid="tableName" />
-		.id,
-		<include refid="tableName" />
-		.bookid,
-		<include refid="tableName" />
-		.writerid
-	</sql>
-
-	<sql id="conditions">
-		<where>
-			<if test="id != 0">and id = #{id}</if>
-			<if test="book != null">
-				and
-				<include refid="tableName" />
-				.bookid =
-				<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
-				.id
-				<if test="book.id != 0">
-					and
-					<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
-					.id = #{book.id}
-				</if>
-				<if test="book.title != null">
-					and
-					<include refid="limeng32.testSpring.mapper.BookMapper.tableName" />
-					.title like #{book.title}
-				</if>
-			</if>
-			<if test="writer != null">
-				and
-				<include refid="tableName" />
-				.writerid =
-				<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
-				.id
-				<if test="writer.id != 0">
-					and
-					<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
-					.id = #{writer.id}
-				</if>
-				<if test="writer.name != null">
-					and
-					<include refid="limeng32.testSpring.mapper.WriterMapper.tableName" />
-					.name like #{writer.name}
-				</if>
-			</if>
-			<include refid="limeng32.testSpring.mapper.PojoMapper.dealIsable" />
-		</where>
-	</sql>
 
 	<select id="select" resultMap="result">#{id}</select>
 
-	<select id="selectAll" resultMap="result" />
+	<select id="selectAll" resultMap="result">#{hash}</select>
 
 	<select id="count" resultType="int" />
 
@@ -67,17 +17,9 @@
 
 	<delete id="delete" />
 
-	<update id="disable" parameterType="BookWriter">
-		update
-		<include refid="tableName" />
-		<include refid="limeng32.testSpring.mapper.PojoMapper.disable" />
-	</update>
+	<update id="disable" />
 
-	<update id="enable" parameterType="BookWriter">
-		update
-		<include refid="tableName" />
-		<include refid="limeng32.testSpring.mapper.PojoMapper.enable" />
-	</update>
+	<update id="enable" />
 
 	<resultMap id="result" type="BookWriter" autoMapping="true">
 		<id property="id" column="id" />

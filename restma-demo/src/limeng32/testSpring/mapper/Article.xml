@@ -2,33 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="limeng32.testSpring.mapper.ArticleMapper">
 	<cache />
-	<sql id="tableName">article</sql>
-	<sql id="columns">id,userid,title,content</sql>
-
-	<sql id="conditions">
-		<where>
-			<if test="id != null">and id = #{id}</if>
-			<if test="user != null and user.id != 0">
-				and userid = #{user.id}
-			</if>
-			<if test="title != null">and title like #{title}</if>
-			<if test="content != null">and content like #{content}</if>
-		</where>
-	</sql>
 
 	<select id="select" resultMap="result">#{id}</select>
 
-	<select id="selectAll" resultMap="result" />
-
-	<select id="selectAll1" resultMap="result">
-		select
-		article.id,
-		article.title, article.content, user.id, user.name, user.address,
-		user.nickname
-		from
-		article left join user on article.userid = user.id
-		where article.title like #{title}
-	</select>
+	<select id="selectAll" resultMap="result">#{hash}</select>
 
 	<select id="count" resultType="int" />
 
@@ -40,17 +17,9 @@
 
 	<delete id="delete" />
 
-	<update id="disable" parameterType="Article">
-		update
-		<include refid="tableName" />
-		<include refid="limeng32.testSpring.mapper.PojoMapper.disable" />
-	</update>
+	<update id="disable" />
 
-	<update id="enable" parameterType="Article">
-		update
-		<include refid="tableName" />
-		<include refid="limeng32.testSpring.mapper.PojoMapper.enable" />
-	</update>
+	<update id="enable" />
 
 	<resultMap id="result" type="Article" autoMapping="true">
 		<id property="id" column="id" />
