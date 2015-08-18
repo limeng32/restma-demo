@@ -692,7 +692,6 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testEnhancedCacheInSelectAll(ModelMap mm) {
 		Writer wc = new Writer();
 		wc.setLevel(new Level());
@@ -714,6 +713,33 @@ public class testController {
 		wc2.getLevel().setId(2);
 		List<Writer> ret = writerService.selectAll(wc2);
 		mm.addAttribute("_content", ret);
+		return "showArticleMix";
+	}
+
+	public String testEnhancedCacheByDisableInSelect(ModelMap mm) {
+		BookWriter bw = bookWriterService.select(2);
+		System.out.println("1:" + bw.getWriter().isable());
+		Writer w = writerService.select(1);
+		writerService.enable(w);
+		BookWriter bw2 = bookWriterService.select(2);
+		System.out.println("2:" + bw2.getWriter().isable());
+		mm.addAttribute("_content", bw2.getWriter().isable());
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testEnhancedCacheByDisableInRetrieve(ModelMap mm) {
+		BookWriter bw = new BookWriter();
+		bw.setId(2);
+		bookWriterService.retrieve(bw);
+		System.out.println("1:" + bw.getWriter().isable());
+		Writer w = writerService.select(1);
+		writerService.disable(w);
+		BookWriter bw2 = new BookWriter();
+		bw2.setId(2);
+		bookWriterService.retrieve(bw2);
+		System.out.println("2:" + bw2.getWriter().isable());
+		mm.addAttribute("_content", bw2.getWriter().isable());
 		return "showArticleMix";
 	}
 

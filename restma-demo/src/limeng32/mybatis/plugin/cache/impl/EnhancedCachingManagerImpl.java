@@ -134,18 +134,20 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 			Map<Class<?>, Set<Method>> observerMethodMap) {
 		for (Class<?> clazz : triggerMethodMap.keySet()) {
 			Set<Method> observerMethods = observerMethodMap.get(clazz);
-			for (Method triggerMethod : triggerMethodMap.get(clazz)) {
-				String triggerFullName = triggerMethod.getDeclaringClass()
-						.getName() + "." + triggerMethod.getName();
-				if (!observers.containsKey(triggerFullName)) {
-					observers.put(triggerFullName, new HashSet<String>());
-				}
-				for (Method observerMethod : observerMethods) {
-					String observerFullName = observerMethod
-							.getDeclaringClass().getName()
-							+ "."
-							+ observerMethod.getName();
-					observers.get(triggerFullName).add(observerFullName);
+			if (observerMethods != null) {
+				for (Method triggerMethod : triggerMethodMap.get(clazz)) {
+					String triggerFullName = triggerMethod.getDeclaringClass()
+							.getName() + "." + triggerMethod.getName();
+					if (!observers.containsKey(triggerFullName)) {
+						observers.put(triggerFullName, new HashSet<String>());
+					}
+					for (Method observerMethod : observerMethods) {
+						String observerFullName = observerMethod
+								.getDeclaringClass().getName()
+								+ "."
+								+ observerMethod.getName();
+						observers.get(triggerFullName).add(observerFullName);
+					}
 				}
 			}
 		}
