@@ -37,10 +37,8 @@
 		</plugin>
 
 		<plugin interceptor="limeng32.mybatis.plugin.cache.EnhancedCachingExecutor">
-			<property name="dependency" value="../dependencys.xml" />
 			<property name="cacheEnabled" value="true" />
-			<property name="annotationPackage" value="limeng32.testSpring.service" />
-			<property name="mapperPackage" value="limeng32.testSpring.mapper" />
+			<property name="annotationPackage" value="limeng32.testSpring.mapper" />
 		</plugin>
 	</plugins>
 </configuration>

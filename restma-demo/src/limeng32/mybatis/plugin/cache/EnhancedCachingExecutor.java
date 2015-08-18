@@ -56,20 +56,20 @@ public class EnhancedCachingExecutor implements Interceptor {
 		Object result = null;
 		switch (name) {
 		case "commit":
-			result = this.processCommit(invocation);
+			result = processCommit(invocation);
 			break;
 		case "close":
-			result = this.processClose(invocation);
+			result = processClose(invocation);
 			break;
 		case "query":
-			result = this.processQuery(invocation);
+			result = processQuery(invocation);
 			break;
 		case "rollback":
-			result = this.processRollback(invocation);
+			result = processRollback(invocation);
 			break;
 		case "update":
 
-			result = this.processUpdate(invocation);
+			result = processUpdate(invocation);
 			break;
 		default:
 			break;
@@ -127,8 +127,6 @@ public class EnhancedCachingExecutor implements Interceptor {
 		Object result = invocation.proceed();
 		MappedStatement mappedStatement = (MappedStatement) invocation
 				.getArgs()[0];
-		// 在这里将没加入到observers的mappedStatement加入到observers中
-		EnhancedCachingManagerImpl.buildObservers(mappedStatement.getId());
 		updateStatementOnCommit.add(mappedStatement.getId());
 		return result;
 	}

@@ -2,8 +2,6 @@ package limeng32.testSpring.service;
 
 import java.util.List;
 
-import limeng32.mybatis.plugin.cache.annotation.CacheAnnotation;
-import limeng32.mybatis.plugin.cache.annotation.CacheRoleType;
 import limeng32.testSpring.mapper.LevelMapper;
 import limeng32.testSpring.pojo.Level;
 import limeng32.testSpring.pojo.Writer;
@@ -36,13 +34,11 @@ public class LevelService extends ServiceSupport<Level> implements LevelMapper {
 	}
 
 	@Override
-	@CacheAnnotation(MappedClass = { Level.class }, role = CacheRoleType.Trigger)
 	public void update(Level t) {
 		supportUpdate(mapper, t);
 	}
 
 	@Override
-	@CacheAnnotation(MappedClass = { Level.class }, role = CacheRoleType.Trigger)
 	public void updatePersistent(Level t) {
 		supportUpdatePersistent(mapper, t);
 	}

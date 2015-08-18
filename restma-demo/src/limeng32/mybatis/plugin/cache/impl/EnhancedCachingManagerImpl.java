@@ -11,16 +11,15 @@ import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.cache.CacheKeysPool;
 import limeng32.mybatis.plugin.cache.EnhancedCachingManager;
 import limeng32.mybatis.plugin.cache.annotation.CacheAnnotation;
-import limeng32.mybatis.plugin.cache.annotation.CacheRoleType;
-import limeng32.testSpring.mapper.WriterMapper;
-import limeng32.testSpring.service.WriterService;
 
 import org.apache.ibatis.cache.Cache;
 
 public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 
 	// 每一个statementId 更新依赖的statementId集合
-	private static Map<String, Set<String>> observers = new ConcurrentHashMap<String, Set<String>>();
+	private static Map<String, Set<String>> observers = new ConcurrentHashMap<>();
+	private Map<Class<?>, Set<Method>> triggerMethods = new ConcurrentHashMap<>();
+	private Map<Class<?>, Set<Method>> observerMethods = new ConcurrentHashMap<>();
 
 	// 全局性的 statemntId与CacheKey集合
 	private CacheKeysPool sharedCacheKeysPool = new CacheKeysPool();
@@ -68,27 +67,6 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 	}
 
 	public void initialize(Properties properties) {
-		// String dependency = properties.getProperty("dependency");
-		// if (!("".equals(dependency) || dependency == null)) {
-		// InputStream inputStream;
-		// try {
-		// inputStream = Resources.getResourceAsStream(dependency);
-		// XPathParser parser = new XPathParser(inputStream);
-		// List<XNode> statements = parser
-		// .evalNodes("/dependencies/statements/statement");
-		// for (XNode node : statements) {
-		// Set<String> temp = new HashSet<String>();
-		// List<XNode> obs = node.evalNodes("observer");
-		// for (XNode observer : obs) {
-		// temp.add(observer.getStringAttribute("id"));
-		// }
-		// observers.put(node.getStringAttribute("id"), temp);
-		// }
-		// initialized = true;
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
 		initialized = true;
 		// cacheEnabled
 		String cacheEnabled = properties.getProperty("cacheEnabled", "true");
@@ -107,12 +85,33 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 					CacheAnnotation cacheAnnotation = method
 							.getAnnotation(CacheAnnotation.class);
 					if (cacheAnnotation != null) {
-						System.out.println("---------------" + cacheAnnotation);
+						switch (cacheAnnotation.role()) {
+						case Observer:
+							for (Class<?> clazz1 : cacheAnnotation
+									.MappedClass()) {
+								if (!observerMethods.containsKey(clazz1)) {
+									observerMethods.put(clazz1,
+											new HashSet<Method>());
+								}
+								observerMethods.get(clazz1).add(method);
+							}
+							break;
+
+						case Trigger:
+							for (Class<?> clazz1 : cacheAnnotation
+									.MappedClass()) {
+								if (!triggerMethods.containsKey(clazz1)) {
+									triggerMethods.put(clazz1,
+											new HashSet<Method>());
+								}
+								triggerMethods.get(clazz1).add(method);
+							}
+							break;
+						}
 					}
 				}
 			}
-
-			System.out.println("---------------" + classes);
+			buildObservers(triggerMethods, observerMethods);
 		}
 	}
 
@@ -128,16 +127,27 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 	}
 
 	public static void buildObservers(String id) {
-		Set<String> temp = new HashSet<String>();
-		/* 在这里使用注解的方式获取对应的方法 */
-		// temp.add("limeng32.testSpring.mapper.WriterMapper.select");
-		// temp.add("limeng32.testSpring.mapper.WriterMapper.selectAll");
-		for (Method m : WriterService.class.getDeclaredMethods()) {
-			CacheAnnotation an = m.getAnnotation(CacheAnnotation.class);
-			if (an != null && CacheRoleType.Observer.equals(an.role())) {
-				temp.add(WriterMapper.class.getName() + "." + m.getName());
+	}
+
+	public static void buildObservers(
+			Map<Class<?>, Set<Method>> triggerMethodMap,
+			Map<Class<?>, Set<Method>> observerMethodMap) {
+		for (Class<?> clazz : triggerMethodMap.keySet()) {
+			Set<Method> observerMethods = observerMethodMap.get(clazz);
+			for (Method triggerMethod : triggerMethodMap.get(clazz)) {
+				String triggerFullName = triggerMethod.getDeclaringClass()
+						.getName() + "." + triggerMethod.getName();
+				if (!observers.containsKey(triggerFullName)) {
+					observers.put(triggerFullName, new HashSet<String>());
+				}
+				for (Method observerMethod : observerMethods) {
+					String observerFullName = observerMethod
+							.getDeclaringClass().getName()
+							+ "."
+							+ observerMethod.getName();
+					observers.get(triggerFullName).add(observerFullName);
+				}
 			}
 		}
-		observers.put(id, temp);
 	}
 }
