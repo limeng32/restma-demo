@@ -804,9 +804,7 @@ public class SqlBuilder {
 			throw new RuntimeException(
 					"Sorry,I refuse to build sql for a null object!");
 		}
-		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
-				getTableMappedClass(object.getClass()));
+
 		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
 				.getClass()));
 		String tableName = ((TableMapperAnnotation) tableMapper
@@ -826,63 +824,25 @@ public class SqlBuilder {
 		}
 		selectSql.append(")");
 
-		StringBuffer fromSql = new StringBuffer(" from ").append(tableName);
-		StringBuffer whereSql = new StringBuffer();
+		StringBuffer fromSql = new StringBuffer(" from ");
+		StringBuffer whereSql = new StringBuffer(" where ");
 
-		for (Mapperable fieldMapper : tableMapper.getFieldMapperCache()
-				.values()) {
+		dealMapperAnnotationIterationForCount(object, fromSql, whereSql, null,
+				null, null);
 
-			// 处理tableMapper中的条件
-			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			/* 此处当value拥有TableMapper或QueryMapper标注时，开始进行迭代 */
-			if (hasTableMapperAnnotation(value.getClass())
-					|| hasQueryMapperAnnotation(value.getClass())) {
-				dealMapperAnnotationIteration(tableName, fieldMapper, value,
-						fromSql, whereSql, null);
-			} else {
-				dealConditionEqual(value, whereSql, fieldMapper, tableName,
-						null);
-			}
+		if (selectSql.indexOf(",") > -1) {
+			selectSql.delete(selectSql.lastIndexOf(","),
+					selectSql.lastIndexOf(",") + 1);
 		}
-
-		// 处理queryMapper中的条件
-		for (ConditionMapper conditionMapper : queryMapper
-				.getConditionMapperCache().values()) {
-			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			switch (conditionMapper.getConditionType()) {
-			case Equal:
-				dealConditionEqual(value, whereSql, conditionMapper, null, null);
-				break;
-			case Like:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.Like, tableName, null);
-				break;
-			case HeadLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.HeadLike, tableName, null);
-				break;
-			case TailLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.TailLike, tableName, null);
-				break;
-			default:
-				break;
-			}
+		if (" where ".equals(whereSql.toString())) {
+			whereSql = new StringBuffer();
 		}
-
 		if (whereSql.indexOf("and") > -1) {
 			whereSql.delete(whereSql.lastIndexOf("and"),
 					whereSql.lastIndexOf("and") + 3);
 		}
 
-		String ret = selectSql.append(fromSql).append(whereSql).toString();
-		return ret;
+		return selectSql.append(fromSql).append(whereSql).toString();
 	}
 
 	private static boolean hasTableMapperAnnotation(Class<?> clazz) {
@@ -905,88 +865,6 @@ public class SqlBuilder {
 		return false;
 	}
 
-	/**
-	 * 对object的MapperAnnotation进行处理，既包括FieldMapper也包括ConditionMapper
-	 * 
-	 * @param leftTableName
-	 * @param leftMapper
-	 * @param object
-	 * @param fromSql
-	 * @param whereSql
-	 * @param fieldPerfix
-	 * @return
-	 * @throws Exception
-	 */
-	private static void dealMapperAnnotationIteration(String leftTableName,
-			Mapperable leftMapper, Object object, StringBuffer fromSql,
-			StringBuffer whereSql, String fieldPerfix) throws Exception {
-		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
-		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
-				.getClass()));
-		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
-				getTableMappedClass(object.getClass()));
-		String rightTableName = ((TableMapperAnnotation) (tableMapper)
-				.getTableMapperAnnotation()).tableName();
-		// 处理fromSql
-		fromSql.append(" left join ").append(rightTableName).append(" on ")
-				.append(leftTableName).append(".")
-				.append(leftMapper.getDbFieldName()).append(" = ")
-				.append(rightTableName).append(".")
-				.append(leftMapper.getDbAssociationUniqueKey());
-		// 处理tableMapper中的条件
-		for (Mapperable fieldMapper : tableMapper.getFieldMapperCache()
-				.values()) {
-			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			String temp = leftMapper.getFieldName();
-			if (fieldPerfix != null) {
-				temp = fieldPerfix + "." + temp;
-			}
-			if (hasTableMapperAnnotation(value.getClass())
-					|| hasQueryMapperAnnotation(value.getClass())) {
-				dealMapperAnnotationIteration(rightTableName, fieldMapper,
-						value, fromSql, whereSql, temp);
-			} else {
-				dealConditionEqual(value, whereSql, fieldMapper,
-						rightTableName, temp);
-			}
-		}
-		// 处理queryMapper中的条件
-		for (ConditionMapper conditionMapper : queryMapper
-				.getConditionMapperCache().values()) {
-			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
-			if (value == null) {
-				continue;
-			}
-			String temp = leftMapper.getFieldName();
-			if (fieldPerfix != null) {
-				temp = fieldPerfix + "." + temp;
-			}
-			switch (conditionMapper.getConditionType()) {
-			case Equal:
-				dealConditionEqual(value, whereSql, conditionMapper,
-						rightTableName, temp);
-				break;
-			case Like:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.Like, rightTableName, temp);
-				break;
-			case HeadLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.HeadLike, rightTableName, temp);
-				break;
-			case TailLike:
-				dealConditionLike(whereSql, conditionMapper,
-						ConditionType.TailLike, rightTableName, temp);
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
 	private static void dealMapperAnnotationIterationForSelectAll(
 			Object object, StringBuffer selectSql, StringBuffer fromSql,
 			StringBuffer whereSql, String originTableName,
@@ -1006,8 +884,7 @@ public class SqlBuilder {
 		}
 
 		/*
-		 * 在第一次遍历中，处理好selectSql和selectSqlAddition和fromSql。
-		 * 如果originFieldMapper为null则可认为是第一次遍历
+		 * 在第一次遍历中，处理好selectSql和fromSql。 如果originFieldMapper为null则可认为是第一次遍历
 		 */
 		if (originFieldMapper == null) {
 			fromSql.append(tableName);
@@ -1048,6 +925,98 @@ public class SqlBuilder {
 					|| hasQueryMapperAnnotation(value.getClass())) {
 				dealMapperAnnotationIterationForSelectAll(value, selectSql,
 						fromSql, whereSql, tableName, fieldMapper, temp);
+			} else {
+				dealConditionEqual(value, whereSql, fieldMapper, tableName,
+						temp);
+			}
+		}
+
+		/* 处理queryMapper中的条件 */
+		for (ConditionMapper conditionMapper : queryMapper
+				.getConditionMapperCache().values()) {
+			Object value = dtoFieldMap.get(conditionMapper.getFieldName());
+			if (value == null) {
+				continue;
+			}
+			switch (conditionMapper.getConditionType()) {
+			case Equal:
+				dealConditionEqual(value, whereSql, conditionMapper, tableName,
+						temp);
+				break;
+			case Like:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.Like, tableName, temp);
+				break;
+			case HeadLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.HeadLike, tableName, temp);
+				break;
+			case TailLike:
+				dealConditionLike(whereSql, conditionMapper,
+						ConditionType.TailLike, tableName, temp);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	private static void dealMapperAnnotationIterationForCount(Object object,
+			StringBuffer fromSql, StringBuffer whereSql,
+			String originTableName, Mapperable originFieldMapper,
+			String fieldPerfix) throws Exception {
+		Map<?, ?> dtoFieldMap = PropertyUtils.describe(object);
+		TableMapper tableMapper = buildTableMapper(getTableMappedClass(object
+				.getClass()));
+		QueryMapper queryMapper = buildQueryMapper(object.getClass(),
+				getTableMappedClass(object.getClass()));
+		String tableName = ((TableMapperAnnotation) tableMapper
+				.getTableMapperAnnotation()).tableName();
+
+		/* 处理Able特性 */
+		if (tableMapper.getAbleFlag() != null
+				&& ((PojoAble) object).getAbleCondition() == null) {
+			((PojoAble) object).setAbleCondition(AbleConditionType.Able);
+		}
+
+		/*
+		 * 在第一次遍历中，处理好fromSql。 如果originFieldMapper为null则可认为是第一次遍历
+		 */
+		if (originFieldMapper == null) {
+			fromSql.append(tableName);
+		}
+
+		/*
+		 * 在非第一次遍历中，处理fieldPerfix和fromSql。
+		 * 如果originFieldMapper和originTableName均不为null则可认为是非第一次遍历
+		 */
+		String temp = null;
+		if (originFieldMapper != null && originTableName != null) {
+			/* 处理fieldPerfix */
+			temp = originFieldMapper.getFieldName();
+			if (fieldPerfix != null) {
+				temp = fieldPerfix + "." + temp;
+			}
+			/* 处理fromSql */
+			fromSql.append(" left join ").append(tableName).append(" on ")
+					.append(originTableName).append(".")
+					.append(originFieldMapper.getDbFieldName()).append(" = ")
+					.append(tableName).append(".")
+					.append(originFieldMapper.getDbAssociationUniqueKey());
+		}
+
+		/* 处理fieldMapper中的条件 */
+		for (Mapperable fieldMapper : tableMapper.getFieldMapperCache()
+				.values()) {
+			Object value = dtoFieldMap.get(fieldMapper.getFieldName());
+			if (value == null) {
+				continue;
+			}
+			/* 此处当value拥有TableMapper或QueryMapper标注时，开始进行迭代 */
+			if (hasTableMapperAnnotation(value.getClass())
+					|| hasQueryMapperAnnotation(value.getClass())) {
+				dealMapperAnnotationIterationForCount(value, fromSql, whereSql,
+						tableName, fieldMapper, temp);
 			} else {
 				dealConditionEqual(value, whereSql, fieldMapper, tableName,
 						temp);

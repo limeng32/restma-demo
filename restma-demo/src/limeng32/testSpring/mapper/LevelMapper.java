@@ -10,9 +10,11 @@ import limeng32.testSpring.pojo.Writer;
 public interface LevelMapper extends MapperFace<Level> {
 
 	@Override
+	@CacheAnnotation(MappedClass = {}, role = CacheRoleType.Observer)
 	public Level select(int id);
 
 	@Override
+	@CacheAnnotation(MappedClass = {}, role = CacheRoleType.Observer)
 	public List<Level> selectAll(Level t);
 
 	@Override
@@ -33,9 +35,11 @@ public interface LevelMapper extends MapperFace<Level> {
 	public void retrieveOnlyNull(Level t);
 
 	@Override
+	@CacheAnnotation(MappedClass = { Level.class }, role = CacheRoleType.Trigger)
 	public void delete(Level t);
 
 	@Override
+	@CacheAnnotation(MappedClass = {}, role = CacheRoleType.Observer)
 	public int count(Level t);
 
 	public void loadWriter(Level level, Writer writer);

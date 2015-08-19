@@ -727,19 +727,42 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testEnhancedCacheByDisableInRetrieve(ModelMap mm) {
 		BookWriter bw = new BookWriter();
 		bw.setId(2);
 		bookWriterService.retrieve(bw);
 		System.out.println("1:" + bw.getWriter().isable());
 		Writer w = writerService.select(1);
-		writerService.disable(w);
+		if (w.isable()) {
+			writerService.disable(w);
+		} else {
+			writerService.enable(w);
+		}
 		BookWriter bw2 = new BookWriter();
 		bw2.setId(2);
 		bookWriterService.retrieve(bw2);
 		System.out.println("2:" + bw2.getWriter().isable());
 		mm.addAttribute("_content", bw2.getWriter().isable());
+		return "showArticleMix";
+	}
+
+	@RequestMapping(value = "/showArticle9Mix")
+	public String testEnhancedCacheByCountInUpdate(ModelMap mm) {
+		BookWriter bwc = new BookWriter();
+		bwc.setWriter(new WriterCondition());
+		((WriterCondition) bwc.getWriter()).setNameLike("李");
+		int c = bookWriterService.count(bwc);
+
+		Writer w = writerService.select(1);
+		w.setName("王");
+		writerService.update(w);
+
+		BookWriter bwc1 = new BookWriter();
+		bwc1.setWriter(new WriterCondition());
+		((WriterCondition) bwc1.getWriter()).setNameLike("李");
+		int c1 = bookWriterService.count(bwc1);
+
+		mm.addAttribute("_content", c1);
 		return "showArticleMix";
 	}
 
