@@ -17,7 +17,7 @@ import org.apache.ibatis.cache.Cache;
 public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 
 	// 每一个statementId 更新依赖的statementId集合
-	private static Map<String, Set<String>> observers = new ConcurrentHashMap<>();
+	private Map<String, Set<String>> observers = new ConcurrentHashMap<>();
 	private Map<Class<?>, Set<Method>> triggerMethods = new ConcurrentHashMap<>();
 	private Map<Class<?>, Set<Method>> observerMethods = new ConcurrentHashMap<>();
 
@@ -38,13 +38,13 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 				: enhancedCacheManager;
 	}
 
+	@Override
 	public void refreshCacheKey(CacheKeysPool keysPool) {
 		sharedCacheKeysPool.putAll(keysPool);
-		// sharedCacheKeysPool.display();
 	}
 
+	@Override
 	public void clearRelatedCaches(final Set<String> set) {
-		// sharedCacheKeysPool.display();
 		for (String observable : set) {
 			Set<String> relatedStatements = observers.get(observable);
 			if (relatedStatements != null) {
@@ -62,10 +62,12 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 		}
 	}
 
+	@Override
 	public boolean isInitialized() {
 		return initialized;
 	}
 
+	@Override
 	public void initialize(Properties properties) {
 		initialized = true;
 		// cacheEnabled
@@ -115,6 +117,7 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 		}
 	}
 
+	@Override
 	public void appendStatementCacheMap(String statementId, Cache cache) {
 		if (holds.containsKey(statementId) && holds.get(statementId) != null) {
 			return;
@@ -122,15 +125,12 @@ public class EnhancedCachingManagerImpl implements EnhancedCachingManager {
 		holds.put(statementId, cache);
 	}
 
+	@Override
 	public boolean isCacheEnabled() {
 		return cacheEnabled;
 	}
 
-	public static void buildObservers(String id) {
-	}
-
-	public static void buildObservers(
-			Map<Class<?>, Set<Method>> triggerMethodMap,
+	private void buildObservers(Map<Class<?>, Set<Method>> triggerMethodMap,
 			Map<Class<?>, Set<Method>> observerMethodMap) {
 		for (Class<?> clazz : triggerMethodMap.keySet()) {
 			Set<Method> observerMethods = observerMethodMap.get(clazz);

@@ -28,7 +28,7 @@ import org.apache.ibatis.session.RowBounds;
 public class EnhancedCachingExecutor implements Interceptor {
 	private static CacheKeysPool queryCacheOnCommit = new CacheKeysPool();
 	private static Set<String> updateStatementOnCommit = new HashSet<String>();
-	EnhancedCachingManager cachingManager = EnhancedCachingManagerImpl
+	private static EnhancedCachingManager cachingManager = EnhancedCachingManagerImpl
 			.getInstance();
 
 	// private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new
@@ -36,6 +36,7 @@ public class EnhancedCachingExecutor implements Interceptor {
 	// private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY
 	// = new DefaultObjectWrapperFactory();
 
+	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		// Executor executorProxy = (Executor) invocation.getTarget();
 		// MetaObject metaExecutor = MetaObject.forObject(executorProxy,
@@ -77,6 +78,7 @@ public class EnhancedCachingExecutor implements Interceptor {
 		return result;
 	}
 
+	@Override
 	public Object plugin(Object target) {
 		return Plugin.wrap(target, this);
 	}
@@ -90,7 +92,7 @@ public class EnhancedCachingExecutor implements Interceptor {
 	 * @return
 	 * @throws Throwable
 	 */
-	protected Object processQuery(Invocation invocation) throws Throwable {
+	private Object processQuery(Invocation invocation) throws Throwable {
 		Object result = invocation.proceed();
 		if (cachingManager.isCacheEnabled()) {
 			Object[] args = invocation.getArgs();
@@ -122,7 +124,7 @@ public class EnhancedCachingExecutor implements Interceptor {
 		return result;
 	}
 
-	protected Object processUpdate(Invocation invocation) throws Throwable {
+	private Object processUpdate(Invocation invocation) throws Throwable {
 
 		Object result = invocation.proceed();
 		MappedStatement mappedStatement = (MappedStatement) invocation
@@ -131,19 +133,19 @@ public class EnhancedCachingExecutor implements Interceptor {
 		return result;
 	}
 
-	protected Object processCommit(Invocation invocation) throws Throwable {
+	private Object processCommit(Invocation invocation) throws Throwable {
 		Object result = invocation.proceed();
 		refreshCache();
 		return result;
 	}
 
-	protected Object processRollback(Invocation invocation) throws Throwable {
+	private Object processRollback(Invocation invocation) throws Throwable {
 		Object result = invocation.proceed();
 		clearSessionData();
 		return result;
 	}
 
-	protected Object processClose(Invocation invocation) throws Throwable {
+	private Object processClose(Invocation invocation) throws Throwable {
 		Object result = invocation.proceed();
 		boolean forceRollback = (Boolean) invocation.getArgs()[0];
 		if (forceRollback) {
@@ -186,6 +188,7 @@ public class EnhancedCachingExecutor implements Interceptor {
 	 * Executor插件配置信息加载点 properties中有 "dependency" 属性来指示
 	 * 配置的缓存依赖配置信息，读取文件，初始化EnhancedCacheManager
 	 */
+	@Override
 	public void setProperties(Properties properties) {
 
 		if (!cachingManager.isInitialized()) {

@@ -479,14 +479,14 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle8Mix")
+	@RequestMapping(value = "/showArticle9Mix")
 	public String showArticle8Mix(ModelMap mm) {
 		// BookWriter bw = bookWriterService.select(4);
 		// Book b = bookService.select(1);
 		Writer w = writerService.select(1);
 		BookWriterCondition bwc = new BookWriterCondition();
 		bwc.setBook(new Book());
-		bwc.setLimiter(new PageParam(1, 2));
+		bwc.setLimiter(new PageParam(1, 1));
 		// bwc.getBook().setTitle("3%");
 		writerService.loadBookWriter(w, bwc);
 
@@ -746,7 +746,6 @@ public class testController {
 		return "showArticleMix";
 	}
 
-	@RequestMapping(value = "/showArticle9Mix")
 	public String testEnhancedCacheByCountInUpdate(ModelMap mm) {
 		BookWriter bwc = new BookWriter();
 		bwc.setWriter(new WriterCondition());

@@ -134,7 +134,7 @@ public class AutoMapperInterceptor implements Interceptor {
 
 	}
 
-	private static SqlSource buildSqlSource(Configuration configuration,
+	private SqlSource buildSqlSource(Configuration configuration,
 			String originalSql, Class<?> parameterType) {
 		SqlSourceBuilder builder = new SqlSourceBuilder(configuration);
 		return builder.parse(originalSql, parameterType, null);
