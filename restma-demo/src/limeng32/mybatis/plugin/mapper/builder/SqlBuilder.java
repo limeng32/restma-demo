@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import limeng32.mybatis.plugin.ReflectHelper;
 import limeng32.mybatis.plugin.mapper.able.AbleConditionFlagAnnotation;
@@ -39,10 +40,10 @@ public class SqlBuilder {
 	/**
 	 * 缓存TableMapper
 	 */
-	private static HashMap<Class<?>, TableMapper> tableMapperCache = new HashMap<Class<?>, TableMapper>(
+	private static Map<Class<?>, TableMapper> tableMapperCache = new ConcurrentHashMap<Class<?>, TableMapper>(
 			128);
 
-	private static HashMap<Class<?>, QueryMapper> queryMapperCache = new HashMap<Class<?>, QueryMapper>(
+	private static Map<Class<?>, QueryMapper> queryMapperCache = new ConcurrentHashMap<Class<?>, QueryMapper>(
 			128);
 
 	/**
@@ -59,86 +60,81 @@ public class SqlBuilder {
 		FieldMapperAnnotation fieldMapperAnnotation = null;
 		FieldMapper fieldMapper = null;
 		TableMapper tableMapper = null;
-		synchronized (tableMapperCache) {
-			tableMapper = tableMapperCache.get(dtoClass);
-			if (tableMapper != null) {
-				return tableMapper;
-			}
-			tableMapper = new TableMapper();
-			List<String> uniqueKeyList = new ArrayList<String>();
-			Annotation[] classAnnotations = dtoClass.getDeclaredAnnotations();
-			for (Annotation an : classAnnotations) {
-				if (an instanceof TableMapperAnnotation) {
-					tableMapper.setTableMapperAnnotation(an);
-				}
-			}
-			fields = dtoClass.getDeclaredFields();
-			fieldMapperCache = new HashMap<String, Mapperable>();
-			Annotation[] fieldAnnotations = null;
-			for (Field field : fields) {
-				fieldAnnotations = field.getDeclaredAnnotations();
-				if (fieldAnnotations.length == 0) {
-					continue;
-				}
-				for (Annotation an : fieldAnnotations) {
-					if (an instanceof FieldMapperAnnotation) {
-						fieldMapperAnnotation = (FieldMapperAnnotation) an;
-						fieldMapper = new FieldMapper();
-						fieldMapper.setFieldName(field.getName());
-						fieldMapper.setDbFieldName(fieldMapperAnnotation
-								.dbFieldName());
-						fieldMapper.setJdbcType(fieldMapperAnnotation
-								.jdbcType());
-						fieldMapper.setUniqueKey(fieldMapperAnnotation
-								.isUniqueKey());
-						if (fieldMapperAnnotation.isUniqueKey()) {
-							uniqueKeyList.add(fieldMapper.getDbFieldName());
-						}
-						if ("".equals(fieldMapperAnnotation
-								.dbAssociationUniqueKey())) {
-						} else {
-							fieldMapper
-									.setDbAssociationUniqueKey(fieldMapperAnnotation
-											.dbAssociationUniqueKey());
-							fieldMapper.setForeignKey(true);
-						}
-						if (fieldMapper.isForeignKey()) {
-							if (!tableMapperCache.containsKey(field.getType())) {
-								buildTableMapper(field.getType());
-							}
-							TableMapper tm = tableMapperCache.get(field
-									.getType());
-							String foreignFieldName = getFieldMapperByDbFieldName(
-									tm.getFieldMapperCache(),
-									fieldMapperAnnotation
-											.dbAssociationUniqueKey())
-									.getFieldName();
-							fieldMapper.setForeignFieldName(foreignFieldName);
-						}
-						fieldMapperCache.put(field.getName(), fieldMapper);
-					} else if (an instanceof PersistentFlagAnnotation) {
-						tableMapper.getPersistentFlags().add(field.getName());
-					} else if (an instanceof AbleConditionFlagAnnotation) {
-						AbleFieldMapper afm = new AbleFieldMapper();
-						afm.setFieldName(field.getName());
-						Field[] ableFlagFields = getFieldsByAnnotation(
-								dtoClass, AbleFlagAnnotation.class);
-						if (ableFlagFields.length != 1) {
-							throw new RuntimeException(
-									"Sorry,I refuse to build sql for a object which has more than one AbleFlagAnnotation!");
-						}
-						afm.setDbFieldName(ableFlagFields[0].getName());
-						fieldMapperCache.put(afm.getFieldName(), afm);
-						tableMapper.setAbleFlag(afm.getDbFieldName());
-					}
-				}
-			}
-			tableMapper.setFieldMapperCache(fieldMapperCache);
-			tableMapper.setUniqueKeyNames(uniqueKeyList
-					.toArray(new String[uniqueKeyList.size()]));
-			tableMapperCache.put(dtoClass, tableMapper);
+		tableMapper = tableMapperCache.get(dtoClass);
+		if (tableMapper != null) {
 			return tableMapper;
 		}
+		tableMapper = new TableMapper();
+		List<String> uniqueKeyList = new ArrayList<String>();
+		Annotation[] classAnnotations = dtoClass.getDeclaredAnnotations();
+		for (Annotation an : classAnnotations) {
+			if (an instanceof TableMapperAnnotation) {
+				tableMapper.setTableMapperAnnotation(an);
+			}
+		}
+		fields = dtoClass.getDeclaredFields();
+		fieldMapperCache = new HashMap<String, Mapperable>();
+		Annotation[] fieldAnnotations = null;
+		for (Field field : fields) {
+			fieldAnnotations = field.getDeclaredAnnotations();
+			if (fieldAnnotations.length == 0) {
+				continue;
+			}
+			for (Annotation an : fieldAnnotations) {
+				if (an instanceof FieldMapperAnnotation) {
+					fieldMapperAnnotation = (FieldMapperAnnotation) an;
+					fieldMapper = new FieldMapper();
+					fieldMapper.setFieldName(field.getName());
+					fieldMapper.setDbFieldName(fieldMapperAnnotation
+							.dbFieldName());
+					fieldMapper.setJdbcType(fieldMapperAnnotation.jdbcType());
+					fieldMapper.setUniqueKey(fieldMapperAnnotation
+							.isUniqueKey());
+					if (fieldMapperAnnotation.isUniqueKey()) {
+						uniqueKeyList.add(fieldMapper.getDbFieldName());
+					}
+					if ("".equals(fieldMapperAnnotation
+							.dbAssociationUniqueKey())) {
+					} else {
+						fieldMapper
+								.setDbAssociationUniqueKey(fieldMapperAnnotation
+										.dbAssociationUniqueKey());
+						fieldMapper.setForeignKey(true);
+					}
+					if (fieldMapper.isForeignKey()) {
+						if (!tableMapperCache.containsKey(field.getType())) {
+							buildTableMapper(field.getType());
+						}
+						TableMapper tm = tableMapperCache.get(field.getType());
+						String foreignFieldName = getFieldMapperByDbFieldName(
+								tm.getFieldMapperCache(),
+								fieldMapperAnnotation.dbAssociationUniqueKey())
+								.getFieldName();
+						fieldMapper.setForeignFieldName(foreignFieldName);
+					}
+					fieldMapperCache.put(field.getName(), fieldMapper);
+				} else if (an instanceof PersistentFlagAnnotation) {
+					tableMapper.getPersistentFlags().add(field.getName());
+				} else if (an instanceof AbleConditionFlagAnnotation) {
+					AbleFieldMapper afm = new AbleFieldMapper();
+					afm.setFieldName(field.getName());
+					Field[] ableFlagFields = getFieldsByAnnotation(dtoClass,
+							AbleFlagAnnotation.class);
+					if (ableFlagFields.length != 1) {
+						throw new RuntimeException(
+								"Sorry,I refuse to build sql for a object which has more than one AbleFlagAnnotation!");
+					}
+					afm.setDbFieldName(ableFlagFields[0].getName());
+					fieldMapperCache.put(afm.getFieldName(), afm);
+					tableMapper.setAbleFlag(afm.getDbFieldName());
+				}
+			}
+		}
+		tableMapper.setFieldMapperCache(fieldMapperCache);
+		tableMapper.setUniqueKeyNames(uniqueKeyList
+				.toArray(new String[uniqueKeyList.size()]));
+		tableMapperCache.put(dtoClass, tableMapper);
+		return tableMapper;
 	}
 
 	private static Field[] getFieldsByAnnotation(Class<?> clazz,
@@ -183,81 +179,74 @@ public class SqlBuilder {
 		ConditionMapperAnnotation conditionMapperAnnotation = null;
 		ConditionMapper conditionMapper = null;
 		QueryMapper queryMapper = null;
-		synchronized (queryMapperCache) {
-			queryMapper = queryMapperCache.get(dtoClass);
-			if (queryMapper != null) {
-				return queryMapper;
-			}
-			queryMapper = new QueryMapper();
-			fields = dtoClass.getDeclaredFields();
-			conditionMapperCache = new HashMap<>();
-			Annotation[] conditionAnnotations = null;
+		queryMapper = queryMapperCache.get(dtoClass);
+		if (queryMapper != null) {
+			return queryMapper;
+		}
+		queryMapper = new QueryMapper();
+		fields = dtoClass.getDeclaredFields();
+		conditionMapperCache = new HashMap<>();
+		Annotation[] conditionAnnotations = null;
 
-			for (Field field : fields) {
-				conditionAnnotations = field.getDeclaredAnnotations();
-				if (conditionAnnotations.length == 0) {
-					continue;
-				}
-				for (Annotation an : conditionAnnotations) {
-					if (an instanceof ConditionMapperAnnotation) {
-						conditionMapperAnnotation = (ConditionMapperAnnotation) an;
-						conditionMapper = new ConditionMapper();
-						conditionMapper.setFieldName(field.getName());
-						conditionMapper
-								.setDbFieldName(conditionMapperAnnotation
-										.dbFieldName());
-						conditionMapper
-								.setConditionType(conditionMapperAnnotation
-										.conditionType());
-						for (Field pojoField : pojoClass.getDeclaredFields()) {
-							for (Annotation oan : pojoField
-									.getDeclaredAnnotations()) {
-								if (oan instanceof FieldMapperAnnotation
-										&& ((FieldMapperAnnotation) oan)
-												.dbFieldName().equals(
-														conditionMapperAnnotation
-																.dbFieldName())) {
-									FieldMapperAnnotation fieldMapperAnnotation = (FieldMapperAnnotation) oan;
+		for (Field field : fields) {
+			conditionAnnotations = field.getDeclaredAnnotations();
+			if (conditionAnnotations.length == 0) {
+				continue;
+			}
+			for (Annotation an : conditionAnnotations) {
+				if (an instanceof ConditionMapperAnnotation) {
+					conditionMapperAnnotation = (ConditionMapperAnnotation) an;
+					conditionMapper = new ConditionMapper();
+					conditionMapper.setFieldName(field.getName());
+					conditionMapper.setDbFieldName(conditionMapperAnnotation
+							.dbFieldName());
+					conditionMapper.setConditionType(conditionMapperAnnotation
+							.conditionType());
+					for (Field pojoField : pojoClass.getDeclaredFields()) {
+						for (Annotation oan : pojoField
+								.getDeclaredAnnotations()) {
+							if (oan instanceof FieldMapperAnnotation
+									&& ((FieldMapperAnnotation) oan)
+											.dbFieldName().equals(
+													conditionMapperAnnotation
+															.dbFieldName())) {
+								FieldMapperAnnotation fieldMapperAnnotation = (FieldMapperAnnotation) oan;
+								conditionMapper
+										.setJdbcType(fieldMapperAnnotation
+												.jdbcType());
+								if ("".equals(fieldMapperAnnotation
+										.dbAssociationUniqueKey())) {
+								} else {
 									conditionMapper
-											.setJdbcType(fieldMapperAnnotation
-													.jdbcType());
-									if ("".equals(fieldMapperAnnotation
-											.dbAssociationUniqueKey())) {
-									} else {
-										conditionMapper
-												.setDbAssociationUniqueKey(fieldMapperAnnotation
-														.dbAssociationUniqueKey());
-										conditionMapper.setForeignKey(true);
+											.setDbAssociationUniqueKey(fieldMapperAnnotation
+													.dbAssociationUniqueKey());
+									conditionMapper.setForeignKey(true);
+								}
+								if (conditionMapper.isForeignKey()) {
+									if (!tableMapperCache.containsKey(pojoField
+											.getType())) {
+										buildTableMapper(pojoField.getType());
 									}
-									if (conditionMapper.isForeignKey()) {
-										if (!tableMapperCache
-												.containsKey(pojoField
-														.getType())) {
-											buildTableMapper(pojoField
-													.getType());
-										}
-										TableMapper tm = tableMapperCache
-												.get(pojoField.getType());
-										String foreignFieldName = tm
-												.getFieldMapperCache()
-												.get(fieldMapperAnnotation
-														.dbAssociationUniqueKey())
-												.getFieldName();
-										conditionMapper
-												.setForeignFieldName(foreignFieldName);
-									}
+									TableMapper tm = tableMapperCache
+											.get(pojoField.getType());
+									String foreignFieldName = tm
+											.getFieldMapperCache()
+											.get(fieldMapperAnnotation
+													.dbAssociationUniqueKey())
+											.getFieldName();
+									conditionMapper
+											.setForeignFieldName(foreignFieldName);
 								}
 							}
 						}
-						conditionMapperCache.put(field.getName(),
-								conditionMapper);
 					}
+					conditionMapperCache.put(field.getName(), conditionMapper);
 				}
 			}
-			queryMapper.setConditionMapperCache(conditionMapperCache);
-			queryMapperCache.put(dtoClass, queryMapper);
-			return queryMapper;
 		}
+		queryMapper.setConditionMapperCache(conditionMapperCache);
+		queryMapperCache.put(dtoClass, queryMapper);
+		return queryMapper;
 	}
 
 	/**
