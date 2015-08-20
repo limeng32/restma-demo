@@ -7,7 +7,6 @@ import java.util.Properties;
 
 import javax.xml.bind.PropertyException;
 
-import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.TransactionalCacheManager;
@@ -16,7 +15,6 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -27,7 +25,6 @@ import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -137,38 +134,12 @@ public class CachePlugin implements Interceptor {
 
 	private CacheKey createCacheKey(MappedStatement ms, Object parameterObject,
 			RowBounds rowBounds, BoundSql boundSql) {
-		Configuration configuration = ms.getConfiguration();
 		CacheKey cacheKey = new CacheKey();
 		cacheKey.update(ms.getId());
 		cacheKey.update(rowBounds.getOffset());
 		cacheKey.update(rowBounds.getLimit());
 		List<ParameterMapping> parameterMappings = boundSql
 				.getParameterMappings();
-		/* 解决自动生成SQL，SQL语句为空导致key生成错误的bug，此问题在执行count、selectAll操作时会出现。 */
-		// if (null == boundSql.getSql() || "".equals(boundSql.getSql())) {
-		// String id = ms.getId();
-		// id = id.substring(id.lastIndexOf(".") + 1);
-		// String newSql = null;
-		// try {
-		// switch (id) {
-		// case "count":
-		// newSql = SqlBuilder.buildCountSql(parameterObject);
-		// break;
-		// case "selectAll":
-		// newSql = SqlBuilder.buildSelectAllSql(parameterObject);
-		// break;
-		// }
-		// SqlSource sqlSource = buildSqlSource(configuration, newSql,
-		// parameterObject.getClass());
-		// parameterMappings = sqlSource.getBoundSql(parameterObject)
-		// .getParameterMappings();
-		// cacheKey.update(newSql);
-		// } catch (Exception e) {
-		// // logger.error("Update cacheKey error.", e);
-		// }
-		// } else {
-		// cacheKey.update(boundSql.getSql());
-		// }
 		cacheKey.update(boundSql.getSql());
 		MetaObject metaObject = MetaObject.forObject(parameterObject,
 				DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
@@ -231,12 +202,6 @@ public class CachePlugin implements Interceptor {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private SqlSource buildSqlSource(Configuration configuration,
-			String originalSql, Class<?> parameterType) {
-		SqlSourceBuilder builder = new SqlSourceBuilder(configuration);
-		return builder.parse(originalSql, parameterType, null);
 	}
 
 }

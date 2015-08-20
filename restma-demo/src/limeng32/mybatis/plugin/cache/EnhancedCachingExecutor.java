@@ -31,28 +31,8 @@ public class EnhancedCachingExecutor implements Interceptor {
 	private static EnhancedCachingManager cachingManager = EnhancedCachingManagerImpl
 			.getInstance();
 
-	// private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new
-	// DefaultObjectFactory();
-	// private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY
-	// = new DefaultObjectWrapperFactory();
-
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
-		// Executor executorProxy = (Executor) invocation.getTarget();
-		// MetaObject metaExecutor = MetaObject.forObject(executorProxy,
-		// DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
-		// // 分离代理对象链
-		// while (metaExecutor.hasGetter("h")) {
-		// Object object = metaExecutor.getValue("h");
-		// metaExecutor = MetaObject.forObject(object, DEFAULT_OBJECT_FACTORY,
-		// DEFAULT_OBJECT_WRAPPER_FACTORY);
-		// }
-		// // 分离最后一个代理对象的目标类
-		// while (metaExecutor.hasGetter("target")) {
-		// Object object = metaExecutor.getValue("target");
-		// metaExecutor = MetaObject.forObject(object, DEFAULT_OBJECT_FACTORY,
-		// DEFAULT_OBJECT_WRAPPER_FACTORY);
-		// }
 		String name = invocation.getMethod().getName();
 		Object result = null;
 		switch (name) {
