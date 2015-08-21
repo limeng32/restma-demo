@@ -60,7 +60,11 @@ public class EnhancedCachingExecutor implements Interceptor {
 
 	@Override
 	public Object plugin(Object target) {
-		return Plugin.wrap(target, this);
+		if (target instanceof Executor) {
+			return Plugin.wrap(target, this);
+		} else {
+			return target;
+		}
 	}
 
 	/**

@@ -65,7 +65,7 @@ public class CachePlugin implements Interceptor {
 		return this.query(metaExecutor, args);
 	}
 
-	public <E> List<E> query(MetaObject metaExecutor, Object[] args)
+	private <E> List<E> query(MetaObject metaExecutor, Object[] args)
 			throws SQLException {
 		MappedStatement ms = (MappedStatement) args[0];
 		Object parameterObject = args[1];
