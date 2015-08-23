@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import javax.xml.bind.PropertyException;
+import limeng32.testSpring.pojo.condition.Conditionable;
 
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
@@ -42,7 +42,8 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class CachePlugin implements Interceptor {
 	private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
 	private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
-	private static String cacheFixMatcher = ""; // 需要拦截的ID(正则匹配)
+
+	// private static String cacheFixMatcher = ""; // 需要拦截的ID(正则匹配)
 
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
@@ -85,8 +86,7 @@ public class CachePlugin implements Interceptor {
 		MetaObject metaParameter = MetaObject.forObject(parameterObject,
 				DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
 		// 当需要分页查询时，缓存里加入page信息
-		if (ms.getId().matches(cacheFixMatcher)
-				&& metaParameter.hasGetter("limiter")) {
+		if (metaParameter.getOriginalObject() instanceof Conditionable) {
 			Cache cache = ms.getCache();
 			if (cache != null) {
 				if (ms.isUseCache() && resultHandler == null) {
@@ -99,8 +99,8 @@ public class CachePlugin implements Interceptor {
 									HashMap<String, Object> cachedMap = (HashMap<String, Object>) value;
 									Limitable cachedPage = (Limitable) cachedMap
 											.get("limiter");
-									Limitable originalPage = (Limitable) metaParameter
-											.getValue("limiter");
+									Limitable originalPage = ((Conditionable) metaParameter
+											.getOriginalObject()).getLimiter();
 									if (null != originalPage
 											&& null != cachedPage) {
 										originalPage.setTotalCount(cachedPage
@@ -162,19 +162,17 @@ public class CachePlugin implements Interceptor {
 			}
 		}
 		// 当需要分页查询时，将page参数里的当前页和每页数加到cachekey里
-		if (ms.getId().matches(cacheFixMatcher)) {
-			if (metaObject.hasGetter("sorter")) {
-				Sortable sorter = (Sortable) metaObject.getValue("sorter");
-				if (sorter != null) {
-					cacheKey.update(sorter.toSql());
-				}
+		if (metaObject.getOriginalObject() instanceof Conditionable) {
+			Sortable sorter = ((Conditionable) metaObject.getOriginalObject())
+					.getSorter();
+			if (sorter != null) {
+				cacheKey.update(sorter.toSql());
 			}
-			if (metaObject.hasGetter("limiter")) {
-				Limitable limiter = (Limitable) metaObject.getValue("limiter");
-				if (limiter != null) {
-					cacheKey.update(limiter.getPageNo());
-					cacheKey.update(limiter.getPageSize());
-				}
+			Limitable limiter = ((Conditionable) metaObject.getOriginalObject())
+					.getLimiter();
+			if (limiter != null) {
+				cacheKey.update(limiter.getPageNo());
+				cacheKey.update(limiter.getPageSize());
 			}
 		}
 		return cacheKey;
@@ -194,14 +192,14 @@ public class CachePlugin implements Interceptor {
 
 	@Override
 	public void setProperties(Properties properties) {
-		cacheFixMatcher = properties.getProperty("cacheFixMatcher");
-		if (cacheFixMatcher == null || cacheFixMatcher.equals("")) {
-			try {
-				throw new PropertyException("selectAll property is not found!");
-			} catch (PropertyException e) {
-				e.printStackTrace();
-			}
-		}
+		// cacheFixMatcher = properties.getProperty("cacheFixMatcher");
+		// if (cacheFixMatcher == null || cacheFixMatcher.equals("")) {
+		// try {
+		// throw new PropertyException("selectAll property is not found!");
+		// } catch (PropertyException e) {
+		// e.printStackTrace();
+		// }
+		// }
 	}
 
 }

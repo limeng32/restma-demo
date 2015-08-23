@@ -36,7 +36,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class SqlPlugin implements Interceptor {
 	private static String dialect = "";
 
-	private static String selectAllMatcher = "";
+//	private static String selectAllMatcher = "";
 
 	@Override
 	public Object plugin(Object target) {
@@ -58,14 +58,14 @@ public class SqlPlugin implements Interceptor {
 				e.printStackTrace();
 			}
 		}
-		selectAllMatcher = p.getProperty("selectAllMatcher");
-		if (selectAllMatcher == null || selectAllMatcher.equals("")) {
-			try {
-				throw new PropertyException("selectAll property is not found!");
-			} catch (PropertyException e) {
-				e.printStackTrace();
-			}
-		}
+//		selectAllMatcher = p.getProperty("selectAllMatcher");
+//		if (selectAllMatcher == null || selectAllMatcher.equals("")) {
+//			try {
+//				throw new PropertyException("selectAll property is not found!");
+//			} catch (PropertyException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	/* 此方法中当Conditionable.getLimiter()不为null时，则自动获取totalCount */
@@ -79,7 +79,7 @@ public class SqlPlugin implements Interceptor {
 					.getValueByFieldName(statementHandler, "delegate");
 			MappedStatement mappedStatement = (MappedStatement) ReflectHelper
 					.getValueByFieldName(delegate, "mappedStatement");
-			if (mappedStatement.getId().matches(selectAllMatcher)) {
+//			if (mappedStatement.getId().matches(selectAllMatcher)) {
 				BoundSql boundSql = delegate.getBoundSql();
 				Object parameterObject = boundSql.getParameterObject();
 				if (parameterObject == null) {
@@ -112,8 +112,8 @@ public class SqlPlugin implements Interceptor {
 					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql);
 				} else {
 				}
-			} else {
-			}
+			// } else {
+			// }
 		}
 		return ivk.proceed();
 	}
